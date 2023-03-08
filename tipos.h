@@ -8,4 +8,9 @@ typedef enum {
     True = 1
 } logico;
 
+/* Precondición: Recibe una cadena de caracteres. */
+/* Poscondición: Cambia el \n por el \0 para que no haya ningún salto de linea al ser la cadena introducida por el buffer. */
+
+void EliminarSaltoLinea(char *cad);
+
 #endif
