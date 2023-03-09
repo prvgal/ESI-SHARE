@@ -3,7 +3,7 @@
                             Todos los datos pertinentes serán almacenados en el fichero vehiculos.txt*/
 
 #include <stdio.h>
-#include <stdio.h>
+#include <stdin.h>
 #include <string.h>
 #include "vehiculo.h"
 #define CARACTERES 51
