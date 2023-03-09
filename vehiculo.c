@@ -86,7 +86,7 @@
     /*
     void leer_fichero(FILE veh_txt, vehiculo_inf vehiculo){
         int i;
-        veh_txt=fopen("vehiculo.txt","r");
+        veh_txt=fopen("vehiculo.txt","rb");
         for(i=0;i<4;i++){
             if(i==0)
               fgets(vehiculo.id_mat, IDMAT-1, veh_txt);
