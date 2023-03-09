@@ -35,5 +35,6 @@
     //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
     void inserta_descripcion(char *);
 
+    /*void leer_fichero(FILE, vehiculo_inf);*/
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED
