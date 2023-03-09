@@ -83,3 +83,22 @@
         fflush(stdin);
         gets(descripcion);
     }
+    /*
+    void leer_fichero(FILE veh_txt, vehiculo_inf vehiculo){
+        int i;
+        veh_txt=fopen("vehiculo.txt","r");
+        for(i=0;i<4;i++){
+            if(i==0)
+              fgets(vehiculo.id_mat, IDMAT-1, veh_txt);
+            if(i==1)
+              scanf("%d",vehiculo.id_usuario);
+            if(i==2)
+              fscanf(veh_txt, "%d", vehiculo.num_plazas);
+            if(i==3)
+              fgets(vehiculo.desc_veh, CARACTERES-1, veh_txt);
+         }
+         fclose(veh_txt);
+      }
+      */
+
+
