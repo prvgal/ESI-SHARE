@@ -79,7 +79,7 @@
     //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
     void inserta_descripcion(char descripcion[CARACTERES]){
 
-        printf("Escribe una pequeña descripción de tu vehículo - color, algún detalle que veas importante, etc...");
+        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, algún detalle que veas importante, etc...");
         fflush(stdin);
         gets(descripcion);
     }
