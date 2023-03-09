@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "vehiculo.h"
 #define CARACTERES 51
 #define IDMAT 8
 
