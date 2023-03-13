@@ -31,13 +31,33 @@ void RegistrarPerfil(tPerfiles *infoper);
 
 /* Precondición: recibe un vector de estructuras de tipo tPerfiles el cual debe tener un tamaño mínimo. */
 /* Poscondición: modifica algún campo de la estructura indicado por el usuario. */
-void ModificarCampo(tPerfiles *infoper);
+void ModificarCamposUsuario(tPerfiles *infoper, unsigned int id[ID]);
 
 // void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles);
 
 
 
 /* FUNCIONES NO EXPORTABLES*/
+
+/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero sin signo que indicará la posición del usuario en infoper. */
+/* Poscondición: Cambia los datos almacenados de Nomb_usuario en la estructura infoper de la posición posUsuario. */
+static void CambiarNombre(tPerfiles *infoper, unsigned int posUsuario);
+
+/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero sin signo que indicará la posición del usuario en infoper. */
+/* Poscondición: Cambia los datos almacenados de Localidad en la estructura infoper de la posición posUsuario. */
+static void CambiarLocalidad(tPerfiles *infoper, unsigned int posUsuario);
+
+/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero sin signo que indicará la posición del usuario en infoper. */
+/* Poscondición: Cambia los datos almacenados de Usuario en la estructura infoper de la posición posUsuario. */
+static void CambiarUsuarioAcceso(tPerfiles *infoper, unsigned int posUsuario);
+
+/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero sin signo que indicará la posición del usuario en infoper. */
+/* Poscondición: Cambia los datos almacenados de Contrasena en la estructura infoper de la posición posUsuario. */
+static void CambiarContrasena(tPerfiles *infoper, unsigned int posUsuario);
+
+/* Precondición: recibe un vector de estructuras ya inicializado y un vector de enteros sin signo. */
+/* Poscondición: devuelve la posición en la que se encuentra el usuario dentro del vector de estructuras infoper */
+static unsigned int PosicionUsuario(tPerfiles *infoper, unsigned int id[ID]);
 
 /* Precondición: recibe un vector de estructuras y un vector de enteros sin signo. */
 /* Poscondición: inicializa el vector de enteros sin signo con una ID, por ejemplo, si es el usuario
