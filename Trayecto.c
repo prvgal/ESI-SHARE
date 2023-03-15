@@ -1,69 +1,38 @@
-#include <string.h>
 #include <stdio.h>
 
-struct trayecto {
-	char poblacion[20];
-	int Id_viajes;
-};
+int main() {
+    copiarContenido("viajes.txt", "pasos.txt", 0, 7);
 
+    return 0;
+}
 
+#include <stdio.h>
 
-	FILE *fichero;
+void copiarContenido(char* archivo_origen, char* archivo_destino, int inicio, int fin) {
+    FILE *f_origen, *f_destino;
+    char buffer[100];
+    int tamano;
 
-	struct trayecto trayecto;
+    f_origen = fopen(archivo_origen, "rb");
+    if (f_origen == NULL) {
+        printf("Error al abrir el archivo de origen\n");
+        return;
+    }
 
+    f_destino = fopen(archivo_destino, "wb");
+    if (f_destino == NULL) {
+        printf("Error al abrir el archivo de destino\n");
+        fclose(f_origen);
+        return;
+    }
 
-	fichero = fopen("pasos.txt", "rb");
+    fseek(f_origen, inicio, SEEK_SET);
+    tamano = fin - inicio;
+    fread(buffer, tamano, 1, f_origen);
+    fwrite(buffer, tamano, 1, f_destino);
 
-	if (fichero == NULL) {
-		printf("Error: No se ha podido crear el fichero empleados.dat");
-	} else {
+    fclose(f_origen);
+    fclose(f_destino);
 
-		fread(&trayecto, sizeof(trayecto), 1, fichero);
-
-		while (feof(fichero) == 0) {
-			printf("\n\nPoblacion: %s", trayecto.poblacion);
-			printf("\nId_viajes: %d", trayecto.Id_viajes);
-
-			fread(&trayecto, sizeof(trayecto), 1, fichero);
-		}
-
-
-		fclose(fichero);
-	}
-
-
-
-typedef struct{
-    int Id_viajes[6];
-    char poblacion[20];
-}trayecto;
-
-
-
-
-
-	FILE *fichero;
-	char poblacion[20];
-	char *resultado;
-	fichero = fopen("viajes.txt", "rt");
-		resultado = fgets(poblacion, 20, fichero);
-		while (resultado != NULL) {
-			printf("%s", poblacion);
-			resultado = fgets(poblacion, 20, fichero);
-		}
-		fclose(fichero);
-
-
-
-
-		FILE *fichero;
-	int Id_viajes[6];
-	int *resultado;
-	fichero = fopen("viajes.txt", "rt");
-		resultado = fgets(Id_viajes, 6, fichero);
-		while (resultado != NULL) {
-			printf("%s", poblacion);
-			resultado = fgets(Id_viajes, 6, fichero);
-		}
-		fclose(fichero);
+    printf("Contenido copiado correctamente\n");
+}
