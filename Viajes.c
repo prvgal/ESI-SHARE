@@ -11,8 +11,9 @@
 
 //Declaración de funciones
 void generar_ID_viaje();
-void introducir_fecha();
-void horas();
+void introducir_fecha(int *hoy);
+void horas(int hoy);
+void plazas();
 
 typedef struct{         //0 = Falso, 1 = Verdadero
     int abierto;
@@ -38,6 +39,8 @@ viajes *viaje;
 int num = 0;
 
 int main(){     //(Main temporal para probar que funciona correctamente)
+    int hoy;
+
     if (num==0)
         viaje = (viajes*)malloc(sizeof(viajes));
     else
@@ -45,9 +48,9 @@ int main(){     //(Main temporal para probar que funciona correctamente)
 
     generar_ID_viaje();
 
-    introducir_fecha();
+    introducir_fecha(&hoy);
 
-    horas();
+    horas(hoy);
 
     free(viaje);
     return 0;
@@ -78,9 +81,9 @@ void generar_ID_viaje(){
 
 //Precondición: El usuario habrá elegido la opción de realizar un viaje
 //Postcondición: El usuario habrá introducido una fecha del viaje válida
-void introducir_fecha(){
-    int dia, mes, ano, dias_en_mes;
-    int fecha_valida = 0;   //Indica si la fecha introducida es válida
+void introducir_fecha(int *hoy){
+    int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
+    *hoy = 0;
 
     time_t tiempo_actual;
     struct tm *fecha_actual;
@@ -96,6 +99,10 @@ void introducir_fecha(){
 
         tiempo_actual = time(NULL);     //Para comprobar que la fecha introducida no es anterior a la actual
         fecha_actual = localtime(&tiempo_actual);
+
+        if(dia == fecha_actual->tm_mday && mes == fecha_actual->tm_mon + 1 && ano == fecha_actual->tm_year + 1900){
+            *hoy = 1;
+        }
 
         if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
             printf("La fecha introducida no puede ser anterior a la fecha actual. Por favor, intentelo de nuevo.\n");
@@ -130,9 +137,14 @@ void introducir_fecha(){
 
 //Precondición: El usuario habrá elegido iniciar un viaje
 //Postcondición: El usuario habrá introducido una hora de inicio y llegada válidas
-void horas(){
+void horas(int hoy){
     char entrada[6];
-    int estado = 0, minutos_llegada, minutos_inicio;
+    int estado = 0, minutos_llegada, minutos_inicio, minutos_actual;
+
+    time_t hora_actual = time(NULL);    //Obtiene la hora actual
+    struct tm* hora_local = localtime(&hora_actual);    //Convierte a hora local
+    
+    minutos_actual = hora_local->tm_hour * 60 + hora_local->tm_min; //Convierte la hora local a minutos
 
     //Pide la hora de inicio
     while (estado == 0){
@@ -140,11 +152,11 @@ void horas(){
         scanf("%5s", entrada);
         int horas, minutos;
         minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60){ //Comprueba que la hora de inicio introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (hoy!=1 || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
             sprintf(viaje[num].hora_inicio, "%02d:%02d", horas, minutos);
             estado = 1;
         } else{
-            printf("La hora de inicio debe estar entre las 06:00 y las 22:25. Introduzca la hora de nuevo.\n");
+            printf("La hora de inicio debe estar entre las 06:00 y las 22:25 y debe ser anterior a la actual si el viaje es hoy. Introduzca la hora de nuevo.\n");
         }
     }
 
@@ -172,3 +184,14 @@ void horas(){
     printf("La hora de llegada es %s\n", viaje[num].hora_llegada);
 }
 
+//Precondición: El usuario habrá elegido iniciar un viaje
+//Postcondición: El usuario habrá introducido el número de plazas disponible para el viaje
+void plazas(){
+    do
+    {
+        printf("Introduce el número de plazas disponibles:\n");
+        scanf("%i", &viaje[num].plazas);
+    } while (viaje[num].plazas<1 || viaje[num].plazas>9);
+
+    printf("El numero de plazas disponibles es %i", viaje[num].plazas);
+}
