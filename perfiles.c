@@ -76,7 +76,7 @@ void ListarRegistro(tPerfiles *infoper, unsigned int id[ID]){
 
 void ModificarCamposUsuario(tPerfiles *infoper, unsigned int id[ID]){
     int op;
-    unsigned int pos = PosicionUsuario(infoper, id);
+    unsigned int pos = (infoper, id);
 
     puts("Que campo desea modificar? ");
 
@@ -233,7 +233,7 @@ static void GenerarID(tPerfiles *infoper, unsigned int id[ID]){
 
 // static ¿ void ? ObtenerID(){}
 
-static unsigned int LongitudVectorEstructuras(tPerfiles *infoper){
+static unsigned int LongitudVectorEstructuras(){
     // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
     char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
     FILE *fich;
