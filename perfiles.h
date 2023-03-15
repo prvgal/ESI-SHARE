@@ -14,7 +14,7 @@ typedef struct {
     unsigned int Id_usuario[ID];    // 4 digitos.
     char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
     char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
-    logico Perfil_usuario;      //True para administrador y False para usuario.
+    logico Perfil_usuario;      // True para administrador y False para usuario.
     char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema
     char Contrasena[MAX_C];     // 8 caracteres mas el \0.
 } tPerfiles;
@@ -64,9 +64,9 @@ static unsigned int PosicionUsuario(tPerfiles *infoper, unsigned int id[ID]);
                  18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
 static void GenerarID(tPerfiles *infoper, unsigned int id[ID]);
 
-/* Precondición: recibe un vector de estructuras. */
+/* Precondición: . */
 /* Poscondición: devuelve un entero sin signo que indica el la longitud n de una estructura. */
-static unsigned int LongitudVectorEstructuras(tPerfiles *infoper);
+static unsigned int LongitudVectorEstructuras();
 
 
 #endif 
