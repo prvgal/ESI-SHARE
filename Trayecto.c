@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 int main() {
+    encontrarUsuario("viajes.txt");
     copiarContenido("viajes.txt", "pasos.txt", 0, 7);
 
     return 0;
@@ -35,4 +36,9 @@ void copiarContenido(char* archivo_origen, char* archivo_destino, int inicio, in
     fclose(f_destino);
 
     printf("Contenido copiado correctamente\n");
+}
+
+
+void encontrarUsuario(char* archivo_origen){
+
 }
