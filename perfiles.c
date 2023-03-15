@@ -68,7 +68,7 @@ void ListarRegistro(tPerfiles *infoper, unsigned int id[ID]){
     scanf("%c", &c);
 
     if(infoper[pos].Perfil_usuario == True)
-        (c == 'S')?ModificarCamposAdmin(infoper, id):printf("No se modificaran datos.\n");
+        //(c == 'S')?ModificarCamposAdmin(infoper, id):printf("No se modificaran datos.\n");
     else
         (c == 'S')?ModificarCamposUsuario(infoper, id):printf("No se modificaran datos.\n");
 
