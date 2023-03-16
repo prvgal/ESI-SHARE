@@ -1,4 +1,5 @@
 #include "perfiles.h"
+#include "ficheros.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,10 +8,10 @@
 
 /* Funciones públicas */
 
-void CargarPerfiles();
+// void CargarPerfiles();
 
 void ReservarPerfil(tPerfiles *infoper){
-    unsigned int numPerfiles = LongitudVectorEstructuras(infoper);
+    int numPerfiles = LongitudVectorEstructuras();
 
     infoper = (tPerfiles *)realloc(infoper, (numPerfiles + 1)*sizeof(tPerfiles));
 
@@ -21,7 +22,7 @@ void ReservarPerfil(tPerfiles *infoper){
 }
 
 void RegistrarPerfil(tPerfiles *infoper){
-    unsigned int numPerfiles = LongitudVectorEstructuras(infoper) + 1, id[ID];
+    int numPerfiles = LongitudVectorEstructuras() + 1;
 
     ReservarPerfil(infoper);
 
@@ -50,7 +51,7 @@ void RegistrarPerfil(tPerfiles *infoper){
     EliminarSaltoLinea(infoper[numPerfiles].Contrasena);
 }
 
-void ListarRegistro(tPerfiles *infoper, unsigned int id[ID]){
+void ListarRegistro(tPerfiles *infoper, char id[ID]){
     int pos = PosicionUsuario(infoper, id);
     char c;
 
@@ -68,15 +69,15 @@ void ListarRegistro(tPerfiles *infoper, unsigned int id[ID]){
     scanf("%c", &c);
 
     if(infoper[pos].Perfil_usuario == True)
-        //(c == 'S')?ModificarCamposAdmin(infoper, id):printf("No se modificaran datos.\n");
+        (c == 'S')?ModificarCamposAdmin(infoper, id):printf("No se modificaran datos.\n");
     else
         (c == 'S')?ModificarCamposUsuario(infoper, id):printf("No se modificaran datos.\n");
 
 }
 
-void ModificarCamposUsuario(tPerfiles *infoper, unsigned int id[ID]){
+void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]){
     int op;
-    unsigned int pos = (infoper, id);
+    int pos = PosicionUsuario(infoper, id);
 
     puts("Que campo desea modificar? ");
 
@@ -101,7 +102,7 @@ void ModificarCamposUsuario(tPerfiles *infoper, unsigned int id[ID]){
 
 /* Funciones NO exportables */
 
-static void CambiarNombre(tPerfiles *infoper, unsigned int posUsuario){
+static void CambiarNombre(tPerfiles *infoper, int posUsuario){
     char c, copia[MAX_N];
 
     strcpy(copia, infoper[posUsuario].Nomb_usuario);
@@ -114,21 +115,26 @@ static void CambiarNombre(tPerfiles *infoper, unsigned int posUsuario){
     printf("\nNuevo nombre: %s.\n", infoper[posUsuario].Nomb_usuario);
 
     printf("Desea mantener cambios? (S/n) ");
+    fflush(stdin);
     scanf("%c", &c);
 
     do{
         if(c == 'n'){
             strcpy(infoper[posUsuario].Nomb_usuario, copia);
             puts("Se cancelaron los cambios.");
-        } else if(c != 'S' || c != 'n')
-            puts("Introduzca o S (Si) o N (No)");
-        else
+        } else if(c == 'S')
             puts("Se ha cambiado el nombre de usuario.");
+        else{
+            puts("Introduzca o S (Si) o N (No) ");
+            fflush(stdin);
+            scanf("%c", &c);
+        }
+    } while(c != 'S' && c != 'n');
 
-    } while(c != 'S' || c != 'n');
+    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
 }
 
-static void CambiarLocalidad(tPerfiles *infoper, unsigned int posUsuario){
+static void CambiarLocalidad(tPerfiles *infoper, int posUsuario){
     char c, copia[MAX_N];
 
     strcpy(copia, infoper[posUsuario].Localidad);
@@ -147,15 +153,19 @@ static void CambiarLocalidad(tPerfiles *infoper, unsigned int posUsuario){
         if(c == 'n'){
             strcpy(infoper[posUsuario].Localidad, copia);
             puts("Se cancelaron los cambios.");
-        } else if(c != 'S' || c != 'n')
-            puts("Introduzca o S (Si) o N (No)");
-        else
+        } else if(c == 'S')
             puts("Se ha cambiado la localidad.");
+        else{
+            puts("Introduzca o S (Si) o N (No) ");
+            fflush(stdin);
+            scanf("%c", &c);
+        }
+    } while(c != 'S' && c != 'n');
 
-    } while(c != 'S' || c != 'n');
+    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
 }
 
-static void CambiarUsuarioAcceso(tPerfiles *infoper, unsigned int posUsuario){
+static void CambiarUsuarioAcceso(tPerfiles *infoper, int posUsuario){
     char c, copia[MAX_N];
 
     strcpy(copia, infoper[posUsuario].Usuario);
@@ -174,15 +184,19 @@ static void CambiarUsuarioAcceso(tPerfiles *infoper, unsigned int posUsuario){
         if(c == 'n'){
             strcpy(infoper[posUsuario].Usuario, copia);
             puts("Se cancelaron los cambios.");
-        } else if(c != 'S' || c != 'n')
-            puts("Introduzca o S (Si) o N (No)");
-        else
+        } else if(c == 'S')
             puts("Se ha cambiado el nombre de acceso.");
+        else{
+            puts("Introduzca o S (Si) o N (No) ");
+            fflush(stdin);
+            scanf("%c", &c);
+        }
+    } while(c != 'S' && c != 'n');
 
-    } while(c != 'S' || c != 'n');
+    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
 }
 
-static void CambiarContrasena(tPerfiles *infoper, unsigned int posUsuario){
+static void CambiarContrasena(tPerfiles *infoper, int posUsuario){
     char c, copia[MAX_N];
 
     strcpy(copia, infoper[posUsuario].Contrasena);
@@ -201,61 +215,36 @@ static void CambiarContrasena(tPerfiles *infoper, unsigned int posUsuario){
         if(c == 'n'){
             strcpy(infoper[posUsuario].Contrasena, copia);
             puts("Se cancelaron los cambios.");
-        } else if(c != 'S' || c != 'n')
-            puts("Introduzca o S (Si) o N (No)");
-        else
+        } else if(c == 'S')
             puts("Se ha cambiado la contrasena.");
+        else{
+            puts("Introduzca o S (Si) o N (No) ");
+            fflush(stdin);
+            scanf("%c", &c);
+        }
+    } while(c != 'S' && c != 'n');
 
-    } while(c != 'S' || c != 'n');
+    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
 }
 
-static unsigned int PosicionUsuario(tPerfiles *infoper, unsigned int id[ID]){
-    int i, fin = 0, npos = LongitudVectorEstructuras(infoper);
+static int PosicionUsuario(tPerfiles *infoper, char id[ID]){
+    int i, fin = 0, npos = LongitudVectorEstructuras();
 
     for(i = 0; i < npos && !fin; i++){
         if(!strcmp(infoper[i].Id_usuario, id))
             fin = 1;
     }
 
-    return i;
+    return i-1; // El bucle for hará que i contenga un valor más de lo que realmente buscabamos.
 }
 
-static void GenerarID(tPerfiles *infoper, unsigned int id[ID]){
-    int i = ID-1, aux1 = LongitudVectorEstructuras(infoper) + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
+static void GenerarID(tPerfiles *infoper, char id[ID]){
+    int i = ID-1, aux1 = LongitudVectorEstructuras() + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
     
     for(; i >= 0; i--){
         aux2 %= 10;
         id[i] = aux2;
-        aux1 = (unsigned int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
+        aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
         aux2 = aux1;
     } 
 }
-
-// static ¿ void ? ObtenerID(){}
-
-static unsigned int LongitudVectorEstructuras(){
-    // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
-    char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
-    FILE *fich;
-    unsigned int i = 1;
-
-    fich = fopen("Usuarios.txt", "r");
-
-    if(fich == NULL){
-        fprintf(stderr, "Error en la apertura del fichero.");
-        exit(1);
-    }
-
-    while(!feof(fich)){
-        fgets(aux, MAX_LIN_FICH, fich);
-        i++;
-    }
-
-    // Falta eliminar la última linea que se crea al ver las lineas del fichero
-
-    rewind(fich); 
-    fclose(fich);
-
-    return i;
-}
-
