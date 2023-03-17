@@ -192,6 +192,10 @@ void horas(int hoy){
 //Precondición: El usuario habrá elegido unirse a un viaje
 //Postcondición: Actualiza el número de plazas libres de un viaje
 void plazas(){
-    viaje[num].Nplazas -= 1;
-    printf("Quedan %i plazas libres en el viaje %i", viaje[num].Nplazas, viaje[num].ID);
+    if(viaje[num].Nplazas != 0){
+        viaje[num].Nplazas -= 1;
+        printf("Quedan %i plazas libres en el viaje %i", viaje[num].Nplazas, viaje[num].ID);
+    }
+    else
+    printf("No quedan plazas en el viaje %i", viaje[num].ID);
 }
