@@ -29,7 +29,7 @@ typedef struct{
     char fecha[11];
     char hora_inicio [HORA];   //Mínimo 06:00
     char hora_llegada [HORA];  //Máximo 22:30
-    int plazas;     //De 1 a 9
+    int Nplazas;     //Actualiza número de plazas
     char tipo [TIPO];  //I(Ida) o V(Vuelta)
     float importe;  //Entre 0 y 15 € por persona
     estado_viajes estado;  //Solo un estado activo al mismo tiempo
@@ -38,11 +38,13 @@ typedef struct{
 viajes *viaje;
 int num = 0;
 
-int main(){     //(Main temporal para probar que funciona correctamente)
+int main(){     //Main temporal para probar que funciona correctamente
     int hoy;
 
-    if (num==0)
+    if (num==0){
         viaje = (viajes*)malloc(sizeof(viajes));
+        num = 1;
+    }
     else
         viaje = (viajes*)realloc(viaje, (num+1)*sizeof(viajes));
 
@@ -51,6 +53,10 @@ int main(){     //(Main temporal para probar que funciona correctamente)
     introducir_fecha(&hoy);
 
     horas(hoy);
+
+    viaje[num].Nplazas = 4;
+
+    plazas();
 
     free(viaje);
     return 0;
@@ -88,7 +94,6 @@ void introducir_fecha(int *hoy){
     time_t tiempo_actual;
     struct tm *fecha_actual;
 
-    fflush(stdin);
     do {
         printf("Introduzca una fecha en el formato Dia/Mes/Ano: ");
         if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3) { //Si no se introducen los 3 números esperados con "/" separándolos
@@ -184,14 +189,9 @@ void horas(int hoy){
     printf("La hora de llegada es %s\n", viaje[num].hora_llegada);
 }
 
-//Precondición: El usuario habrá elegido iniciar un viaje
-//Postcondición: El usuario habrá introducido el número de plazas disponible para el viaje
+//Precondición: El usuario habrá elegido unirse a un viaje
+//Postcondición: Actualiza el número de plazas libres de un viaje
 void plazas(){
-    do
-    {
-        printf("Introduce el número de plazas disponibles:\n");
-        scanf("%i", &viaje[num].plazas);
-    } while (viaje[num].plazas<1 || viaje[num].plazas>9);
-
-    printf("El numero de plazas disponibles es %i", viaje[num].plazas);
+    viaje[num].Nplazas -= 1;
+    printf("Quedan %i plazas libres en el viaje %i", viaje[num].Nplazas, viaje[num].ID);
 }
