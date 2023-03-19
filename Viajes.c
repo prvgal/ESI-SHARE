@@ -2,6 +2,9 @@
             /*Módulo de viaje: se guarda la ID única del viaje, la matrícula del vehículo, fecha y hora de inicio y llegada,
                         plazas libres, tipo de viaje, el importe y estado del viaje en el fichero Viajes.txt*/
 
+#include "Viajes.h"
+#include "tipos.h"
+
 viajes *viaje;
 int posUsuario = 0;
 
@@ -29,7 +32,7 @@ int main(){     //Main temporal para probar que funciona correctamente
     return 0;
 }
 
-void generar_ID_viaje(viajes *viaje, int posUsuario){
+static void generar_ID_viaje(viajes *viaje, int posUsuario){
     int i, p = 0;
     do
     {
@@ -49,7 +52,7 @@ void generar_ID_viaje(viajes *viaje, int posUsuario){
     printf("ID del viaje = %i\n", viaje[posUsuario].ID);
 }
 
-void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
+static void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
     int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
     *hoy = False;
 
@@ -102,7 +105,7 @@ void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
     printf("La fecha introducida es: %s\n", viaje[posUsuario].fecha);
 }
 
-void horas(viajes *viaje, int posUsuario, logico hoy){
+static void horas(viajes *viaje, int posUsuario, logico hoy){
     char entrada[6];
     int estado = 0, minutos_llegada, minutos_inicio, minutos_actual;
 
@@ -149,7 +152,7 @@ void horas(viajes *viaje, int posUsuario, logico hoy){
     printf("La hora de llegada es %s\n", viaje[posUsuario].hora_llegada);
 }
 
-void plazas(viajes *viaje, int posUsuario){
+static void plazas(viajes *viaje, int posUsuario){
     if(viaje[posUsuario].Nplazas != 0){
         viaje[posUsuario].Nplazas -= 1;
         printf("Quedan %i plazas libres en el viaje %i", viaje[posUsuario].Nplazas, viaje[posUsuario].ID);
