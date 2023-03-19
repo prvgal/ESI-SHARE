@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "tipos.h"
 
 #define MATRICULA 8
 #define HORA 6
