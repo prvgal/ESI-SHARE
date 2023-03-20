@@ -11,7 +11,7 @@ FILE* pasos;
         fflush(stdin);
         fgets(poblacion, 21, stdin);
         if (pasos != NULL) {
-            fprintf(pasos,"%i-%c",viaje.ID,poblacion);
+            fprintf(pasos,"%i-%c \n",viaje.ID,poblacion);
             fclose(pasos);
    }
 
