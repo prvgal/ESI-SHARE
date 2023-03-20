@@ -8,7 +8,6 @@
 
 #define MATRICULA 8
 #define HORA 6
-#define TIPO 2
 
 typedef struct{
     logico abierto;
@@ -25,7 +24,7 @@ typedef struct{
     char hora_inicio [HORA];        //Formato 24h - Mínimo 06:00
     char hora_llegada [HORA];       //Formato 24h - Máximo 22:30
     int Nplazas;                    //Número de plazas disponibles
-    char tipo [TIPO];               //I - Ida o V - Vuelta
+    char tipo;                      //I - Ida o V - Vuelta
     float importe;                  //Entre 0 y 15 € por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
 } viajes;
@@ -53,5 +52,7 @@ static void horas(viajes *viaje, int posUsuario, logico hoy);
 //Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posUsuario
 
 static void plazas(viajes *viaje, int posUsuario);
+
+static void tipo(viajes *viaje, int posUsuario);
 
 #endif
