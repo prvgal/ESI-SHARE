@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include "viajes.h"
 
-
-int main(){
-}
 void paradas(viajes viaje){
 char c,poblacion[21];
 FILE* pasos;
@@ -18,7 +15,7 @@ FILE* pasos;
             fclose(pasos);
    }
 
-        printf("¿Quiere añadir una nueva población? (s/n) \n");
+        printf("Â¿Quiere aÃ±adir una nueva poblaciÃ³n? (s/n) \n");
         fflush(stdin);
         scanf("%c",c);
 }while(c=='S'||c=='s');
