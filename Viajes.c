@@ -28,6 +28,8 @@ int main(){     //Main temporal para probar que funciona correctamente
 
     plazas(viaje, posUsuario);
 
+    tipo(viaje, posUsuario);
+
     free(viaje);
     return 0;
 }
@@ -155,8 +157,21 @@ static void horas(viajes *viaje, int posUsuario, logico hoy){
 static void plazas(viajes *viaje, int posUsuario){
     if(viaje[posUsuario].Nplazas != 0){
         viaje[posUsuario].Nplazas -= 1;
-        printf("Quedan %i plazas libres en el viaje %i", viaje[posUsuario].Nplazas, viaje[posUsuario].ID);
+        printf("Quedan %i plazas libres en el viaje %i\n", viaje[posUsuario].Nplazas, viaje[posUsuario].ID);
     }
     else
-    printf("No quedan plazas en el viaje %i", viaje[posUsuario].ID);
+    printf("No quedan plazas en el viaje %i\n", viaje[posUsuario].ID);
+}
+
+static void tipo(viajes *viaje, int posUsuario){
+    do
+    {
+        printf("Introduce (I) si el viaje es de ida o (V) vuelta:\n");
+    
+        fflush(stdin);
+    
+        scanf("%c", &viaje[posUsuario].tipo);
+    } while (viaje[posUsuario].tipo != 'I' && viaje[posUsuario].tipo != 'V');
+
+    printf("Seleccionado viaje tipo %c", viaje[posUsuario].tipo);
 }
