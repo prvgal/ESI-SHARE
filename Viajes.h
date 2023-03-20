@@ -53,6 +53,9 @@ static void horas(viajes *viaje, int posUsuario, logico hoy);
 
 static void plazas(viajes *viaje, int posUsuario);
 
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondición: Habrá introducido el tipo de viaje en la estructura viaje de la posición posUsuario: (I) Ida o (V) Vuelta
+
 static void tipo(viajes *viaje, int posUsuario);
 
 #endif
