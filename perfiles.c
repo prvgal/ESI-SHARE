@@ -8,12 +8,28 @@
 
 /* Funciones públicas */
 
-// void CargarPerfiles();
+void CargarPerfiles(tPerfiles *infoper){
+    int i;
+    char c;
+    FILE *f;
+
+    f = fopen("Usuarios.txt", "r");
+
+    if(f == NULL){
+        fprintf(stderr, "Error en la apertura de ficheros.\n");
+        exit(1);
+    }
+
+    
+}
 
 void ReservarPerfil(tPerfiles *infoper){
     int numPerfiles = LongitudVectorEstructuras();
 
-    infoper = (tPerfiles *)realloc(infoper, (numPerfiles + 1)*sizeof(tPerfiles));
+    if(numPerfiles == 0)
+        infoper = (tPerfiles *)calloc(numPerfiles + 1, sizeof(tPerfiles));
+    else
+        infoper = (tPerfiles *)realloc(infoper, (numPerfiles + 1)*sizeof(tPerfiles));
 
     if(infoper == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
@@ -22,11 +38,11 @@ void ReservarPerfil(tPerfiles *infoper){
 }
 
 void RegistrarPerfil(tPerfiles *infoper){
-    int numPerfiles = LongitudVectorEstructuras() + 1;
+    int numPerfiles = LongitudVectorEstructuras();
 
     ReservarPerfil(infoper);
 
-    GenerarID(infoper, infoper[numPerfiles].Id_usuario);
+    GenerarID(infoper[numPerfiles].Id_usuario, LongitudVectorEstructuras(), ID);
 
     printf("\nNombre de usuario: ");
     fflush(stdin);
@@ -99,6 +115,17 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]){
 
 // void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles)
 
+
+void GenerarID(char *id, int ndatos, int numDigitos){
+    int i = numDigitos-1, aux1 = ndatos + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
+    
+    for(; i >= 0; i--){
+        aux2 %= 10;
+        id[i] = aux2;
+        aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
+        aux2 = aux1;
+    }
+}
 
 /* Funciones NO exportables */
 
@@ -236,15 +263,4 @@ static int PosicionUsuario(tPerfiles *infoper, char id[ID]){
     }
 
     return i-1; // El bucle for hará que i contenga un valor más de lo que realmente buscabamos.
-}
-
-static void GenerarID(tPerfiles *infoper, char id[ID]){
-    int i = ID-1, aux1 = LongitudVectorEstructuras() + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
-    
-    for(; i >= 0; i--){
-        aux2 %= 10;
-        id[i] = aux2;
-        aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
-        aux2 = aux1;
-    } 
 }
