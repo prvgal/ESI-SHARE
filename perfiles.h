@@ -1,5 +1,5 @@
-#ifndef __PERFILES__
-#define __PERFILES__
+#ifndef _PERFILES_
+#define _PERFILES_
 
 #include "tipos.h"
 
@@ -20,7 +20,11 @@ typedef struct {
 
 /* FUNCIONES PUBLICAS */
 
-/* Precondición: recibe un vector de estructuras de tipo tPerfiles el cual debe tener un tamaño mínimo. */
+/* Precondición: recibe un vector de estructuras tipo tPefiles el cual debe tener ¿¿un tamaño minimo?? */
+/* Poscondición: almacena en infoper los datos de Usuarios.txt*/
+void CargarPerfiles(tPerfiles *infoper);
+
+/* Precondición: recibe un vector de estructuras de tipo tPerfiles. */
 /* Poscondición: redimensiona el vector de estructuras tPerfiles para un nuevo elemento. */
 void ReservarPerfil(tPerfiles *infoper);
 
@@ -38,6 +42,10 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]);
 
 // void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles);
 
+/* Precondición: recibe una cadena de caracteres(ID), el numeo de datos que haya almaecados y el numero de dígitos para el que se quiera generar la ID. */
+/* Poscondición: inicializa la cadena de caracteres con una ID, por ejemplo, si es el usuario
+                 18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
+void GenerarID(char *id, int ndatos, int numDigitos);
 
 
 /* FUNCIONES NO EXPORTABLES*/
@@ -59,12 +67,8 @@ static void CambiarUsuarioAcceso(tPerfiles *infoper, int posUsuario);
 static void CambiarContrasena(tPerfiles *infoper, int posUsuario);
 
 /* Precondición: recibe un vector de estructuras ya inicializado y una cadena de caracteres (ID). */
-/* Poscondición: devuelve la posición en la que se encuentra el usuario dentro del vector de estructuras infoper */
+/* Poscondición: devuelve la posición en la que se encuentra el usuario con ID (char id[ID]) dentro del vector de estructuras infoper */
 static int PosicionUsuario(tPerfiles *infoper, char id[ID]);
 
-/* Precondición: recibe un vector de estructuras y un cadena de caracteres(ID). */
-/* Poscondición: inicializa la cadena de caracteres con una ID, por ejemplo, si es el usuario
-                 18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
-static void GenerarID(tPerfiles *infoper, char id[ID]);
 
-#endif 
+#endif
