@@ -105,12 +105,12 @@ int main(){		//main provisional
            		fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
            		fwrite(guion,sizeof(char),1,veh_txt);
            		fwrite(vehiculo.id_usuario, sizeof(char), 4, veh_txt);
-				fwrite(guion, sizeof(char),1,veh_txt);
-				fprintf(veh_txt,"%i",vehiculo.num_plazas);
-				fwrite(guion, sizeof(char),1,veh_txt);
-				fwrite(vehiculo.desc_veh, sizeof(char), 50, veh_txt);
+			fwrite(guion, sizeof(char),1,veh_txt);
+			fprintf(veh_txt,"%i",vehiculo.num_plazas);
+			fwrite(guion, sizeof(char),1,veh_txt);
+			fwrite(vehiculo.desc_veh, sizeof(char), 50, veh_txt);
 			}
-     	fclose(veh_txt);
+	     	fclose(veh_txt);
 		}
 
 
