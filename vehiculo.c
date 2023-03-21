@@ -3,32 +3,14 @@
                             Todos los datos pertinentes serán almacenados en el fichero vehiculos.txt*/
 
 #include <stdio.h>
-#include <stdin.h>
 #include <string.h>
 #include "vehiculo.h"
-#define CARACTERES 51
-#define IDMAT 8
 
-    //vehiculo_inf - Registro que almacena toda la información pertinente a un vehículo.
-    typedef struct{
-        char id_mat[IDMAT];
-        int id_usuario;
-        int num_plazas;
-        char desc_veh[CARACTERES];
-    }vehiculo_inf;
+int main(){		//main provisional
+	return 0;
+}
 
-    FILE veh_txt;
-
-    //Declaración de funciones
-    void cambiar_datos(vehiculo_inf);
-    void pedir_matricula(char *);
-    void pedir_plazas_veh(int);
-    void inserta_descripcion(char *);
-
-
-    //Precondición: El usuario habrá creado su propia cuenta, de manera el dato lógico "tienecoche" es igual a 1.
-    //Postcondición: El usuario habrá cambiado algún dato acerca de su vehículo.
-    void cambiar_datos(vehiculo_inf vehiculo){
+   void cambiar_datos(vehiculo_inf vehiculo, FILE *veh_txt){
         int opcion=-1;
 
         do{
@@ -42,11 +24,9 @@
                 case '0': break;
             }
         }while(opcion!=0);
+        escribir_fichero(vehiculo, veh_txt);
     }
-
-    //Precondición: Recoge un vector de caracter o cadena de caracteres del campo id_mat del registro vehiculo, con lo que
-    //debe estar habilitada la información del vehículo.
-    //Postcondición: La cadena vehiculo.matricula tendrá una matrícula guardada.
+    
     void pedir_matricula(char matricula[IDMAT]){
         int i;
 
@@ -63,42 +43,75 @@
         fflush(stdin);
     }
 
-    //Precondición: Recibe la variable entera num_plazas, con lo que debe estar habilitada la información del vehículo.
-    //Postcondicion: El entero vehiculo.num_plazas será un número entre 0 y 10.
     void pedir_plazas_veh(int plazas){
 
         printf("Indica el número total de plazas de las que dispone el vehículo: ");
         scanf("%i",&plazas);
-        while(plazas>=10){
+        while(plazas>9||plazas<1){
             printf("Por favor, escribe un número válido de plazas de coche/furgoneta/etc... - ");
             scanf("%d",&plazas);
         }
     }
 
-    //Precondición: Debe estar habilitada la información del vehículo, concretamente el campo "desc_veh".
-    //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
     void inserta_descripcion(char descripcion[CARACTERES]){
 
-        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, algún detalle que veas importante, etc...");
+        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, etc...");
         fflush(stdin);
         gets(descripcion);
+        while(strlen(descripcion)>50){
+    		printf("Introduzca una descripción más corta (o ninguna)");
+    		fflush(stdin);
+    		gets(descripcion);
+		}
     }
-    /*
-    void leer_fichero(FILE veh_txt, vehiculo_inf vehiculo){
-        int i;
-        veh_txt=fopen("vehiculo.txt","rb");
-        for(i=0;i<4;i++){
-            if(i==0)
-              fgets(vehiculo.id_mat, IDMAT-1, veh_txt);
-            if(i==1)
-              scanf("%d",vehiculo.id_usuario);
-            if(i==2)
-              fscanf(veh_txt, "%d", vehiculo.num_plazas);
-            if(i==3)
-              fgets(vehiculo.desc_veh, CARACTERES-1, veh_txt);
-         }
-         fclose(veh_txt);
-      }
-      */
+    
+    void introducir_datos(vehiculo_inf vehiculo, FILE *veh_txt){
+    	int i, num_car;
+    	
+    	printf("Rellene el formulario a continuación, por favor: \n");
+    	printf("		*) Matrícula: ");
+    	do{
+    		printf("		- La matrícula debe ser española (formato 0000AAA) -");
+    		fflush(stdin);
+    		gets(vehiculo.id_mat);
+		}while(strlen(vehiculo.id_mat)>=8);
+    
+    	printf("\n		*) Número de plazas: ");
+    	scanf("%d", vehiculo.num_plazas);
+    	while(vehiculo.num_plazas>9){
+    		printf("\n		Introduzca un número realista de plazas (0-9):");
+    		scanf("%d", vehiculo.num_plazas);
+		}
+    
+		printf("\n		*) Una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
+		fflush(stdin);
+    	gets(vehiculo.desc_veh);
+    	while(strlen(vehiculo.desc_veh)>50){
+    		printf("\n		Introduzca una descripción más corta (o ninguna)");
+    		fflush(stdin);
+    		gets(vehiculo.desc_veh);
+		}
+		//escribir_fichero(vehiculo, veh_txt);
+	}
+	
+	void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+        char guion[2]={'-','\0'};
+        
+        if((veh_txt=fopen("vehiculo.txt","w+"))==NULL){
+        	printf("Error al guardar la información");
+        	exit(1);
+			}
+		else{
+           		fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
+           		fwrite(guion,sizeof(char),1,veh_txt);
+           		fwrite(vehiculo.id_usuario, sizeof(char), 4, veh_txt);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fprintf(veh_txt,"%i",vehiculo.num_plazas);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fwrite(vehiculo.desc_veh, sizeof(char), 50, veh_txt);
+			}
+     	fclose(veh_txt);
+		}
+
 
 
