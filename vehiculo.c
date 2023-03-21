@@ -91,7 +91,7 @@ int main(){		//main provisional
     		fflush(stdin);
     		gets(vehiculo.desc_veh);
 		}
-		//escribir_fichero(vehiculo, veh_txt);
+		escribir_fichero(vehiculo, veh_txt);
 	}
 	
 	void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
