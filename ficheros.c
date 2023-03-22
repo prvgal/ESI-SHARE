@@ -6,7 +6,7 @@ int LongitudVectorEstructuras(){
     // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
     char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
     FILE *fich;
-    unsigned int i = 1;
+    int i = 1;
 
     fich = fopen("Usuarios.txt", "r");
 
@@ -24,4 +24,14 @@ int LongitudVectorEstructuras(){
     fclose(fich);
 
     return i;
+}
+
+void CargarID(FILE *ptrf, char *cad, int numDigitos){
+    int i = 0;
+    char c;
+    
+    while((i < numDigitos) && (c = fgetc(ptrf))){
+        cad[i] = c;
+        i++;
+    }
 }
