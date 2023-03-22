@@ -3,7 +3,7 @@
 
 #include "tipos.h"
 
-#define ID 4
+#define ID 5
 #define MAX_N 21
 #define MAX_L 21
 #define MAX_U 6
@@ -32,6 +32,7 @@ void ReservarPerfil(tPerfiles *infoper);
 /* Poscondición: introduce en el vector de estructuras de tipo tPerfiles los valores necesarios. */
 void RegistrarPerfil(tPerfiles *infoper);
 
+
 /* Precondición: recibe un vector de estructuras tipo tPerfiles y una cadena de caracteres que debe contener la ID de usuario*/
 /* Poscondición: imprime por pantalla todos los datos que hay en el registro */
 void ListarRegistro(tPerfiles *infoper, char id[ID]);
@@ -42,10 +43,15 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]);
 
 // void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles);
 
-/* Precondición: recibe una cadena de caracteres(ID), el numeo de datos que haya almaecados y el numero de dígitos para el que se quiera generar la ID. */
+/* Precondición: recibe una cadena de caracteres(ID), el numero de datos del registro, si hay registrados
+                 n usuarios, generará para el n+1 (nuevo usuario). Debe ser mayor o igual a cero. Y el numero de dígitos de la ID, debe ser mayor o igual a cero. */
 /* Poscondición: inicializa la cadena de caracteres con una ID, por ejemplo, si es el usuario
                  18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
-void GenerarID(char *id, int ndatos, int numDigitos);
+void GenerarID(char *id, int datos, int numDigitos);
+
+/* Precondición: recibe una cadena de caracteres (ID) y el numero de dígitos (mayor o igual a cero) que contiene la ID. */
+/* Poscondición: imprime por la cadena de caracteres de numDigitos. */
+void ImprimirID(char *id, int numDigitos);
 
 
 /* FUNCIONES NO EXPORTABLES*/
