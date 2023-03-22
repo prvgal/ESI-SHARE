@@ -20,7 +20,14 @@ void CargarPerfiles(tPerfiles *infoper){
         exit(1);
     }
 
-    
+    for(i = 0; i < LongitudVectorEstructuras(); i++){
+        CargarID(f, infoper[i].Id_usuario, ID-1);
+        CargarNombreUsuario(f, infoper[i].Nomb_usuario);
+        CargarLocalidad(f, infoper[i].Localidad);
+        CargarPerfilUsuario(f, infoper[i].Perfil_usuario);
+        CargarUsuario(f, infoper[i].Usuario);
+        CargarContrasena(f, infoper[i].Contrasena);
+    }
 }
 
 void ReservarPerfil(tPerfiles *infoper){
@@ -65,6 +72,10 @@ void RegistrarPerfil(tPerfiles *infoper){
     fflush(stdin);
     fgets(infoper[numPerfiles].Contrasena, MAX_C, stdin);
     EliminarSaltoLinea(infoper[numPerfiles].Contrasena);
+}
+
+void RegistrarPerfilEnEstructura(){
+
 }
 
 void ListarRegistro(tPerfiles *infoper, char id[ID]){
@@ -113,11 +124,8 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]){
     } while(op < 0 || op > 4);   
 }
 
-// void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles)
-
-
-void GenerarID(char *id, int ndatos, int numDigitos){
-    int i = numDigitos-1, aux1 = ndatos + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
+void GenerarID(char *id, int datos, int numDigitos){
+    int i = numDigitos-1, aux1 = datos + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
     
     for(; i >= 0; i--){
         aux2 %= 10;
@@ -125,6 +133,13 @@ void GenerarID(char *id, int ndatos, int numDigitos){
         aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
         aux2 = aux1;
     }
+}
+
+void ImprimirID(char *id, int numDigitos){
+    int i;
+
+    for(i = 0; i < numDigitos; i++)
+        printf("%i", id[i]);
 }
 
 /* Funciones NO exportables */
