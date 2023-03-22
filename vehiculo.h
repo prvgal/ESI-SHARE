@@ -61,5 +61,10 @@
     //Precondición: Debe estar habilitada la información del vehículo, concretamente el campo "desc_veh".
     //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
     void inserta_descripcion(char [CARACTERES]);
+    
+    //Precondición: Recibe una cadena de cualquier longitud, de manera que se acortará según encuentre \n, es decir, queden espacios 
+	//libres.
+	//Postcondición: La cadena dada habrá sido acortada, sustituyendo \n por \0.
+    void acortar_cadena(char []);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED
