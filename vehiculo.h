@@ -12,7 +12,7 @@
 
     typedef struct{
         char id_mat[IDMAT]; 
-        char id_usuario[IDUSU];
+        int id_usuario[IDUSU];
         char desc_veh[CARACTERES];
         int num_plazas;
     }vehiculo_inf;
@@ -41,9 +41,13 @@
     //Postcondición: La función habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
     void introducir_datos(vehiculo_inf, FILE *);
     
-    //Precondición: La función recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
+    //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
     //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
     void escribir_fichero(vehiculo_inf, FILE *);
+    
+    //Precondición: El procedimiento recibe una estructura para captar datos del fichero dado.
+    //Postcondición: La estructura dada habrá leído la información del fichero dado y la habrá guardado en memoria.
+    void leer_fichero_vehiculo(vehiculo_inf, FILE *);
     
     
     //*******FUNCIONES PRIVADAS*******

@@ -10,8 +10,6 @@ int main(){		//main provisional
 
 	vehiculo_inf vehiculo;
 	FILE *f;
-	
-	introducir_datos(vehiculo, f);
 
 	return 0;
 }
@@ -138,5 +136,15 @@ int main(){		//main provisional
 	     	fclose(veh_txt);
 		}
 
-
+void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+	if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
+        	printf("Error al guardar la información");
+        	exit(1);
+		}
+		else{
+			
+		
+		}
+		fclose(veh_txt);
+}
 
