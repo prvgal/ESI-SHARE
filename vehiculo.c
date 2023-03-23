@@ -137,7 +137,7 @@ int main(){		//main provisional
 	     	fclose(veh_txt);
 		}
 
-	void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt, int idusu[IDUSU]){
+	void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
 		int i=0, j=0, k=0, info_guardada=0;
 		
 		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
