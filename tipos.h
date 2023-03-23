@@ -13,4 +13,8 @@ typedef enum {
 
 void EliminarSaltoLinea(char *cad);
 
+// Precondición: Recibe dos vectores, así como la longitud de cada uno de ellos.
+// Postcondición: Devuelve el valor lógico True si el contenido de los vectores es el mismo, False en caso contrario.
+logico vectores_iguales(int, int, int *,int *);
+
 #endif

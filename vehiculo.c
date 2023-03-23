@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "vehiculo.h"
+#include "tipos.h"
 
 int main(){		//main provisional
 
 	vehiculo_inf vehiculo;
 	FILE *f;
-
+	
 	return 0;
 }
 
@@ -31,7 +32,7 @@ int main(){		//main provisional
         escribir_fichero(vehiculo, veh_txt);
     }
     
-    void pedir_matricula(char matricula[IDMAT]){
+    static void pedir_matricula(char matricula[IDMAT]){
         int i;
 
         printf("Indica la matrícula de tu vehículo: ");
@@ -47,7 +48,7 @@ int main(){		//main provisional
         fflush(stdin);
     }
 
-    void pedir_plazas_veh(int plazas){
+    static void pedir_plazas_veh(int plazas){
 
         printf("Indica el número total de plazas de las que dispone el vehículo: ");
         scanf("%i",&plazas);
@@ -57,7 +58,7 @@ int main(){		//main provisional
         }
     }
 
-    void inserta_descripcion(char descripcion[CARACTERES]){
+    static void inserta_descripcion(char descripcion[CARACTERES]){
 
         printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, etc...");
         fflush(stdin);
@@ -100,7 +101,7 @@ int main(){		//main provisional
 		escribir_fichero(vehiculo, veh_txt);
 	}
 	
-	void acortar_cadena(char cadena[]){
+	static void acortar_cadena(char cadena[]){
 		int i,longitud;
 		for(i=0;i<strlen(cadena);i++){
     			if(cadena[i]=='\n')
@@ -136,15 +137,41 @@ int main(){		//main provisional
 	     	fclose(veh_txt);
 		}
 
-void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
-	if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
-        	printf("Error al guardar la información");
+	void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt, int idusu[IDUSU]){
+		int i=0, j=0, k=0, info_guardada=0;
+		
+		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
+  	      	printf("Error al guardar la información");
         	exit(1);
 		}
+	
 		else{
-			
-		
-		}
+			while(fgetc(veh_txt)!='\n'&&info_guardada==0)
+				if(i<7)
+					vehiculo.id_mat[i]=fgetc(veh_txt);
+				if(8<=i<12){
+					vehiculo.id_usuario[j]=fgetc(veh_txt);
+					j++;
+				}
+			 	if(13<=i<14)  	 	
+					fscanf(veh_txt, "%i", &vehiculo.num_plazas);
+				if(15<=i){
+					vehiculo.desc_veh[k]=fgetc(veh_txt);
+					k++;
+				}
+				i++;
+				info_guardada=1;
+		}	
 		fclose(veh_txt);
-}
+	}
+
+
+
+
+
+
+	
+
+
+
 
