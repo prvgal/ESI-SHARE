@@ -30,6 +30,8 @@ int main(){     //Main temporal para probar que funciona correctamente
 
     tipo(viaje, posUsuario);
 
+    importe(viaje, posUsuario);
+
     free(viaje);
     return 0;
 }
@@ -173,5 +175,15 @@ static void tipo(viajes *viaje, int posUsuario){
         scanf("%c", &viaje[posUsuario].tipo);
     } while (viaje[posUsuario].tipo != 'I' && viaje[posUsuario].tipo != 'V');
 
-    printf("Seleccionado viaje tipo %c", viaje[posUsuario].tipo);
+    printf("Seleccionado viaje tipo %c\n", viaje[posUsuario].tipo);
+}
+
+static void importe(viajes *viaje, int posUsuario){
+    do
+    {
+        printf("Introduce el importe del viaje (0-15 euros): ");
+        scanf("%f", &viaje[posUsuario].importe);
+    } while (viaje[posUsuario].importe < 0 || viaje[posUsuario].importe > 15);
+    
+    printf("El importe introducido es: %.2f", viaje[posUsuario].importe);
 }
