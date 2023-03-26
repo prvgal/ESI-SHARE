@@ -6,6 +6,7 @@
 #include <time.h>
 #include "tipos.h"
 
+#define FECHA 11
 #define MATRICULA 8
 #define HORA 6
 
@@ -20,7 +21,7 @@ typedef struct{
 typedef struct{
     int ID;                         //6 dígitos
     char matricula [MATRICULA];     //Matrícula de vehícula usado para el viaje
-    char fecha[11];                 //Formato dd/mm/aa
+    char fecha[FECHA];              //Formato dd/mm/aa
     char hora_inicio [HORA];        //Formato 24h - Mínimo 06:00
     char hora_llegada [HORA];       //Formato 24h - Máximo 22:30
     int Nplazas;                    //Número de plazas disponibles
@@ -57,5 +58,10 @@ static void plazas(viajes *viaje, int posUsuario);
 //Postcondición: Habrá introducido el tipo de viaje en la estructura viaje de la posición posUsuario: (I) Ida o (V) Vuelta
 
 static void tipo(viajes *viaje, int posUsuario);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondicion: Habrá introducido el importe del viaje en la estructura viaje en la posición posUsuario
+
+static void importe(viajes *viaje, int posUsuario);
 
 #endif
