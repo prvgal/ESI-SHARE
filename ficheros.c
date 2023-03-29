@@ -25,13 +25,3 @@ int LongitudVectorEstructuras(){
 
     return i;
 }
-
-void CargarID(FILE *ptrf, char *cad, int numDigitos){
-    int i = 0;
-    char c;
-    
-    while((i < numDigitos) && (c = fgetc(ptrf))){
-        cad[i] = c;
-        i++;
-    }
-}
