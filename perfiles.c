@@ -1,5 +1,6 @@
 #include "perfiles.h"
 #include "ficheros.h"
+#include "tipos.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,26 +9,21 @@
 
 /* Funciones públicas */
 
+/* FUNCIÓN CON PROBLEMAS, SI NO LE METO UN INTRO AL PRINCIPIO, LA PRIMERA ID QUE RECOGE COGE SOLO 3 DÍGITOS*/
 void CargarPerfiles(tPerfiles *infoper){
     int i;
-    char c;
-    FILE *f;
+    FILE *pf;
 
-    f = fopen("Usuarios.txt", "r");
+    pf = fopen("Usuarios.txt", "r");
 
-    if(f == NULL){
-        fprintf(stderr, "Error en la apertura de ficheros.\n");
+    if(pf == NULL){
+        fprintf(pf, "Error en la apertura de ficheros.\n");
         exit(1);
     }
 
-    for(i = 0; i < LongitudVectorEstructuras(); i++){
-        CargarID(f, infoper[i].Id_usuario, ID-1);
-        CargarNombreUsuario(f, infoper[i].Nomb_usuario);
-        CargarLocalidad(f, infoper[i].Localidad);
-        CargarPerfilUsuario(f, infoper[i].Perfil_usuario);
-        CargarUsuario(f, infoper[i].Usuario);
-        CargarContrasena(f, infoper[i].Contrasena);
-    }
+    for(i = 0; i < LongitudVectorEstructuras(); i++)
+        fscanf(pf, "%*c%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%[^\n]", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, 
+                                                              infoper[i].Perfil_usuario, infoper[i].Usuario, infoper[i].Contrasena);
 }
 
 void ReservarPerfil(tPerfiles *infoper){
@@ -49,7 +45,7 @@ void RegistrarPerfil(tPerfiles *infoper){
 
     ReservarPerfil(infoper);
 
-    GenerarID(infoper[numPerfiles].Id_usuario, LongitudVectorEstructuras(), ID);
+    GenerarID(infoper[numPerfiles].Id_usuario, numPerfiles, ID);
 
     printf("\nNombre de usuario: ");
     fflush(stdin);
@@ -61,7 +57,7 @@ void RegistrarPerfil(tPerfiles *infoper){
     fgets(infoper[numPerfiles].Localidad, MAX_L, stdin);
     EliminarSaltoLinea(infoper[numPerfiles].Localidad);
 
-    infoper[numPerfiles].Perfil_usuario = False;
+    // ADMINISTRADOR O USUARIO???
 
     printf("\n%s, indique el nombre de usuario para acceder al sistema: ", infoper[numPerfiles].Nomb_usuario);
     fflush(stdin);
@@ -72,10 +68,6 @@ void RegistrarPerfil(tPerfiles *infoper){
     fflush(stdin);
     fgets(infoper[numPerfiles].Contrasena, MAX_C, stdin);
     EliminarSaltoLinea(infoper[numPerfiles].Contrasena);
-}
-
-void RegistrarPerfilEnEstructura(){
-
 }
 
 void ListarRegistro(tPerfiles *infoper, char id[ID]){
@@ -124,15 +116,17 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]){
     } while(op < 0 || op > 4);   
 }
 
-void GenerarID(char *id, int datos, int numDigitos){
-    int i = numDigitos-1, aux1 = datos + 1, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
-    
+void GenerarID(char *id, int num, int numDigitos){
+    int i = numDigitos-1, aux1 = num, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
+
     for(; i >= 0; i--){
         aux2 %= 10;
         id[i] = aux2;
         aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
         aux2 = aux1;
     }
+
+    id[numDigitos] = '/0';
 }
 
 void ImprimirID(char *id, int numDigitos){
@@ -209,7 +203,7 @@ static void CambiarLocalidad(tPerfiles *infoper, int posUsuario){
 
 static void CambiarUsuarioAcceso(tPerfiles *infoper, int posUsuario){
     char c, copia[MAX_N];
-
+    
     strcpy(copia, infoper[posUsuario].Usuario);
 
     printf("\nIntroduzca el nuevo nombre de acceso: ");
