@@ -1,11 +1,10 @@
 #ifndef _PERFILES_
 #define _PERFILES_
 
-#include "tipos.h"
-
 #define ID 5
 #define MAX_N 21
 #define MAX_L 21
+#define MAX_PU 13
 #define MAX_U 6
 #define MAX_C 9
 
@@ -13,7 +12,7 @@ typedef struct {
     char Id_usuario[ID];        // 4 digitos.
     char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
     char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
-    logico Perfil_usuario;      // True para administrador y False para usuario.
+    char Perfil_usuario[MAX_PU];      // True para administrador y False para usuario.
     char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema
     char Contrasena[MAX_C];     // 8 caracteres mas el \0.
 } tPerfiles;
@@ -43,11 +42,11 @@ void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]);
 
 // void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles);
 
-/* Precondición: recibe una cadena de caracteres(ID), el numero de datos del registro, si hay registrados
-                 n usuarios, generará para el n+1 (nuevo usuario). Debe ser mayor o igual a cero. Y el numero de dígitos de la ID, debe ser mayor o igual a cero. */
+/* Precondición: recibe una cadena de caracteres(ID), el numero, se introducirá el número para el que se desea generar la ID. 
+                 Debe ser mayor o igual a cero. Y el numero de dígitos de la ID, debe ser mayor o igual a cero. */
 /* Poscondición: inicializa la cadena de caracteres con una ID, por ejemplo, si es el usuario
                  18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
-void GenerarID(char *id, int datos, int numDigitos);
+void GenerarID(char *id, int num, int numDigitos);
 
 /* Precondición: recibe una cadena de caracteres (ID) y el numero de dígitos (mayor o igual a cero) que contiene la ID. */
 /* Poscondición: imprime por la cadena de caracteres de numDigitos. */
