@@ -7,13 +7,13 @@
 #include "vehiculo.h"
 #include "tipos.h"
 
-int main(){		//main provisional
-
-	vehiculo_inf vehiculo;
-	FILE *f;
-	
-	return 0;
-}
+	int main(){
+		FILE *f;
+		vehiculo_inf vehiculo[3];
+		
+		leer_fichero_vehiculo(vehiculo,f);
+		return 0;
+	}
 
    void cambiar_datos(vehiculo_inf vehiculo, FILE *veh_txt){
         int opcion=-1;
@@ -31,7 +31,7 @@ int main(){		//main provisional
         }while(opcion!=0);
         escribir_fichero(vehiculo, veh_txt);
     }
-    
+
     static void pedir_matricula(char matricula[IDMAT]){
         int i;
 
@@ -49,13 +49,11 @@ int main(){		//main provisional
     }
 
     static void pedir_plazas_veh(int plazas){
-
-        printf("Indica el número total de plazas de las que dispone el vehículo: ");
-        scanf("%i",&plazas);
-        while(plazas>9||plazas<1){
-            printf("Por favor, escribe un número válido de plazas de coche/furgoneta/etc... - ");
-            scanf("%d",&plazas);
-        }
+    	plazas=-1;
+		while(plazas<1||plazas>9){
+			printf("Indica el número total de plazas de las que dispone el vehículo (introduzca un número realista): ");
+        	scanf("%i",&plazas);
+		}
     }
 
     static void inserta_descripcion(char descripcion[CARACTERES]){
@@ -70,10 +68,10 @@ int main(){		//main provisional
 		}
 		acortar_cadena(descripcion);
     }
-    
+
     void introducir_datos(vehiculo_inf vehiculo, FILE *veh_txt){
     	int i, num_car;
-    	
+
     	printf("Rellene el formulario a continuación, por favor: \n");
     	printf("		*) Matrícula: ");
     	do{
@@ -81,14 +79,14 @@ int main(){		//main provisional
     		fflush(stdin);
     		gets(vehiculo.id_mat);
 		}while(strlen(vehiculo.id_mat)>=8||strlen(vehiculo.id_mat)<7);
-    
+
     	printf("\n		*) Número de plazas disponibles (sin contar el conductor): ");
     	scanf("%i", &vehiculo.num_plazas);
     	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
     		printf("\n		Introduzca un número realista de plazas (2-9):");
     		scanf("%i", &vehiculo.num_plazas);
 		}
-    
+
 		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
 		fflush(stdin);
     	gets(vehiculo.desc_veh);
@@ -100,22 +98,20 @@ int main(){		//main provisional
 		acortar_cadena(vehiculo.desc_veh);
 		escribir_fichero(vehiculo, veh_txt);
 	}
-	
+
 	static void acortar_cadena(char cadena[]){
 		int i,longitud;
 		for(i=0;i<strlen(cadena);i++){
     			if(cadena[i]=='\n')
     				cadena[i]=='\0';
-			}	
+			}
 	}
 
 	void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
         char guion[2]={'-','\0'};
-        char barraene[2]={'\n','\0'};
-        
+
         if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
         	printf("Error al guardar la información");
-        	exit(1);
 			}
 		else{
            		fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
@@ -137,41 +133,18 @@ int main(){		//main provisional
 	     	fclose(veh_txt);
 		}
 
-	void leer_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
-		int i=0, j=0, k=0, info_guardada=0;
-		
+	void leer_fichero_vehiculo(vehiculo_inf vehiculo[5], FILE *veh_txt){
+		int i;
+
 		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
   	      	printf("Error al guardar la información");
-        	exit(1);
 		}
-	
+
 		else{
-			while(fgetc(veh_txt)!='\n'&&info_guardada==0)
-				if(i<7)
-					vehiculo.id_mat[i]=fgetc(veh_txt);
-				if(8<=i<12){
-					vehiculo.id_usuario[j]=fgetc(veh_txt);
-					j++;
-				}
-			 	if(13<=i<14)  	 	
-					fscanf(veh_txt, "%i", &vehiculo.num_plazas);
-				if(15<=i){
-					vehiculo.desc_veh[k]=fgetc(veh_txt);
-					k++;
-				}
-				i++;
-				info_guardada=1;
-		}	
+			for(i=0;i<1;i++){
+				fscanf(veh_txt,"%[^-]-%[^-]-%[^-]-%[^\n]",vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+				printf("\nRegistro: %s - %s - %d - %s",vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+			}
+		}
 		fclose(veh_txt);
-	}
-
-
-
-
-
-
-	
-
-
-
-
+	}	
