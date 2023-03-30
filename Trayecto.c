@@ -12,7 +12,7 @@ void gestionar_trayecto(viajes viaje){
         printf("\n Elija una opción: \n \n   1. Agregar paradas \n   2. Modificar paradas \n   3. Borrar paradas \n   0. Cancelar \n");
         scanf("%i",&op);
         switch(op){
-            case 1: inicio_trayecto();
+            case 1: inicio_trayecto(viaje);
             case 2: modificar_trayecto(viaje);
             case 3: borrar_trayecto(viaje);
             case 0: break;
@@ -22,7 +22,7 @@ void gestionar_trayecto(viajes viaje){
 
 
 
-void inicio_trayecto(){
+void inicio_trayecto(viajes viaje){
      int op;
     do{
         setlocale(LC_ALL, "");
@@ -30,12 +30,257 @@ void inicio_trayecto(){
         printf("1. El viaje inicia en la ESI\n 2. El viaje finaliza en la ESI\n 0. Cancelar\n");
         scanf("%i",&op);
         switch(op){
-            case 1: inicio_ESI();
-            case 2: final_ESI();
+            case 1: inicio_ESI(viaje);
+            case 2: final_ESI(viaje);
             case 0: break;
         }
     }while(op!=0);
 }
+
+
+void final_ESI(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es el destino final de su viaje? \n\n");
+        printf("1. Cádiz\n 2. San Fernando\n 3. Jerez\n 4. Puerto de Santa María\n 5. Puerto Real\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_cadiz(viaje);
+            case 2: ida_ESI_sanfer(viaje);
+            case 3: ida_ESI_jerez(viaje);
+            case 4: ida_ESI_puerto(viaje);
+            case 5: ida_ESI_puertor(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+void ida_ESI_cadiz(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_cadiz_puertor(viaje);
+            case 2: ida_ESI_cadiz_fin(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+
+void ida_ESI_cadiz_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.ID);
+            fprintf(pasos,"%i-Cádiz\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: Cádiz - Puerto Real - ESI\n");
+}
+
+
+
+void ida_ESI_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Cádiz\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: ESI - Cádiz\n");
+}
+
+
+void ida_ESI_sanfer(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf("1. Cádiz\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_sanfer_cadiz(viaje);
+            case 2: ida_ESI_sanfer_puertor(viaje);
+            case 3: ida_ESI_sanfer_fin(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+
+void ida_ESI_sanfer_cadiz(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_sanfer_cadiz_puertor(viaje);
+            case 2: ida_ESI_sanfer_cadiz_fin(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+
+void ida_ESI_sanfer_cadiz_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.ID);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.ID);
+            fprintf(pasos,"%i-Cádiz\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: San Fernando - Cádiz - Puerto Real - ESI\n");
+}
+
+
+
+void ida_ESI_sanfer_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.ID);
+            fprintf(pasos,"%i-Cádiz\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: San Fernando - Cádiz - ESI\n");
+}
+
+
+
+void ida_ESI_sanfer_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.ID);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: San Fernando - Puerto Real - ESI\n");
+}
+
+
+
+void ida_ESI_sanfer_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: San Fernando - ESI\n");
+}
+
+
+
+void ida_ESI_jerez(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf("1. Puerto de Santa María\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_jerez_puerto(viaje);
+            case 2: ida_ESI_jerez_puertor(viaje);
+            case 3: ida_ESI_jerez_fin(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+
+void ida_ESI_jerez_puerto(viajes viaje){
+    int op;
+    do{
+        setlocale(LC_ALL, "");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        scanf("%i",&op);
+        switch(op){
+            case 1: ida_ESI_jerez_puerto_puertor_fin(viaje);
+            case 2: ida_ESI_jerez_puertor_fin(viaje);
+            case 0: break;
+        }
+    }while(op!=0);
+}
+
+
+
+void ida_ESI_jerez_puerto_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.ID);
+            fprintf(pasos,"%i-Jerez\n",viaje.ID);
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: Jerez - Puerto de Santa María - Puerto Real - ESI\n");
+}
+
+
+
+
+void ida_ESI_jerez_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.ID);
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: Jerez - Puerto de Santa María - ESI\n");
+}
+
+
+
+void ida_ESI_jerez_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.ID);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: Jerez - Puerto Real - ESI\n");
+}
+
+
+
+void ida_ESI_jerez_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.ID);
+            fclose(pasos);
+   }
+   setlocale(LC_ALL, "");
+   printf("Su ruta es: Jerez - ESI\n");
+}
+
 
 
 void inicio_ESI(viajes viaje){
@@ -294,6 +539,13 @@ void ESI_puerto_fin(viajes viaje){
    setlocale(LC_ALL, "");
    printf("Su ruta es: ESI - Puerto de Santa María\n");
 }
+
+
+
+
+
+
+
 
 /*
 void paradas_trayecto(viajes viaje){
