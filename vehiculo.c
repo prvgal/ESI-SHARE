@@ -5,13 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "vehiculo.h"
-#include "tipos.h"
 
 	int main(){
 		FILE *f;
-		vehiculo_inf vehiculo[3];
+		vehiculo_inf vehiculo[5];
 		
-		leer_fichero_vehiculo(vehiculo,f);
+		leer_fichero_vehiculo(vehiculo, f);
 		return 0;
 	}
 
@@ -70,7 +69,7 @@
     }
 
     void introducir_datos(vehiculo_inf vehiculo, FILE *veh_txt){
-    	int i, num_car;
+    	int i,j, num_car;
 
     	printf("Rellene el formulario a continuación, por favor: \n");
     	printf("		*) Matrícula: ");
@@ -79,7 +78,8 @@
     		fflush(stdin);
     		gets(vehiculo.id_mat);
 		}while(strlen(vehiculo.id_mat)>=8||strlen(vehiculo.id_mat)<7);
-
+		acortar_cadena(vehiculo.id_mat);
+		
     	printf("\n		*) Número de plazas disponibles (sin contar el conductor): ");
     	scanf("%i", &vehiculo.num_plazas);
     	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
@@ -109,12 +109,13 @@
 
 	void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
         char guion[2]={'-','\0'};
-
+		int i;
+		
         if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
         	printf("Error al guardar la información");
 			}
 		else{
-           		fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
+				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
            		fflush(veh_txt);
            		fwrite(guion,sizeof(char),1,veh_txt);
            		fflush(veh_txt);
@@ -129,22 +130,25 @@
 				fwrite(vehiculo.desc_veh, sizeof(char), strlen(vehiculo.desc_veh), veh_txt);
 				fflush(veh_txt);
 				fprintf(veh_txt,"\n");
-			}
-	     	fclose(veh_txt);
 		}
+	   	fclose(veh_txt);
+}
 
-	void leer_fichero_vehiculo(vehiculo_inf vehiculo[5], FILE *veh_txt){
+	void leer_fichero_vehiculo(vehiculo_inf vehiculo[LONGVEC], FILE *veh_txt){
 		int i;
+		char buf[1024];
 
 		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
   	      	printf("Error al guardar la información");
 		}
 
 		else{
-			for(i=0;i<1;i++){
-				fscanf(veh_txt,"%[^-]-%[^-]-%[^-]-%[^\n]",vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
-				printf("\nRegistro: %s - %s - %d - %s",vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+			for(i=0;i<LONGVEC;i++){
+				if(fgets(buf, 1024, veh_txt)!=NULL){
+					buf[strcspn(buf,"\n")]='\0';
+					sscanf(buf,"%[^-]-%[^-]-%d-%[^\0]",vehiculo[i].id_mat, vehiculo[i].id_usuario, &vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+				}
 			}
 		}
 		fclose(veh_txt);
-	}	
+	}		

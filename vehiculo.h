@@ -2,10 +2,12 @@
 #define PRUEBA_VEHICULOS_H_INCLUDED
 
 #include "vehiculo.h"
+#include <stdio.h>
 
 #define CARACTERES 51
 #define IDMAT 8
 #define IDUSU 5
+#define LONGVEC 5
 
     typedef struct{
         char id_mat[IDMAT];
@@ -29,8 +31,8 @@
     //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
     void escribir_fichero(vehiculo_inf, FILE *);
 
-    //Precondición: El procedimiento recibe una estructura para captar datos del fichero dado.
-    //Postcondición: La estructura dada habrá leído la información del fichero dado y la habrá guardado en memoria.
+    //Precondición: El procedimiento recibe un vector de estructuras para captar los datos del fichero dado.
+    //Postcondición: El procedimiento habrá leído la información del fichero dado y la habrá guardado en el vector de estructuras dado.
     void leer_fichero_vehiculo(vehiculo_inf *, FILE *);
 
 
