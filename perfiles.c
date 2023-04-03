@@ -1,38 +1,235 @@
-#include "perfiles.h"
-#include "ficheros.h"
-#include "tipos.h"
+/* FALTA ADAPTARLO EN EL ARCHIVO DE HEADERS Y QUITAR EL MAIN, YA QUE ES UN MAIN TEMPORAL */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-/* Funciones públicas */
+#define ID 5
+#define MAX_N 21
+#define MAX_L 21
+#define MAX_PU 14
+#define MAX_U 6
+#define MAX_C 9
+#define MAX_LIN_FICH 68
 
-/* FUNCIÓN CON PROBLEMAS, SI NO LE METO UN INTRO AL PRINCIPIO, LA PRIMERA ID QUE RECOGE COGE SOLO 3 DÍGITOS*/
-void CargarPerfiles(tPerfiles *infoper){
-    int i;
-    FILE *pf;
+typedef struct {
+    char Id_usuario[ID];        // 4 digitos.
+    char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
+    char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
+    char Perfil_usuario[MAX_PU];      // True para administrador y False para usuario.
+    char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema
+    char Contrasena[MAX_C];
+} tPerfil;
 
-    pf = fopen("Usuarios.txt", "r");
+void Inicio(tPerfil *infoper, int *posUsua);
+void Menu(tPerfil *infoper, int posUsua);
+void MenuAdmin(tPerfil *infoper, int posUsua);
+void MenuUser(tPerfil *infoper, int posUsua);
+void Perfil(tPerfil *infoper, int posUsua);
+void ImprimirESISHARE();
 
-    if(pf == NULL){
-        fprintf(pf, "Error en la apertura de ficheros.\n");
+tPerfil *CrearListaDePerfiles();
+void ReservarNuevoPerfil(tPerfil *infoper);
+void CargarPerfiles(tPerfil *infoper);
+
+int LogIn(tPerfil *infoper);
+int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos);
+int SignUp(tPerfil *infoper);
+
+void ListarPerfiles(tPerfil *infoper);
+void ModificarCamposUsuario(tPerfil *infoper, int pos);
+int LongitudVectorEstructuras();
+void EliminarSaltoLinea(char *cad);
+void LimpiarCadena(char *cad);
+void GenerarID(char *id, int num, int numDigitos);
+
+void ObtenerNombreUsuario(char *nomUsuario);
+void ObtenerLocalidad(char *nomLocalidad);
+void ObtenerUsuario(char *usuario);
+void ObtenerContrasena(char *contrasena);
+
+int main(){
+    int pos;
+    tPerfil *info;
+
+    info = CrearListaDePerfiles();
+    CargarPerfiles(info);
+
+    Inicio(info, &pos);
+
+    Menu(info, pos);
+
+    free(info);
+
+    return 0;
+}
+
+void Inicio(tPerfil *infoper, int *posUsua){
+    int op, pos;
+
+    ImprimirESISHARE();
+    printf("\nBienvenido.");
+
+    do{
+        printf("\n#            OPCIONES            #\n\n");
+       
+        printf("\n<1> Para Iniciar Sesion.\n");
+        printf("<2> Para Registrarse.\n");
+        printf("<0> Para cerrrar ESI-SHARE\n");
+        printf("\nIngrese la opcion que desee: ");
+        scanf("%i", &op);
+
+        if(op == 0)
+            exit(1);
+
+        system("cls");
+        ImprimirESISHARE();
+
+        switch(op){
+            case 1: pos = LogIn(infoper); break;
+            case 2: pos = SignUp(infoper); break;
+            default: printf("\nElige una de las opciones.\n");
+        }
+
+    } while(op != 1 && op != 2);
+
+    *posUsua = pos;
+}
+
+void Menu(tPerfil *infoper, int posUsua){
+    if(!strcmp(infoper[posUsua].Perfil_usuario, "administrador"))
+        MenuAdmin(infoper, posUsua);
+    else
+        MenuUser(infoper, posUsua);
+}
+
+void MenuAdmin(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n###################################\n");
+    printf("#               MENU              #\n");
+    printf("###################################\n\n");
+
+    printf("%s", infoper[posUsua].Perfil_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES            #\n");
+       
+        printf("\n<1> Usuarios.\n");
+        printf("<2> Vehiculos.\n");
+        printf("<3> Viajes.\n");
+        printf("<0> Para cerrar ESI-SHARE\n");
+        printf("\nIngrese la opcion que desee: ");
+        scanf("%i", &op);
+
+        if(op == 0)
+            exit(1);
+
+        system("cls");
+        ImprimirESISHARE();
+
+        switch(op){
+            // case 1: Usuarios(); break;
+            // case 2: Vehiculos(); break;
+            // case 3: Viajes(); break;
+            default: printf("\nElige una de las opciones.\n");
+        }
+
+    } while(op != 0);
+
+}
+
+void MenuUser(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n###################################\n");
+    printf("#               MENU              #\n");
+    printf("###################################\n");
+
+    printf("Usuario: %s", infoper[posUsua].Nomb_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES            #\n");
+       
+        printf("\n<1> Perfil.\n");
+        printf("<2> Vehiculos.\n");
+        printf("<3> Viajes.\n");
+        printf("<0> Para cerrar ESI-SHARE\n");
+
+        printf("\nIngrese la opcion que desee: ");
+        scanf("%i", &op);
+
+        if(op == 0)
+            exit(1);
+
+        system("cls");
+        ImprimirESISHARE();
+
+        switch(op){
+            case 1: Perfil(infoper, posUsua); break;
+            // case 2: Vehiculos(); break;
+            // case 3: Viajes(); break;
+            default: printf("\nElige una de las opciones.\n");
+        }
+
+    } while(op != 0);
+}
+
+void Perfil(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n#######################################################\n");
+    printf("#               Configuracion del Perfil              #\n");
+    printf("#######################################################\n\n");
+
+    printf("Usuario: %s.", infoper[posUsua].Nomb_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES de Configuracion            #\n");
+       
+        printf("\n<1> Cambiar algun dato de la cuenta.\n");
+        printf("<0> Para volver al menu.\n");
+        printf("\nIngrese la opcion que desee: ");
+        scanf("%i", &op);
+
+        system("cls");
+        ImprimirESISHARE();
+
+        switch(op){
+            case 0: break;
+            case 1: ModificarCamposUsuario(infoper, posUsua); break;
+            default: printf("\nElige una de las opciones.\n");
+        }
+
+    } while(op != 0);
+}
+
+void ImprimirESISHARE(){
+    printf("###################################\n");
+    printf("#            ESI-SHARE            #\n");
+    printf("###################################\n");
+}
+
+
+tPerfil *CrearListaDePerfiles(){
+    tPerfil *perfiles;
+
+    perfiles = (tPerfil *)calloc(LongitudVectorEstructuras(), sizeof(tPerfil));
+
+    if(perfiles == NULL){
+        fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
 
-    for(i = 0; i < LongitudVectorEstructuras(); i++)
-        fscanf(pf, "%*c%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%[^\n]", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, 
-                                                              infoper[i].Perfil_usuario, infoper[i].Usuario, infoper[i].Contrasena);
+    return perfiles;
 }
 
-void ReservarPerfil(tPerfiles *infoper){
-    int numPerfiles = LongitudVectorEstructuras();
-
-    if(numPerfiles == 0)
-        infoper = (tPerfiles *)calloc(numPerfiles + 1, sizeof(tPerfiles));
+void ReservarNuevoPerfil(tPerfil *infoper){
+    if(LongitudVectorEstructuras() == 0)
+        infoper = (tPerfil *)calloc(LongitudVectorEstructuras() + 1, sizeof(tPerfil));
     else
-        infoper = (tPerfiles *)realloc(infoper, (numPerfiles + 1)*sizeof(tPerfiles));
+        infoper = (tPerfil *)realloc(infoper, (LongitudVectorEstructuras() + 1)*sizeof(tPerfil));
 
     if(infoper == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
@@ -40,236 +237,314 @@ void ReservarPerfil(tPerfiles *infoper){
     }
 }
 
-void RegistrarPerfil(tPerfiles *infoper){
-    int numPerfiles = LongitudVectorEstructuras();
+void CargarPerfiles(tPerfil *infoper){
+    int i;
+    char buffer[MAX_LIN_FICH];
+    FILE *pf;
 
-    ReservarPerfil(infoper);
+    pf = fopen("Usuarios.txt", "r");
 
-    GenerarID(infoper[numPerfiles].Id_usuario, numPerfiles, ID);
+    if(pf == NULL){
+        fprintf(pf, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
 
-    printf("\nNombre de usuario: ");
-    fflush(stdin);
-    fgets(infoper[numPerfiles].Nomb_usuario, MAX_N, stdin);
-    EliminarSaltoLinea(infoper[numPerfiles].Nomb_usuario);
+    for(i = 0; i < LongitudVectorEstructuras(); i++){
+        if(fgets(buffer, MAX_LIN_FICH, pf) != NULL){
+            buffer[strcspn(buffer, "\n")] = '\0';
+            sscanf(buffer, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%s", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, 
+                                                               infoper[i].Perfil_usuario, infoper[i].Usuario, infoper[i].Contrasena);
+        }
+    }
 
-    printf("\n%s, indique el nombre de la localidad en la que resida: ", infoper[numPerfiles].Nomb_usuario);
-    fflush(stdin);
-    fgets(infoper[numPerfiles].Localidad, MAX_L, stdin);
-    EliminarSaltoLinea(infoper[numPerfiles].Localidad);
-
-    // ADMINISTRADOR O USUARIO???
-
-    printf("\n%s, indique el nombre de usuario para acceder al sistema: ", infoper[numPerfiles].Nomb_usuario);
-    fflush(stdin);
-    fgets(infoper[numPerfiles].Usuario, MAX_U, stdin);
-    EliminarSaltoLinea(infoper[numPerfiles].Usuario);
-
-    printf("\nContrasena para %s: ", infoper[numPerfiles].Usuario);
-    fflush(stdin);
-    fgets(infoper[numPerfiles].Contrasena, MAX_C, stdin);
-    EliminarSaltoLinea(infoper[numPerfiles].Contrasena);
+    fclose(pf);
 }
 
-void ListarRegistro(tPerfiles *infoper, char id[ID]){
-    int pos = PosicionUsuario(infoper, id);
-    char c;
 
-    printf("\nUSER: %s", infoper[pos].Usuario);
-    printf("\nNombre de usuario: %s", infoper[pos].Nomb_usuario);
-    printf("\nLocalidad: %s", infoper[pos].Localidad);
-    printf("\nContrasena: %s", infoper[pos].Contrasena);
-    
-    if(infoper[pos].Perfil_usuario == True)
-        printf("\nTipo de usuario: Administrador.");
-    else
-        printf("\nTipo de usuario: Usuario.");
 
-    printf("\nDesea cambiar algun dato? (S para modificar, cualquiera para no modificar) ");
-    scanf("%c", &c);
-
-    if(infoper[pos].Perfil_usuario == True)
-        (c == 'S')?ModificarCamposAdmin(infoper, id):printf("No se modificaran datos.\n");
-    else
-        (c == 'S')?ModificarCamposUsuario(infoper, id):printf("No se modificaran datos.\n");
-
-}
-
-void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]){
-    int op;
-    int pos = PosicionUsuario(infoper, id);
-
-    puts("Que campo desea modificar? ");
+int LogIn(tPerfil *infoper){
+    int posUsuario;
+    char usuario[MAX_U], contrasena[MAX_C];
 
     do{
-        printf("\n<1> Nombre de usuario. <2> Localidad. <3> Usuario de acceso. <4> Contrasena. <0> Salir");
+        printf("\n#            LOG-IN            #\n");
+
+        printf("\nUsuario: ");
+        fflush(stdin);
+        fgets(usuario, MAX_U, stdin);
+
+        printf("\nContrasena: ");
+        fflush(stdin);
+        fgets(contrasena, MAX_C, stdin);
+
+        if(!ValidarLogin(infoper, usuario, contrasena, &posUsuario)){
+            system("cls");
+            ImprimirESISHARE();
+            fprintf(stderr, "Error, el usuario o la contrasena son incorrectas\n");
+        } else{
+            system("cls");
+            printf("\nBienvenido/a %s.\n", infoper[posUsuario].Nomb_usuario);
+        }
+
+    } while(!ValidarLogin(infoper, usuario, contrasena, &posUsuario));
+
+    return posUsuario;  // Devuelve la posicion del usuario.
+}
+
+int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos){
+    int i = 0, fin = 0, boole = 0;
+
+    // Comprobemos primero los usuarios
+    while(i < LongitudVectorEstructuras() && !fin){
+        if(strncmp(infoper[i].Usuario, usuario, MAX_U-1) == 0 && strlen(usuario) == strlen(infoper[i].Usuario))
+            fin = 1;
+
+        i++;
+    }
+
+    i -= 1;
+
+    // Luego, comprobamos la contraseña de ese usuario.
+    if(strncmp(infoper[i].Contrasena, contrasena, MAX_C-1) == 0 && strlen(contrasena) == strlen(infoper[i].Contrasena))
+        boole = 1;
+
+    *pos = i;
+
+    return boole;
+}
+
+int SignUp(tPerfil *infoper){
+    FILE *pf;
+    int numPerfiles = LongitudVectorEstructuras();
+
+    ReservarNuevoPerfil(infoper);
+
+    GenerarID(infoper[numPerfiles].Id_usuario, numPerfiles+1, ID-1);
+
+    ObtenerNombreUsuario(infoper[numPerfiles].Nomb_usuario);
+
+    ObtenerLocalidad(infoper[numPerfiles].Localidad);
+
+    // El inicio de sesión será por defecto de tipo usuario, este campo solo lo podrá cambiar el administrador.
+    strcpy(infoper[numPerfiles].Perfil_usuario, "usuario");
+
+    ObtenerUsuario(infoper[numPerfiles].Usuario);
+
+    ObtenerContrasena(infoper[numPerfiles].Contrasena);
+
+    pf = fopen("Usuarios.txt", "a");
+
+    if(pf == NULL){
+        fprintf(stderr, "Error en la apertura de ficheros.");
+        exit(1);
+    }
+
+    fprintf(pf, "\n%s-%s-%s-%s-%s-%s", infoper[numPerfiles].Id_usuario, infoper[numPerfiles].Nomb_usuario,
+                                       infoper[numPerfiles].Localidad, infoper[numPerfiles].Perfil_usuario,
+                                       infoper[numPerfiles].Usuario, infoper[numPerfiles].Contrasena);
+
+    printf("\nBienvenido/a %s.\n", infoper[numPerfiles].Nomb_usuario);
+
+    fclose(pf);
+
+    return numPerfiles; // Devuelve la posición del vector donde debería encontrarse el usuario.
+}
+
+
+void ListarPerfiles(tPerfil *infoper){
+    int i;
+
+    printf("\nUsuarios registrados: ");
+
+    for(i = 0; i < LongitudVectorEstructuras(); i++)
+        printf("%s\n", infoper[i].Nomb_usuario);
+    
+    printf("Numero de usuarios %i totales.", i);
+}
+
+void ModificarCamposUsuario(tPerfil *infoper, int pos){
+    int op;
+
+    printf("Datos de su cuenta.\n");
+
+    printf("\nNombre de usuario: %s\n", infoper[pos].Nomb_usuario);
+    printf("\nNombre de la localidad: %s\n", infoper[pos].Localidad);
+    printf("\nUsuario: %s\n", infoper[pos].Usuario);
+    printf("\nContrasena: %s\n", infoper[pos].Contrasena);
+
+    do{
+        printf("\nQue desea cambiar?\n");
+        printf("<1> Para cambiar el nombre de usuario.\n");
+        printf("<2> Para cambiar el nombre de su localidad.\n");
+        printf("<3> Para cambiar el usuario.\n");
+        printf("<4> Para cambiar la contrasena.\n");
+        printf("<0> Para no realizar ningun cambio y volver a la configuracion del perfil.\n");
+
+        printf("\nIngrese el numero: ");
         scanf("%i", &op);
 
         switch(op){
             case 0: break;
-            case 1: CambiarNombre(infoper, pos); break;
-            case 2: CambiarLocalidad(infoper, pos); break;
-            case 3: CambiarUsuarioAcceso(infoper, pos); break;
-            case 4: CambiarContrasena(infoper, pos); break;
-            default: printf("\nPor favor, introduzca un numero que este en las opciones.\n");
+            case 1: ObtenerNombreUsuario(infoper[pos].Nomb_usuario);
+            case 2: ObtenerLocalidad(infoper[pos].Localidad);
+            case 3: ObtenerUsuario(infoper[pos].Usuario);
+            case 4: ObtenerContrasena(infoper[pos].Contrasena);
+            default: printf("\nIngrese un numero dentro del rango de opciones.\n");
         }
-        
-    } while(op < 0 || op > 4);   
+
+    } while(op != 0);
+
+    // FALTA QUE CAMBIE DICHOS CAMBIOS EN EL FICHERO
+}
+
+int LongitudVectorEstructuras(){
+    // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
+    char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
+    FILE *pf;
+    int i = 1;
+
+    pf = fopen("Usuarios.txt", "r");
+
+    if(pf == NULL){
+        fprintf(stderr, "Error en la apertura del fichero.");
+        exit(1);
+    }
+
+    while(!feof(pf)){
+        fgets(aux, MAX_LIN_FICH, pf);
+        i++;
+    }
+
+    rewind(pf); 
+    fclose(pf);
+
+    return i-1;
+}
+
+void EliminarSaltoLinea(char *cad){
+    int len = strlen(cad);
+
+    if(cad[len - 1] == '\n')
+        cad[len - 1] = '\0';
 }
 
 void GenerarID(char *id, int num, int numDigitos){
-    int i = numDigitos-1, aux1 = num, aux2 = aux1;     // aux1 contendrá la parte decimal y aux2 la parte entera
+    sprintf(id, "%0*d", numDigitos, num);
+}
 
-    for(; i >= 0; i--){
-        aux2 %= 10;
-        id[i] = aux2;
-        aux1 = (int)floor(aux1/10);  // Aproximación a la baja, es decir, si el numero es 3,8, en aux1 se guradará 3
-        aux2 = aux1;
+
+
+void ObtenerNombreUsuario(char *nomUsuario){
+    int i = 0;
+    char c;
+
+    printf("\nEscribe el nombre de usuario (maximo 20 caracteres): ");
+    fflush(stdin);
+
+    while((c = getchar()) != '\n' && i < MAX_N){
+        nomUsuario[i] = c;
+        i++;
     }
 
-    id[numDigitos] = '/0';
-}
+    nomUsuario[i] = '\0';
 
-void ImprimirID(char *id, int numDigitos){
-    int i;
-
-    for(i = 0; i < numDigitos; i++)
-        printf("%i", id[i]);
-}
-
-/* Funciones NO exportables */
-
-static void CambiarNombre(tPerfiles *infoper, int posUsuario){
-    char c, copia[MAX_N];
-
-    strcpy(copia, infoper[posUsuario].Nomb_usuario);
-
-    printf("\nIntroduzca el nuevo nombre: ");
-    fflush(stdin);
-    fgets(infoper[posUsuario].Nomb_usuario, MAX_N, stdin);
-    EliminarSaltoLinea(infoper[posUsuario].Nomb_usuario);
-
-    printf("\nNuevo nombre: %s.\n", infoper[posUsuario].Nomb_usuario);
-
-    printf("Desea mantener cambios? (S/n) ");
-    fflush(stdin);
-    scanf("%c", &c);
-
-    do{
-        if(c == 'n'){
-            strcpy(infoper[posUsuario].Nomb_usuario, copia);
-            puts("Se cancelaron los cambios.");
-        } else if(c == 'S')
-            puts("Se ha cambiado el nombre de usuario.");
-        else{
-            puts("Introduzca o S (Si) o N (No) ");
-            fflush(stdin);
-            scanf("%c", &c);
-        }
-    } while(c != 'S' && c != 'n');
-
-    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
-}
-
-static void CambiarLocalidad(tPerfiles *infoper, int posUsuario){
-    char c, copia[MAX_N];
-
-    strcpy(copia, infoper[posUsuario].Localidad);
-
-    printf("\nIntroduzca la nueva localidad: ");
-    fflush(stdin);
-    fgets(infoper[posUsuario].Localidad, MAX_N, stdin);
-    EliminarSaltoLinea(infoper[posUsuario].Localidad);
-
-    printf("\nNueva localidad: %s.\n", infoper[posUsuario].Localidad);
-
-    printf("Desea mantener cambios? (S/n) ");
-    scanf("%c", &c);
-
-    do{
-        if(c == 'n'){
-            strcpy(infoper[posUsuario].Localidad, copia);
-            puts("Se cancelaron los cambios.");
-        } else if(c == 'S')
-            puts("Se ha cambiado la localidad.");
-        else{
-            puts("Introduzca o S (Si) o N (No) ");
-            fflush(stdin);
-            scanf("%c", &c);
-        }
-    } while(c != 'S' && c != 'n');
-
-    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
-}
-
-static void CambiarUsuarioAcceso(tPerfiles *infoper, int posUsuario){
-    char c, copia[MAX_N];
-    
-    strcpy(copia, infoper[posUsuario].Usuario);
-
-    printf("\nIntroduzca el nuevo nombre de acceso: ");
-    fflush(stdin);
-    fgets(infoper[posUsuario].Usuario, MAX_N, stdin);
-    EliminarSaltoLinea(infoper[posUsuario].Usuario);
-
-    printf("\nNuevo nombre de acceso: %s.\n", infoper[posUsuario].Usuario);
-
-    printf("Desea mantener cambios? (S/n) ");
-    scanf("%c", &c);
-
-    do{
-        if(c == 'n'){
-            strcpy(infoper[posUsuario].Usuario, copia);
-            puts("Se cancelaron los cambios.");
-        } else if(c == 'S')
-            puts("Se ha cambiado el nombre de acceso.");
-        else{
-            puts("Introduzca o S (Si) o N (No) ");
-            fflush(stdin);
-            scanf("%c", &c);
-        }
-    } while(c != 'S' && c != 'n');
-
-    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
-}
-
-static void CambiarContrasena(tPerfiles *infoper, int posUsuario){
-    char c, copia[MAX_N];
-
-    strcpy(copia, infoper[posUsuario].Contrasena);
-
-    printf("\nIntroduzca la nueva contrasena: ");
-    fflush(stdin);
-    fgets(infoper[posUsuario].Contrasena, MAX_N, stdin);
-    EliminarSaltoLinea(infoper[posUsuario].Contrasena);
-
-    printf("\nNueva contrasena: %s.\n", infoper[posUsuario].Contrasena);
-
-    printf("Desea mantener cambios? (S/n) ");
-    scanf("%c", &c);
-
-    do{
-        if(c == 'n'){
-            strcpy(infoper[posUsuario].Contrasena, copia);
-            puts("Se cancelaron los cambios.");
-        } else if(c == 'S')
-            puts("Se ha cambiado la contrasena.");
-        else{
-            puts("Introduzca o S (Si) o N (No) ");
-            fflush(stdin);
-            scanf("%c", &c);
-        }
-    } while(c != 'S' && c != 'n');
-
-    // Se debe llamar a una función para que cambie esos cambios también en el fichero.
-}
-
-static int PosicionUsuario(tPerfiles *infoper, char id[ID]){
-    int i, fin = 0, npos = LongitudVectorEstructuras();
-
-    for(i = 0; i < npos && !fin; i++){
-        if(!strcmp(infoper[i].Id_usuario, id))
-            fin = 1;
+    if(strlen(nomUsuario) > MAX_N-1){
+        printf("El nombre de usuario excede los 20 caracteres.");
+        LimpiarCadena(nomUsuario);
+        ObtenerNombreUsuario(nomUsuario);
     }
 
-    return i-1; // El bucle for hará que i contenga un valor más de lo que realmente buscabamos.
+    if(strlen(nomUsuario) == 0){
+        printf("El nombre de usuario no puede estar vacio.");
+        LimpiarCadena(nomUsuario);
+        ObtenerNombreUsuario(nomUsuario);
+    } 
+}
+
+void ObtenerLocalidad(char *nomLocalidad){
+    int i = 0;
+    char c;
+
+    printf("\nEscribe el nombre de su localidad (maximo 20 caracteres): ");
+    fflush(stdin);
+
+    while((c = getchar()) != '\n' && i < MAX_L){
+        nomLocalidad[i] = c;
+        i++;
+    }
+
+    nomLocalidad[i] = '\0';
+
+    if(strlen(nomLocalidad) > MAX_L-1){
+        printf("El nombre de la localidad excede los 20 caracteres.");
+        LimpiarCadena(nomLocalidad);
+        ObtenerNombreUsuario(nomLocalidad);
+    }
+
+    if(strlen(nomLocalidad) == 0){
+        printf("El nombre de la localidad no puede estar vacio.");
+        LimpiarCadena(nomLocalidad);
+        ObtenerNombreUsuario(nomLocalidad);
+    } 
+}
+
+void ObtenerUsuario(char *usuario){
+    int i = 0;
+    char c;
+
+    printf("\nEscribe el usuario (maximo 5 caracteres): ");
+    fflush(stdin);
+
+    while((c = getchar()) != '\n' && i < MAX_U){
+        usuario[i] = c;
+        i++;
+    }
+
+    usuario[i] = '\0';
+
+    if(strlen(usuario) > MAX_U-1){
+        printf("El usuario excede los 5 caracteres.");
+        LimpiarCadena(usuario);
+        ObtenerNombreUsuario(usuario);
+    }
+
+    if(strlen(usuario) == 0){
+        printf("El usuario no puede estar vacio.");
+        LimpiarCadena(usuario);
+        ObtenerNombreUsuario(usuario);
+    } 
+}
+
+void ObtenerContrasena(char *contrasena){
+    int i = 0;
+    char c;
+
+    printf("\nEscribe la contrasena (maximo 8 caracteres): ");
+    fflush(stdin);
+
+    while((c = getchar()) != '\n' && i < MAX_C){
+        contrasena[i] = c;
+        i++;
+    }
+
+    contrasena[i] = '\0';
+
+    if(strlen(contrasena) > MAX_C-1){
+        printf("La contrasena excede los 8 caracteres.");
+        LimpiarCadena(contrasena);
+        ObtenerNombreUsuario(contrasena);
+    }
+
+    if(strlen(contrasena) == 0){
+        printf("La contrasena no puede estar vacio.");
+        LimpiarCadena(contrasena);
+        ObtenerNombreUsuario(contrasena);
+    } 
+}
+
+void LimpiarCadena(char *cad){
+    unsigned int i;
+
+    for(i = 0; i < strlen(cad); i++)
+        cad[i] = '\0';
 }
