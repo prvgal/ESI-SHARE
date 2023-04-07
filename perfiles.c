@@ -37,6 +37,8 @@ void CargarPerfiles(tPerfil *infoper);
 int LogIn(tPerfil *infoper);
 int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos);
 int SignUp(tPerfil *infoper);
+void AltaUsuario(tPerfil *infoper, int pos);
+void BajaUsuario(tPerfil *infoper, int pos);
 
 void ListarPerfiles(tPerfil *infoper);
 void ModificarCamposUsuario(tPerfil *infoper, int pos);
@@ -45,7 +47,6 @@ int LongitudVectorEstructuras();
 void EliminarSaltoLinea(char *cad);
 void LimpiarCadena(char *cad, int tam);
 void GenerarID(char *id, int num, int numDigitos);
-int isactive(tPerfil *infoper, int pos);
 int ValidarID(tPerfil *infoper, char id[ID], int *posUsua);
 
 void ObtenerNombreUsuario(tPerfil *infoper, char *nomUsuario);
@@ -210,7 +211,7 @@ void Perfil(tPerfil *infoper, int posUsua){
 }
 
 void Usuarios(tPerfil *infoper){
-    int op;
+    int op, posUsua;
 
     printf("\n##################################################################\n");
     printf("#               Configuracion del Sistema de Usuarios              #\n");
@@ -220,8 +221,9 @@ void Usuarios(tPerfil *infoper){
         printf("\n\n#            OPCIONES de Configuracion            #\n");
        
         printf("\n<1> Listar usuarios del sistema.\n");
-        printf("<2> Para dar de alta/baja a un usuario.\n");
-        printf("<3> Para modificar datos de algun usuario.\n");
+        printf("<2> Para dar de alta a un usuario.\n");
+        printf("<3> Para dar de baja a un usuario.\n");
+        printf("<4> Para modificar datos de algun usuario.\n");
         printf("<0> Para volver al menu.\n");
         printf("\nIngrese la opcion que desee: ");
         scanf("%i", &op);
@@ -232,8 +234,9 @@ void Usuarios(tPerfil *infoper){
         switch(op){
             case 0: break;
             case 1: ListarPerfiles(infoper); break;
-            // case 2: AltaBaja(infoper); break;
-            case 3: ModificarCamposAdmin(infoper); break;
+            //case 2: AltaUsuario(infoper, posUsua); break;
+            //case 3: BajaUsuario(infoper, posUsua); break;
+            case 4: ModificarCamposAdmin(infoper); break;
             default: printf("\nElige una de las opciones.\n");
         }
 
@@ -318,7 +321,7 @@ int LogIn(tPerfil *infoper){
             ImprimirESISHARE();
             fprintf(stderr, "Error, el usuario o la contrasena son incorrectas\n");
         } else{
-            if(!isactive(infoper, posUsuario)){
+            if(infoper[posUsuario].estado == '0'){  // Verificamos si está activo.
                 fprintf(stderr, "\nError, el usuario se encuentra bloqueado.");
                 exit(1);
             } else{
@@ -394,6 +397,50 @@ int SignUp(tPerfil *infoper){
     return numPerfiles; // Devuelve la posición del vector donde debería encontrarse el usuario.
 }
 
+//void AltaUsuario(tPerfil *infoper, int pos){
+
+//}
+
+void BajaUsuario(tPerfil *infoper, int pos){
+    int i, elim = 0;
+    FILE *pf;
+    char id[ID], buffer[MAX_LIN_FICH];
+
+    pf = fopen("Usuarios.txt", "r+");
+
+    if(pf == NULL){
+        fprintf(stderr, "Error en la apertura de archivo.");
+        exit(1);
+    }
+
+    for(i = pos-1; i < LongitudVectorEstructuras()-1; i++)
+        infoper[i]= infoper[i+1];
+
+    infoper = (int *)realloc(infoper, (LongitudVectorEstructuras()-1)*sizeof(int));
+
+    if(infoper == NULL){
+        printf("Error en asignacion de memoria");
+        exit(1);
+    }
+
+    GenerarID(id, pos, ID-1);
+
+    while(fgets(buffer, ID, pf) != NULL){
+        if(strstr(buffer, id) == NULL)
+            fprintf(pf, "%s", buffer);
+        else
+            elim = 1;     
+    }
+
+    if(!elim)
+        printf("\nEl usuario con ID %s no se encuentra en el archivo.\n", id);
+    else
+        printf("\nEl usuario con ID %s se ha eliminado.", id);
+        
+
+    fclose(pf);
+}
+
 
 void ListarPerfiles(tPerfil *infoper){
     int i;
@@ -466,7 +513,7 @@ void ModificarCamposUsuario(tPerfil *infoper, int pos){
 void ModificarCamposAdmin(tPerfil *infoper){
     FILE *pf;
     int i, pos, aux;
-    char id[ID], estadoPerfil;
+    char id[ID], estadoPerfil[2];
 
     pf = fopen("Usuarios.txt", "r+");
 
@@ -478,7 +525,7 @@ void ModificarCamposAdmin(tPerfil *infoper){
     ListarPerfiles(infoper);
 
     do{
-        printf("\nIndique la ID del usuario que desea cambiar su actividad: ");
+        printf("\nIndique la ID (primer campo de usuario) del usuario que desea cambiar su actividad: ");
         fflush(stdin);
         fgets(id, ID, stdin);
         
@@ -500,9 +547,9 @@ void ModificarCamposAdmin(tPerfil *infoper){
 
     } while(!ValidarID(infoper, id, &pos));
 
-    sprintf(&estadoPerfil, "%i", aux);
+    sprintf(estadoPerfil, "%i", aux);
 
-    infoper[pos].estado = estadoPerfil;
+    infoper[pos].estado = estadoPerfil[0];
 
     for(i = 0; i < LongitudVectorEstructuras(); i++){
         if(i+1 == LongitudVectorEstructuras())
@@ -556,14 +603,6 @@ void GenerarID(char *id, int num, int numDigitos){
     sprintf(id, "%0*d", numDigitos, num);
 }
 
-int isactive(tPerfil *infoper, int pos){
-    int boole = 1;
-
-    if(infoper[pos].estado == 0)
-        boole = 0;
-
-    return boole;
-}
 
 int ValidarID(tPerfil *infoper, char id[ID], int *posUsua){
     int i, boole = 0;
