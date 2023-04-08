@@ -21,11 +21,11 @@
 
     //Precondición: El usuario habrá creado su propia cuenta, de manera el dato lógico "tienecoche" es igual a 1.
     //Postcondición: El usuario habrá cambiado algún dato acerca de su vehículo.
-    void cambiar_datos(vehiculo_inf, FILE *);
+    void cambiar_datos_veh(vehiculo_inf, FILE *);
 
     //Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
     //Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
-    void introducir_datos(vehiculo_inf, FILE *);
+    void introducir_datos_veh(vehiculo_inf, FILE *);
 
     //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
     //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
@@ -52,9 +52,13 @@
     //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
     static void inserta_descripcion(char []);
 
-    //Precondición: Recibe una cadena de cualquier longitud, de manera que se acortará según encuentre \n, es decir, queden espacios
+    //Precondición: Recibe una cadena de cualquier longitud, de manera que su contenido (que no espacio en memoria) se acortará según encuentre \n, es decir, queden espacios
 	//libres.
 	//Postcondición: La cadena dada habrá sido acortada, sustituyendo \n por \0.
     static void acortar_cadena(char []);
+    
+    //Precondición: Recibe una cadena (matrícula) de longitud IDMAT, de manera que comprueba si es acorde al formato de matriculación española (000AAA).
+    //Postcondición: Devuelve 1 si la matrícula es válida, 0 en caso contrario.
+    static int comprobar_validez_mat(char []);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED
