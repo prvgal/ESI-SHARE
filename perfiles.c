@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #define ID 5
 #define MAX_N 21
@@ -10,7 +9,7 @@
 #define MAX_U 6
 #define MAX_C 9
 #define MAX_E 10
-#define MAX_LIN_FICH 78
+#define MAX_LIN_FICH 70
 
 typedef struct {
     char Id_usuario[ID];        // 4 digitos.
@@ -37,8 +36,8 @@ void CargarPerfiles(tPerfil *infoper);
 int LogIn(tPerfil *infoper);
 int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos);
 int SignUp(tPerfil *infoper);
-void AltaUsuario(tPerfil *infoper, int pos);
-void BajaUsuario(tPerfil *infoper, int pos);
+void AltaUsuario(tPerfil *infoper);
+void BajaUsuario(tPerfil *infoper);
 
 void ListarPerfiles(tPerfil *infoper);
 void ModificarCamposUsuario(tPerfil *infoper, int pos);
@@ -47,7 +46,7 @@ int LongitudVectorEstructuras();
 void EliminarSaltoLinea(char *cad);
 void LimpiarCadena(char *cad, int tam);
 void GenerarID(char *id, int num, int numDigitos);
-int ValidarID(tPerfil *infoper, char id[ID], int *posUsua);
+int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam);
 
 void ObtenerNombreUsuario(tPerfil *infoper, char *nomUsuario);
 void ObtenerLocalidad(char *nomLocalidad);
@@ -211,7 +210,7 @@ void Perfil(tPerfil *infoper, int posUsua){
 }
 
 void Usuarios(tPerfil *infoper){
-    int op, posUsua;
+    int op;
 
     printf("\n##################################################################\n");
     printf("#               Configuracion del Sistema de Usuarios              #\n");
@@ -235,7 +234,7 @@ void Usuarios(tPerfil *infoper){
             case 0: break;
             case 1: ListarPerfiles(infoper); break;
             //case 2: AltaUsuario(infoper, posUsua); break;
-            //case 3: BajaUsuario(infoper, posUsua); break;
+            case 3: BajaUsuario(infoper); break;
             case 4: ModificarCamposAdmin(infoper); break;
             default: printf("\nElige una de las opciones.\n");
         }
@@ -401,42 +400,73 @@ int SignUp(tPerfil *infoper){
 
 //}
 
-void BajaUsuario(tPerfil *infoper, int pos){
-    int i, elim = 0;
-    FILE *pf;
-    char id[ID], buffer[MAX_LIN_FICH];
+void BajaUsuario(tPerfil *infoper){
+    FILE *pf; 
+    int i, pos, tamOriginal = LongitudVectorEstructuras(); 
+    char id[ID];
 
-    pf = fopen("Usuarios.txt", "r+");
+    printf("\n####################################################################\n");
+    printf("#               Configuracion del Sistema de Bajas                 #\n");
+    printf("####################################################################\n\n");
+    
+    ListarPerfiles(infoper);
+
+    pf = fopen("Usuarios.txt", "w");
+
+    fclose(pf);  // Elminamos su contenido
+
+    pf = fopen("Usuarios.txt", "a");
 
     if(pf == NULL){
-        fprintf(stderr, "Error en la apertura de archivo.");
+        fprintf(stderr, "Error en la apertura de archivos.");
         exit(1);
     }
+    
+    do{
+        printf("\nIndique la ID (primer campo de usuario) del usuario que desea dar de baja: ");
+        fflush(stdin);
+        fgets(id, ID, stdin);
+        
+        if(!ValidarID((infoper), id, &pos, tamOriginal))
+            fprintf(stderr, "La ID no se encuentra disponible.\n");
+        
+        for(i = 0; i < tamOriginal; i++){
+            if(!strcmp((infoper)[i].Perfil_usuario, "administrador") && !strcmp((infoper)[i].Id_usuario, id)){
+                fprintf(stderr, "No se puede dar de baja a un admin.");
+                exit(1);
+            }
+        }
 
-    for(i = pos-1; i < LongitudVectorEstructuras()-1; i++)
-        infoper[i]= infoper[i+1];
+    } while(!ValidarID((infoper), id, &pos, tamOriginal));
 
-    infoper = (int *)realloc(infoper, (LongitudVectorEstructuras()-1)*sizeof(int));
+    system("cls");
+
+    for(; pos < tamOriginal-1; pos++)
+        (infoper)[pos]= (infoper)[pos+1];
+
+    infoper = (tPerfil *)realloc(infoper, (tamOriginal-1)*sizeof(tPerfil));
 
     if(infoper == NULL){
         printf("Error en asignacion de memoria");
         exit(1);
     }
 
-    GenerarID(id, pos, ID-1);
-
-    while(fgets(buffer, ID, pf) != NULL){
-        if(strstr(buffer, id) == NULL)
-            fprintf(pf, "%s", buffer);
+    // Regeneramos las IDs
+    for(i = 0; i < tamOriginal-1; i++)
+        GenerarID((infoper)[i].Id_usuario, i+1, ID-1);
+    
+    // Reescribimos el archivo.
+    for(i = 0; i < tamOriginal-1; i++){
+        if(i+1 == tamOriginal-1)
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", (infoper)[i].Id_usuario, (infoper)[i].Nomb_usuario,
+                                                (infoper)[i].Localidad, (infoper)[i].Perfil_usuario,
+                                                (infoper)[i].Usuario, (infoper)[i].Contrasena, (infoper)[i].estado);
         else
-            elim = 1;     
-    }
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c\n", (infoper)[i].Id_usuario, (infoper)[i].Nomb_usuario,
+                                                  (infoper)[i].Localidad, (infoper)[i].Perfil_usuario,
+                                                  (infoper)[i].Usuario, (infoper)[i].Contrasena, (infoper)[i].estado);
 
-    if(!elim)
-        printf("\nEl usuario con ID %s no se encuentra en el archivo.\n", id);
-    else
-        printf("\nEl usuario con ID %s se ha eliminado.", id);
-        
+    }
 
     fclose(pf);
 }
@@ -448,7 +478,7 @@ void ListarPerfiles(tPerfil *infoper){
     printf("\nUsuarios registrados: \n");
 
     for(i = 0; i < LongitudVectorEstructuras(); i++)
-        printf("%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario, infoper[i].estado);
+        printf("%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario, infoper[i].Contrasena ,infoper[i].estado);
     
     printf("\nNumero de usuarios registrados en el sistema: %i.", i);
 }
@@ -529,7 +559,7 @@ void ModificarCamposAdmin(tPerfil *infoper){
         fflush(stdin);
         fgets(id, ID, stdin);
         
-        if(!ValidarID(infoper, id, &pos))
+        if(!ValidarID(infoper, id, &pos, LongitudVectorEstructuras()))
             fprintf(stderr, "La ID no se encuentra disponible.\n");
         else{
             do{
@@ -545,7 +575,7 @@ void ModificarCamposAdmin(tPerfil *infoper){
             system("cls");
         }
 
-    } while(!ValidarID(infoper, id, &pos));
+    } while(!ValidarID(infoper, id, &pos, LongitudVectorEstructuras()));
 
     sprintf(estadoPerfil, "%i", aux);
 
@@ -604,10 +634,10 @@ void GenerarID(char *id, int num, int numDigitos){
 }
 
 
-int ValidarID(tPerfil *infoper, char id[ID], int *posUsua){
+int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
     int i, boole = 0;
 
-    for(i = 0; i < LongitudVectorEstructuras() && !boole; i++){
+    for(i = 0; i < tam && !boole; i++){
         if(!strcmp(infoper[i].Id_usuario, id))
             boole = 1;
     }
