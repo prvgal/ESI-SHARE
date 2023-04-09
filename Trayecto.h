@@ -117,13 +117,13 @@ static void ESI_puerto_fin(viajes);
 
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
 //postcondición: Permite al usuario modificar las paradas de su trayecto en caso de equivocación
-static void modificar_trayecto(viajes viaje);
+static void modificar_trayecto(viajes);
 
 
 
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
 //postcondición: Permite al usuario borrar su registro de trayecto del fichero Pasos.txt
-static void borrar_trayecto(viajes viaje);
+static void borrar_trayecto(viajes);
 
 
 
