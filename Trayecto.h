@@ -9,10 +9,6 @@ void gestionar_trayecto(viajes);
 
 
 
-
-static void inicio_trayecto(viajes);
-
-
 //*Nota*: Las siguientes funciones cuentan con la misma precondición y postcondición
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
 //postcondición: Despliega un menú sin funcionalidad, meramente visual e ilustrativo
