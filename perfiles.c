@@ -1,72 +1,8 @@
+#include "perfiles.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define ID 5
-#define MAX_N 21
-#define MAX_L 21
-#define MAX_PU 14
-#define MAX_U 6
-#define MAX_C 9
-#define MAX_E 10
-#define MAX_LIN_FICH 70
-
-typedef struct {
-    char Id_usuario[ID];        // 4 digitos.
-    char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
-    char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
-    char Perfil_usuario[MAX_PU];    // 13 caracteres (administrador) incluyendo el \0. Verifica si el usuario es administrador o de tipo usuario
-    char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema.
-    char Contrasena[MAX_C];     // 8 caracteres mas el \0. 
-    char estado;     // Dos posibles estados, activo (1) /bloqueado (0). 
-} tPerfil;
-
-int Inicio(tPerfil *infoper);
-void Menu(tPerfil *infoper, int posUsua);
-void MenuAdmin(tPerfil *infoper, int posUsua);
-void MenuUser(tPerfil *infoper, int posUsua);
-void Perfil(tPerfil *infoper, int posUsua);
-void Usuarios(tPerfil *infoper);
-void ImprimirESISHARE();
-
-tPerfil *CrearListaDePerfiles();
-void ReservarNuevoPerfil(tPerfil *infoper);
-void CargarPerfiles(tPerfil *infoper);
-
-int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos);
-int SignUp(tPerfil *infoper);
-void AltaUsuario(tPerfil *infoper);
-void BajaUsuario(tPerfil *infoper);
-
-void ListarPerfiles(tPerfil *infoper);
-void ModificarCamposUsuario(tPerfil *infoper, int pos);
-void ModificarCamposAdmin(tPerfil *infoper);
-int LongitudVectorEstructuras();
-void EliminarSaltoLinea(char *cad);
-void LimpiarCadena(char *cad, int tam);
-void GenerarID(char *id, int num, int numDigitos);
-int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam);
-
-void ObtenerNombreUsuario(tPerfil *infoper, char *nomUsuario);
-void ObtenerLocalidad(char *nomLocalidad);
-void ObtenerUsuario(tPerfil *infoper, char *usuario);
-void ObtenerContrasena(char *contrasena);
-
-int main(){
-    int pos;
-    tPerfil *info;
-
-    info = CrearListaDePerfiles();
-    CargarPerfiles(info);
-
-    pos = Inicio(info);
-
-    Menu(info, pos);
-
-    free(info);
-
-    return 0;
-}
 
 int Inicio(tPerfil *infoper){
     int op, posUsuario;
@@ -138,9 +74,9 @@ void MenuAdmin(tPerfil *infoper, int posUsua){
     printf("#               MENU              #\n");
     printf("###################################\n\n");
 
-    printf("%s", infoper[posUsua].Perfil_usuario);
-
     do{
+        printf("%s", infoper[posUsua].Perfil_usuario);
+
         printf("\n\n#            OPCIONES            #\n");
        
         printf("\n<1> Usuarios.\n");
@@ -321,8 +257,6 @@ void CargarPerfiles(tPerfil *infoper){
     fclose(pf);
 }
 
-
-
 int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos){
     int i = 0, fin = 0, boole = 0;
 
@@ -386,7 +320,39 @@ int SignUp(tPerfil *infoper){
 }
 
 void AltaUsuario(tPerfil *infoper){
-    SignUp(infoper);
+    FILE *pf;
+    int numPerfiles = LongitudVectorEstructuras();
+
+    ReservarNuevoPerfil(infoper);
+
+    GenerarID(infoper[numPerfiles].Id_usuario, numPerfiles+1, ID-1);
+
+    ObtenerNombreUsuario(infoper, infoper[numPerfiles].Nomb_usuario);
+
+    ObtenerLocalidad(infoper[numPerfiles].Localidad);
+
+    // El inicio de sesión será por defecto de tipo usuario, este campo solo lo podrá cambiar el administrador.
+    strcpy(infoper[numPerfiles].Perfil_usuario, "usuario"); 
+
+    ObtenerUsuario(infoper, infoper[numPerfiles].Usuario);
+
+    ObtenerContrasena(infoper[numPerfiles].Contrasena);
+
+    // Por defecto el usuario estará activo.
+    infoper[numPerfiles].estado = '1';
+
+    pf = fopen("Usuarios.txt", "a");
+
+    if(pf == NULL){
+        fprintf(stderr, "Error en la apertura de ficheros.");
+        exit(1);
+    }
+
+    fprintf(pf, "\n%s-%s-%s-%s-%s-%s-%c", infoper[numPerfiles].Id_usuario, infoper[numPerfiles].Nomb_usuario,
+                                          infoper[numPerfiles].Localidad, infoper[numPerfiles].Perfil_usuario,
+                                          infoper[numPerfiles].Usuario, infoper[numPerfiles].Contrasena, infoper[numPerfiles].estado);
+
+    fclose(pf);
 }
 
 void BajaUsuario(tPerfil *infoper){
@@ -473,14 +439,13 @@ void BajaUsuario(tPerfil *infoper){
     fclose(pf);
 }
 
-
 void ListarPerfiles(tPerfil *infoper){
     int i;
 
     printf("\nUsuarios registrados: \n");
 
     for(i = 0; i < LongitudVectorEstructuras(); i++)
-        printf("%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario, infoper[i].Contrasena ,infoper[i].estado);
+        printf("%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario ,infoper[i].estado);
     
     printf("\nNumero de usuarios registrados en el sistema: %i.", i);
 }
@@ -635,7 +600,6 @@ void GenerarID(char *id, int num, int numDigitos){
     sprintf(id, "%0*d", numDigitos, num);
 }
 
-
 int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
     int i, boole = 0;
 
@@ -648,7 +612,6 @@ int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
 
     return boole;
 }
-
 
 void ObtenerNombreUsuario(tPerfil *infoper, char *nomUsuario){
     int i = 0;
@@ -706,36 +669,38 @@ void ObtenerLocalidad(char *nomLocalidad){
 
 void ObtenerUsuario(tPerfil *infoper, char *usuario){
     int i = 0, fin = 0;
-    char c;
+    char c, aux[MAX_U];
 
     printf("\nEscribe el usuario (maximo 5 caracteres): ");
     fflush(stdin);
 
     while((c = getchar()) != '\n' && i < MAX_U){
-        usuario[i] = c;
+        aux[i] = c;
         i++;
     }
 
-    usuario[i] = '\0';
+    aux[i] = '\0';
 
-    if(strlen(usuario) > MAX_U-1){
+    if(strlen(aux) > MAX_U-1){
         printf("El usuario excede los 5 caracteres.");
-        LimpiarCadena(usuario, MAX_U);
-        ObtenerUsuario(infoper, usuario);
-    } else if(strlen(usuario) == 0){
+        LimpiarCadena(aux, MAX_U);
+        ObtenerUsuario(infoper, aux);
+    } else if(strlen(aux) == 0){
         printf("El usuario no puede estar vacio.");
-        LimpiarCadena(usuario, MAX_U);
-        ObtenerUsuario(infoper, usuario);
+        LimpiarCadena(aux, MAX_U);
+        ObtenerUsuario(infoper, aux);
     } else {
         for(i = 0; i < LongitudVectorEstructuras() && !fin; i++){
-            if(strcmp(infoper[i].Usuario, usuario) == 0){
+            if(!strcmp(infoper[i].Usuario, aux)){
                 fin = 1;
                 printf("El usuario ya se encuentra ocupado.");
-                LimpiarCadena(usuario, MAX_U);
-                ObtenerUsuario(infoper, usuario);
+                LimpiarCadena(aux, MAX_U);
+                ObtenerUsuario(infoper, aux);
             }
         }
     }
+
+    strcpy(usuario, aux);
 }
 
 void ObtenerContrasena(char *contrasena){
@@ -764,7 +729,6 @@ void ObtenerContrasena(char *contrasena){
         ObtenerContrasena(contrasena);
     } 
 }
-
 
 void LimpiarCadena(char *cad, int tam){
     int i;
