@@ -1,6 +1,6 @@
 #ifndef TRAYECTO_H_INCLUDED
 #define TRAYECTO_H_INCLUDED
-
+#include "viajes.h"
 
 
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
