@@ -108,7 +108,7 @@ static void ESI_jerez_puertor_fin(viajes);
 
 static void ESI_jerez_puerto(viajes);
 
-static ESI_jerez_fin(viajes);
+static void ESI_jerez_fin(viajes);
 
 static void ESI_puerto_puertor_fin(viajes);
 

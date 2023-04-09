@@ -581,7 +581,7 @@ static void ESI_jerez_puerto(viajes viaje){
 
 
 
-static ESI_jerez_fin(viajes viaje){
+static void ESI_jerez_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
