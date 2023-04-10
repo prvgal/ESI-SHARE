@@ -7,22 +7,28 @@
 
 viajes *viaje;
 int posUsuario = 0;
+int numvector = 0;
 
 int main(){     //Main temporal para probar que funciona correctamente
-    logico hoy;
 
-    if (posUsuario==0){
+    if (numvector == 0){
+
         viaje = (viajes*)malloc(sizeof(viajes));
-        posUsuario = 1;
+
+        numvector = 1;
     }
-    else
-        viaje = (viajes*)realloc(viaje, (posUsuario+1)*sizeof(viajes));
+    else{
+
+        viaje = (viajes*)realloc(viaje, (numvector + 1)*sizeof(viajes));
+        
+        numvector += 1;
+    }
 
     generar_ID_viaje(viaje, posUsuario);
 
-    introducir_fecha(viaje, posUsuario, &hoy);
+    introducir_fecha(viaje, posUsuario);
 
-    horas(viaje, posUsuario, hoy);
+    horas(viaje, posUsuario);
 
     viaje[posUsuario].Nplazas = 4;
 
@@ -56,9 +62,9 @@ static void generar_ID_viaje(viajes *viaje, int posUsuario){
     printf("ID del viaje = %i\n", viaje[posUsuario].ID);
 }
 
-static void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
+static void introducir_fecha(viajes *viaje, int posUsuario){
     int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
-    *hoy = False;
+    viaje[posUsuario].hoy = False;
 
     time_t tiempo_actual;
     struct tm *fecha_actual;
@@ -75,7 +81,7 @@ static void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
         fecha_actual = localtime(&tiempo_actual);
 
         if(dia == fecha_actual->tm_mday && mes == fecha_actual->tm_mon + 1 && ano == fecha_actual->tm_year + 1900){
-            *hoy = True;
+            viaje[posUsuario].hoy = True;
         }
 
         if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
@@ -109,7 +115,7 @@ static void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy){
     printf("La fecha introducida es: %s\n", viaje[posUsuario].fecha);
 }
 
-static void horas(viajes *viaje, int posUsuario, logico hoy){
+static void horas(viajes *viaje, int posUsuario){
     char entrada[6];
     int estado = 0, minutos_llegada, minutos_inicio, minutos_actual;
 
@@ -124,7 +130,7 @@ static void horas(viajes *viaje, int posUsuario, logico hoy){
         scanf("%5s", entrada);
         int horas, minutos;
         minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posUsuario].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
             sprintf(viaje[posUsuario].hora_inicio, "%02d:%02d", horas, minutos);
             estado = 1;
         } else{
@@ -185,5 +191,5 @@ static void importe(viajes *viaje, int posUsuario){
         scanf("%f", &viaje[posUsuario].importe);
     } while (viaje[posUsuario].importe < 0 || viaje[posUsuario].importe > 15);
     
-    printf("El importe introducido es: %.2f", viaje[posUsuario].importe);
+    printf("El importe introducido es de %.2f euros", viaje[posUsuario].importe);
 }
