@@ -28,6 +28,7 @@ typedef struct{
     char tipo;                      //I - Ida o V - Vuelta
     float importe;                  //Entre 0 y 15 € por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
+    logico hoy;                     //Indica si la fecha introducida es hoy
 } viajes;
 
 //FUNCIONES PRIVADAS:
@@ -37,17 +38,15 @@ typedef struct{
 
 static void generar_ID_viaje(viajes *viaje, int posUsuario);
 
-/*Precondición: Recibe un vector de estructuras de tipo viajes, un entero que indicará la posición del usuario en viaje
-y la dirección de memoria a un puntero booleano que indicará si la fecha introducida es hoy*/
+/*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
 //Postcondición: Habrá introducido fecha en la estructura viaje de la posición posUsuario
 
-static void introducir_fecha(viajes *viaje, int posUsuario, logico *hoy);
+static void introducir_fecha(viajes *viaje, int posUsuario);
 
-/*Precondición: Recibe un vector de estructuras de tipo viajes, un entero que indicará la posición del usuario en viaje
-y un booleano que indicará si la fecha introducida es hoy*/
+/*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
 //Postcondición: Habrá introducido hora_inicio y hora_llegada en la estructura viaje de la posición posUsuario
 
-static void horas(viajes *viaje, int posUsuario, logico hoy);
+static void horas(viajes *viaje, int posUsuario);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
 //Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posUsuario
