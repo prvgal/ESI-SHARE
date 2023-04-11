@@ -8,6 +8,7 @@
 viajes *viaje;
 int posUsuario = 0;
 int numvector = 0;
+int Iplazas = 4;
 
 int main(){     //Main temporal para probar que funciona correctamente
 
@@ -30,7 +31,7 @@ int main(){     //Main temporal para probar que funciona correctamente
 
     horas(viaje, posUsuario);
 
-    viaje[posUsuario].Nplazas = 4;
+    viaje[posUsuario].Nplazas = Iplazas;
 
     plazas(viaje, posUsuario);
 
@@ -38,13 +39,17 @@ int main(){     //Main temporal para probar que funciona correctamente
 
     importe(viaje, posUsuario);
 
+    estado(viaje, posUsuario);
+
     free(viaje);
     return 0;
 }
 
 static void generar_ID_viaje(viajes *viaje, int posUsuario){
     int i, p = 0;
+
     do
+
     {
         srand(time(NULL));   //Inicializa la semilla del generador de números aleatorios
         viaje[posUsuario].ID = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un número aleatorio entre 0 y 999999
@@ -57,13 +62,16 @@ static void generar_ID_viaje(viajes *viaje, int posUsuario){
             printf("Generando una nueva ID...");
         }
     }
+
     } while (p==1);
+
     printf("ID del viaje generada correctamente.\n");
     printf("ID del viaje = %i\n", viaje[posUsuario].ID);
 }
 
 static void introducir_fecha(viajes *viaje, int posUsuario){
     int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
+
     viaje[posUsuario].hoy = False;
 
     time_t tiempo_actual;
@@ -71,9 +79,12 @@ static void introducir_fecha(viajes *viaje, int posUsuario){
 
     do {
         printf("Introduzca una fecha en el formato Dia/Mes/Ano: ");
-        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3) { //Si no se introducen los 3 números esperados con "/" separándolos
+    
+        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 números esperados con "/" separándolos
+
             while (getchar() != '\n');                  //se limpia el buffer de entrada
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
+        
             continue;
         }
 
@@ -86,11 +97,13 @@ static void introducir_fecha(viajes *viaje, int posUsuario){
 
         if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
             printf("La fecha introducida no puede ser anterior a la fecha actual. Por favor, intentelo de nuevo.\n");
+
             continue;
         }
 
         if (ano > 2024 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el día, mes y año sean válidos
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
+
             continue;
         }
 
@@ -99,17 +112,22 @@ static void introducir_fecha(viajes *viaje, int posUsuario){
         //Se calcula el número de días del mes introducido
         if (mes == 2){
             dias_en_mes = (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28;
-        } else if (mes == 4 || mes == 6 || mes == 9 || mes == 11) {
+
+        } else if (mes == 4 || mes == 6 || mes == 9 || mes == 11){
+
             dias_en_mes = 30;
         }
 
         if (dia > dias_en_mes){
             printf("La fecha introducida no es valida, el mes %d tiene %d dias. Por favor, intentelo de nuevo.\n", mes, dias_en_mes);
+
             continue;
         }
 
         sprintf(viaje[posUsuario].fecha, "%02d/%02d/%04d", dia, mes, ano);  //Convierte la fecha a una cadena
+
         fecha_valida = 1;
+
     } while (!fecha_valida);
 
     printf("La fecha introducida es: %s\n", viaje[posUsuario].fecha);
@@ -128,11 +146,16 @@ static void horas(viajes *viaje, int posUsuario){
     while (estado == 0){
         printf("Introduzca la hora de inicio en formato hh:mm (24 horas): ");
         scanf("%5s", entrada);
+
         int horas, minutos;
+
         minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;
+
         if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posUsuario].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
             sprintf(viaje[posUsuario].hora_inicio, "%02d:%02d", horas, minutos);
+
             estado = 1;
+
         } else{
             printf("La hora de inicio debe estar entre las 06:00 y las 22:25 y debe ser anterior a la actual si el viaje es hoy. Introduzca la hora de nuevo.\n");
         }
@@ -144,15 +167,21 @@ static void horas(viajes *viaje, int posUsuario){
     while (estado == 0){
         printf("Introduzca la hora de llegada en formato hh:mm (24 horas): ");
         scanf("%5s", entrada);
+
         int horas, minutos;
+
         minutos_llegada = atoi(entrada+3) + atoi(entrada) * 60;
+
         if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es válida
             sprintf(viaje[posUsuario].hora_llegada, "%02d:%02d", horas, minutos);
-            if (minutos_llegada >= minutos_inicio + 5) {
+
+            if (minutos_llegada >= minutos_inicio + 5){
                 estado = 1;
+
             } else{
                 printf("La hora de llegada debe ser al menos 5 minutos mas tarde que la hora de inicio. Introduzca la hora de nuevo.\n");
             }
+
         } else{
             printf("La hora de llegada debe estar entre las 06:05 y las 22:30. Introduzca la hora de nuevo.\n");
         }
@@ -165,6 +194,7 @@ static void horas(viajes *viaje, int posUsuario){
 static void plazas(viajes *viaje, int posUsuario){
     if(viaje[posUsuario].Nplazas != 0){
         viaje[posUsuario].Nplazas -= 1;
+
         printf("Quedan %i plazas libres en el viaje %i\n", viaje[posUsuario].Nplazas, viaje[posUsuario].ID);
     }
     else
@@ -191,5 +221,53 @@ static void importe(viajes *viaje, int posUsuario){
         scanf("%f", &viaje[posUsuario].importe);
     } while (viaje[posUsuario].importe < 0 || viaje[posUsuario].importe > 15);
     
-    printf("El importe introducido es de %.2f euros", viaje[posUsuario].importe);
+    printf("El importe introducido es de %.2f euros\n", viaje[posUsuario].importe);
+}
+
+static void estado(viajes *viaje, int posUsuario){
+    int minutos_llegada, minutos_inicio, minutos_actual, dia, mes, ano, hora, minuto;
+    char anular;
+
+    time_t fecha_actual = time(NULL);
+    struct tm* fecha_local = localtime(&fecha_actual);
+    
+    minutos_actual = fecha_local->tm_hour * 60 + fecha_local->tm_min; //Convierte la hora local a minutos
+
+    sscanf(viaje[posUsuario].fecha, "%d/%d/%d", &dia, &mes, &ano);
+
+    sscanf(viaje[posUsuario].hora_inicio, "%d:%d", &hora, &minuto);
+
+    minutos_inicio = hora*60 + minuto;
+
+    if(viaje[posUsuario].Nplazas > 0 && 
+    ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
+    (viaje[posUsuario].hoy == True && minutos_actual < minutos_inicio))){
+
+        viaje[posUsuario].estado.abierto = True;
+        viaje[posUsuario].estado.cerrado = False;
+        viaje[posUsuario].estado.iniciado = False;
+        viaje[posUsuario].estado.finalizado = False;
+        viaje[posUsuario].estado.anulado = False;
+    }
+
+    do
+    {
+        fflush(stdin);
+        printf("Desea anular el viaje %i? (S/N): ", viaje[posUsuario].ID);
+        scanf("%c", &anular);
+    } while (anular != 'S' && anular != 'N');
+
+    if(anular == 'S'){
+        viaje[posUsuario].estado.abierto = False;
+        viaje[posUsuario].estado.cerrado = False;
+        viaje[posUsuario].estado.iniciado = False;
+        viaje[posUsuario].estado.finalizado = False;
+        viaje[posUsuario].estado.anulado = True;
+    }
+
+    printf("El estado abierto esta a %i\n", viaje[posUsuario].estado.abierto);
+    printf("El estado cerrado esta a %i\n", viaje[posUsuario].estado.cerrado);
+    printf("El estado iniciado esta a %i\n", viaje[posUsuario].estado.iniciado);
+    printf("El estado finalizado esta a %i\n", viaje[posUsuario].estado.finalizado);
+    printf("El estado anulado esta a %i\n", viaje[posUsuario].estado.anulado);
 }
