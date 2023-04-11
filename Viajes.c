@@ -25,6 +25,8 @@ int main(){     //Main temporal para probar que funciona correctamente
         numvector += 1;
     }
 
+    strcpy(viaje[posViaje].matricula, "8291JDK");
+
     generar_ID_viaje(viaje, posViaje);
 
     introducir_fecha(viaje, posViaje);
@@ -42,6 +44,8 @@ int main(){     //Main temporal para probar que funciona correctamente
     estado(viaje, posViaje);
 
     modviaje(viaje, posViaje);
+
+    imprimirviajes(viaje);
 
     free(viaje);
     return 0;
@@ -212,26 +216,31 @@ static void plazas(viajes *viaje, int posViaje){
 }
 
 static void tipo(viajes *viaje, int posViaje){
-    do
-    {
-        printf("Introduce (I) si el viaje es de ida o (V) vuelta:\n");
     
+    do {
+        printf("Introduce 'ida' o 'vuelta': ");
         fflush(stdin);
-    
-        scanf("%c", &viaje[posViaje].tipo);
-    } while (viaje[posViaje].tipo != 'I' && viaje[posViaje].tipo != 'V');
+        fgets(viaje[posViaje].tipo, sizeof(viaje[posViaje].tipo), stdin);
 
-    printf("Seleccionado viaje tipo %c\n", viaje[posViaje].tipo);
+        viaje[posViaje].tipo[strcspn(viaje[posViaje].tipo, "\n")] = '\0';
+        
+    } while (strcmp(viaje[posViaje].tipo, "ida") != 0 && strcmp(viaje[posViaje].tipo, "vuelta") != 0);
+    
+    printf("Seleccionaste viaje tipo %s\n", viaje[posViaje].tipo);
 }
 
 static void importe(viajes *viaje, int posViaje){
+    float aux;
+
     do
     {
         printf("Introduce el importe del viaje (0-15 euros): ");
-        scanf("%f", &viaje[posViaje].importe);
-    } while (viaje[posViaje].importe < 0 || viaje[posViaje].importe > 15);
+        scanf("%f", &aux);
+    } while (aux < 0 || aux > 15);
+
+    sprintf(viaje[posViaje].importe, "%.2f€", aux);
     
-    printf("El importe introducido es de %.2f euros\n", viaje[posViaje].importe);
+    printf("El importe introducido es de %.2f euros\n", aux);
 }
 
 static void estado(viajes *viaje, int posViaje){
@@ -352,4 +361,39 @@ static void modviaje(viajes *viaje, int posViaje){
     }
     else
         printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
+}
+
+static void imprimirviajes(viajes *viaje){
+    int i;
+    char aux [11];
+
+    FILE *vf;
+    vf = fopen("Viajes.txt", "a");
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i <= posViaje; i++){
+        if(viaje[i].estado.abierto == 1){
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+    }
+    fclose(vf);
 }
