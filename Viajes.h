@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #include "tipos.h"
 
 #define FECHA 11
 #define MATRICULA 8
+#define IMPORTE 7
+#define TIPO 7
 #define HORA 6
 
 typedef struct{
@@ -25,8 +28,8 @@ typedef struct{
     char hora_inicio [HORA];        //Formato 24h - Mínimo 06:00
     char hora_llegada [HORA];       //Formato 24h - Máximo 22:30
     int Nplazas;                    //Número de plazas disponibles
-    char tipo;                      //I - Ida o V - Vuelta
-    float importe;                  //Entre 0 y 15 € por persona
+    char tipo [TIPO];               //Ida o Vuelta
+    char importe [IMPORTE];         //Entre 0 y 15 € por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
     logico hoy;                     //Indica si la fecha introducida es hoy
 } viajes;
@@ -67,5 +70,13 @@ static void importe(viajes *viaje, int posViaje);
 //Postcondición: Se activará (True) el estado en el que se encuentre el viaje y se desactivará (False) el anterior si era diferente
 
 static void estado(viajes *viaje, int posViaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondición: Se habrá modificado algo en la estructura
+static void modviaje(viajes *viaje, int posViaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habrá imprimido en un fichero la estructura viaje
+static void imprimirviajes(viajes *viaje);
 
 #endif
