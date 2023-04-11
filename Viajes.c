@@ -41,6 +41,8 @@ int main(){     //Main temporal para probar que funciona correctamente
 
     estado(viaje, posViaje);
 
+    modviaje(viaje, posViaje);
+
     free(viaje);
     return 0;
 }
@@ -279,7 +281,7 @@ static void estado(viajes *viaje, int posViaje){
         viaje[posViaje].estado.anulado = False;
     }
 
-    if(viaje[posViaje].hoy == True && minutos_actual >= minutos_inicio && minutos_actual <= minutos_llegada){
+    if(viaje[posViaje].hoy == True && minutos_actual >= minutos_inicio && minutos_actual < minutos_llegada + 60){
 
         viaje[posViaje].estado.abierto = False;
         viaje[posViaje].estado.cerrado = False;
@@ -289,7 +291,7 @@ static void estado(viajes *viaje, int posViaje){
     }
 
     if(((ano < fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes < fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia < fecha_local->tm_mday)) ||
-    (viaje[posViaje].hoy == True && minutos_actual > minutos_llegada))){
+    (viaje[posViaje].hoy == True && minutos_actual >= minutos_llegada + 60))){
 
         viaje[posViaje].estado.abierto = False;
         viaje[posViaje].estado.cerrado = False;
@@ -318,4 +320,36 @@ static void estado(viajes *viaje, int posViaje){
     printf("El estado iniciado esta a %i\n", viaje[posViaje].estado.iniciado);
     printf("El estado finalizado esta a %i\n", viaje[posViaje].estado.finalizado);
     printf("El estado anulado esta a %i\n", viaje[posViaje].estado.anulado);
+}
+
+static void modviaje(viajes *viaje, int posViaje){
+    int op;
+
+    if(viaje[posViaje].Nplazas == Iplazas){
+        do
+        {
+            printf("Seleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n", viaje[posViaje].ID);
+            scanf("%i", &op);
+        } while (op != 1 && op != 2 && op != 3 && op != 4);
+        
+        switch (op)
+        {
+        case 1:
+            introducir_fecha(viaje, posViaje);
+            break;
+        
+        case 2:
+            horas(viaje, posViaje);
+            break;
+        
+        case 3:
+            tipo(viaje, posViaje);
+            break;
+        
+        case 4:
+            importe(viaje, posViaje);
+        }
+    }
+    else
+        printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
 }
