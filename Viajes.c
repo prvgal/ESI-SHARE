@@ -239,6 +239,10 @@ static void estado(viajes *viaje, int posUsuario){
 
     minutos_inicio = hora*60 + minuto;
 
+    sscanf(viaje[posUsuario].hora_llegada, "%d:%d", &hora, &minuto);
+
+    minutos_llegada = hora*60 + minuto;
+
     if(viaje[posUsuario].Nplazas > 0 &&
     ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
     (viaje[posUsuario].hoy == True && minutos_actual < minutos_inicio))){
@@ -257,6 +261,15 @@ static void estado(viajes *viaje, int posUsuario){
         viaje[posUsuario].estado.abierto = False;
         viaje[posUsuario].estado.cerrado = True;            //Cerrado
         viaje[posUsuario].estado.iniciado = False;
+        viaje[posUsuario].estado.finalizado = False;
+        viaje[posUsuario].estado.anulado = False;
+    }
+
+    if(viaje[posUsuario].hoy == True && minutos_actual >= minutos_inicio && minutos_actual <= minutos_llegada){
+
+        viaje[posUsuario].estado.abierto = False;
+        viaje[posUsuario].estado.cerrado = False;
+        viaje[posUsuario].estado.iniciado = True;           //Iniciado
         viaje[posUsuario].estado.finalizado = False;
         viaje[posUsuario].estado.anulado = False;
     }
