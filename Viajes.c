@@ -70,7 +70,7 @@ static void generar_ID_viaje(viajes *viaje, int posUsuario){
 }
 
 static void introducir_fecha(viajes *viaje, int posUsuario){
-    int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
+    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es válida
 
     time_t tiempo_actual;
     struct tm *fecha_actual;
@@ -89,11 +89,19 @@ static void introducir_fecha(viajes *viaje, int posUsuario){
         tiempo_actual = time(NULL);     //Para comprobar que la fecha introducida no es anterior a la actual
         fecha_actual = localtime(&tiempo_actual);
 
+        hora_actual = fecha_actual->tm_hour * 60 + fecha_actual->tm_min;
+
         if(dia == fecha_actual->tm_mday && mes == fecha_actual->tm_mon + 1 && ano == fecha_actual->tm_year + 1900){
             viaje[posUsuario].hoy = True;
         }
         else
             viaje[posUsuario].hoy = False;
+
+        if(viaje[posUsuario].hoy == True && hora_actual >= (22*60 + 25)){
+            printf("No es posible crear un viaje para hoy. Por favor, introduzca otra fecha.\n");
+
+            continue;
+        }
 
         if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
             printf("La fecha introducida no puede ser anterior a la fecha actual. Por favor, intentelo de nuevo.\n");
