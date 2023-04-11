@@ -72,8 +72,6 @@ static void generar_ID_viaje(viajes *viaje, int posUsuario){
 static void introducir_fecha(viajes *viaje, int posUsuario){
     int dia, mes, ano, dias_en_mes, fecha_valida = 0;   //Indica si la fecha introducida es válida
 
-    viaje[posUsuario].hoy = False;
-
     time_t tiempo_actual;
     struct tm *fecha_actual;
 
@@ -94,6 +92,8 @@ static void introducir_fecha(viajes *viaje, int posUsuario){
         if(dia == fecha_actual->tm_mday && mes == fecha_actual->tm_mon + 1 && ano == fecha_actual->tm_year + 1900){
             viaje[posUsuario].hoy = True;
         }
+        else
+            viaje[posUsuario].hoy = False;
 
         if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
             printf("La fecha introducida no puede ser anterior a la fecha actual. Por favor, intentelo de nuevo.\n");
@@ -235,6 +235,12 @@ static void estado(viajes *viaje, int posUsuario){
 
     sscanf(viaje[posUsuario].fecha, "%d/%d/%d", &dia, &mes, &ano);
 
+    if(dia == fecha_local->tm_mday && mes == fecha_local->tm_mon + 1 && ano == fecha_local->tm_year + 1900){
+        viaje[posUsuario].hoy = True;
+    }
+    else
+        viaje[posUsuario].hoy = False;
+
     sscanf(viaje[posUsuario].hora_inicio, "%d:%d", &hora, &minuto);
 
     minutos_inicio = hora*60 + minuto;
@@ -271,6 +277,16 @@ static void estado(viajes *viaje, int posUsuario){
         viaje[posUsuario].estado.cerrado = False;
         viaje[posUsuario].estado.iniciado = True;           //Iniciado
         viaje[posUsuario].estado.finalizado = False;
+        viaje[posUsuario].estado.anulado = False;
+    }
+
+    if(((ano < fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes < fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia < fecha_local->tm_mday)) ||
+    (viaje[posUsuario].hoy == True && minutos_actual > minutos_llegada))){
+
+        viaje[posUsuario].estado.abierto = False;
+        viaje[posUsuario].estado.cerrado = False;
+        viaje[posUsuario].estado.iniciado = False;
+        viaje[posUsuario].estado.finalizado = True;        //Finalizado
         viaje[posUsuario].estado.anulado = False;
     }
 
