@@ -34,38 +34,38 @@ typedef struct{
 //FUNCIONES PRIVADAS:
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
-//Postcondición: Asigna una ID en la estructura viaje de la posición posUsuario
+//Postcondición: Asigna una ID en la estructura viaje de la posición posViaje
 
-static void generar_ID_viaje(viajes *viaje, int posUsuario);
-
-/*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
-//Postcondición: Habrá introducido fecha en la estructura viaje de la posición posUsuario
-
-static void introducir_fecha(viajes *viaje, int posUsuario);
+static void generar_ID_viaje(viajes *viaje, int posViaje);
 
 /*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
-//Postcondición: Habrá introducido hora_inicio y hora_llegada en la estructura viaje de la posición posUsuario
+//Postcondición: Habrá introducido fecha en la estructura viaje de la posición posViaje
 
-static void horas(viajes *viaje, int posUsuario);
+static void introducir_fecha(viajes *viaje, int posViaje);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
-//Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posUsuario
+/*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
+//Postcondición: Habrá introducido hora_inicio y hora_llegada en la estructura viaje de la posición posViaje
 
-static void plazas(viajes *viaje, int posUsuario);
-
-//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
-//Postcondición: Habrá introducido el tipo de viaje en la estructura viaje de la posición posUsuario: (I) Ida o (V) Vuelta
-
-static void tipo(viajes *viaje, int posUsuario);
+static void horas(viajes *viaje, int posViaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
-//Postcondicion: Habrá introducido el importe del viaje en la estructura viaje en la posición posUsuario
+//Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posViaje
 
-static void importe(viajes *viaje, int posUsuario);
+static void plazas(viajes *viaje, int posViaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondición: Habrá introducido el tipo de viaje en la estructura viaje de la posición posViaje: (I) Ida o (V) Vuelta
+
+static void tipo(viajes *viaje, int posViaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondicion: Habrá introducido el importe del viaje en la estructura viaje de la posición posViaje
+
+static void importe(viajes *viaje, int posViaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
 //Postcondición: Se activará (True) el estado en el que se encuentre el viaje y se desactivará (False) el anterior si era diferente
 
-static void estado(viajes *viaje, int posUsuario);
+static void estado(viajes *viaje, int posViaje);
 
 #endif
