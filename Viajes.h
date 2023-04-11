@@ -11,11 +11,11 @@
 #define HORA 6
 
 typedef struct{
-    logico abierto;
-    logico cerrado;
-    logico iniciado;
-    logico finalizado;
-    logico anulado;
+    logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no está anulado
+    logico cerrado;                 //Si Nplazas = 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no está anulado
+    logico iniciado;                //Si el viaje ha iniciado (la hora actual está entre la hora de inicio y hora de llegada) y no se anula
+    logico finalizado;              //Si el viaje ha finalizado (la hora actual es  mayor que la hora de llegada) y no ha sido anulado
+    logico anulado;                 //Si el viaje ha sido anulado
 } estado_viajes;
 
 typedef struct{
@@ -62,5 +62,10 @@ static void tipo(viajes *viaje, int posUsuario);
 //Postcondicion: Habrá introducido el importe del viaje en la estructura viaje en la posición posUsuario
 
 static void importe(viajes *viaje, int posUsuario);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondición: Se activará (True) el estado en el que se encuentre el viaje y se desactivará (False) el anterior si era diferente
+
+static void estado(viajes *viaje, int posUsuario);
 
 #endif
