@@ -6,7 +6,7 @@
 #include "tipos.h"
 
 viajes *viaje;
-int posViaje = 2;
+int posViaje = 3;
 int Iplazas = 4;
 int numviajes;
 
@@ -466,6 +466,7 @@ void leerviajes(viajes *viaje){
             continue;
         }
     }
+    fclose(vf);
 }
 
 void listarviajes(viajes *viaje){
@@ -496,7 +497,7 @@ void listarviajes(viajes *viaje){
     }
 }
 
-int numeroviajes(){
+int numeroviajes(void){
     char aux[MAX_VIAJES];
     FILE *vf;
     int i = 1;
