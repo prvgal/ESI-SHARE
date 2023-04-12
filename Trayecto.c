@@ -34,7 +34,7 @@ static void inicio_trayecto(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es el punto de partida de su viaje? \n\n");
-        printf("1. El viaje inicia en la ESI\n 2. El viaje finaliza en la ESI\n 0. Cancelar\n");
+        printf(" 1. El viaje inicia en la ESI\n 2. El viaje finaliza en la ESI\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -56,7 +56,7 @@ static void final_ESI(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es el punto de partida de su viaje? \n\n");
-        printf("1. Cádiz\n 2. San Fernando\n 3. Jerez\n 4. Puerto de Santa María\n 5. Puerto Real\n 0. Cancelar\n");
+        printf(" 1. Cádiz\n 2. San Fernando\n 3. Jerez\n 4. Puerto de Santa María\n 5. Puerto Real\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -82,7 +82,7 @@ static void ida_ESI_cadiz(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -129,7 +129,7 @@ static void ida_ESI_sanfer(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Cádiz\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        printf(" 1. Cádiz\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -153,7 +153,7 @@ static void ida_ESI_sanfer_cadiz(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -228,7 +228,7 @@ static void ida_ESI_jerez(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Puerto de Santa María\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        printf(" 1. Puerto de Santa María\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -252,7 +252,7 @@ static void ida_ESI_jerez_puerto(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -328,7 +328,7 @@ static void ida_ESI_puerto(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
-        printf("1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -386,7 +386,7 @@ static void inicio_ESI(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál es su destino final? \n\n");
-        printf("   1. Cádiz\n   2. Puerto Real\n   3. San Fernando\n   4. Jerez de la Frontera\n   5. Puerto de Santa María\n   0. Cancelar\n");
+        printf(" 1. Cádiz\n 2. Puerto Real\n 3. San Fernando\n 4. Jerez de la Frontera\n 5. Puerto de Santa María\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -411,7 +411,7 @@ static void ESI_cadiz(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Puerto Real\n   2. Fin\n   0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -470,7 +470,7 @@ static void ESI_sanfernando(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Puerto Real\n   2. Cádiz\n   3. Fin\n   0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Cádiz\n 3. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -507,7 +507,7 @@ static void ESI_sanfer_puertor(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Cádiz\n   2. Fin\n   0. Cancelar\n");
+        printf(" 1. Cádiz\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -567,7 +567,7 @@ static void ESI_jerez(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Puerto Real\n   2. Puerto de Santa María\n   3. Fin\n   0. Cancelar\n");
+        printf(" 1. Puerto Real\n 2. Puerto de Santa María\n 3. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -591,7 +591,7 @@ static void ESI_jerez_puertor(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Puerto de Santa María\n   2. Fin\n   0. Cancelar\n");
+        printf(" 1. Puerto de Santa María\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -667,7 +667,7 @@ static void ESI_puertostamaria(viajes viaje){
     do{
         system("cls");
         printf("\n ¿Cuál será su siguiente parada? \n\n");
-        printf("   1. Puerto de Santa María\n   2. Fin\n   0. Cancelar\n");
+        printf(" 1. Puerto de Santa María\n 2. Fin\n 0. Cancelar\n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
