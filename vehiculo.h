@@ -3,6 +3,7 @@
 
 #include "vehiculo.h"
 #include <stdio.h>
+#include "perfiles.h"
 
 #define CARACTERES 51
 #define IDMAT 8
@@ -25,7 +26,7 @@
 
     //Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
     //Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
-    void introducir_datos_veh(vehiculo_inf, FILE *);
+    void introducir_datos_veh(vehiculo_inf, tPerfiles);
 
     //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
     //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
@@ -34,7 +35,18 @@
     //Precondición: El procedimiento recibe un vector de estructuras para captar los datos del fichero dado.
     //Postcondición: El procedimiento habrá leído la información del fichero dado y la habrá guardado en el vector de estructuras dado.
     void leer_fichero_vehiculo(vehiculo_inf *, FILE *);
-
+    
+    //Precondición: 
+    //Postcondición:
+	void admin_veh(tPerfiles);
+	
+	//Precondición: 
+    //Postcondición:
+    void usuario();
+    
+    //Precondición: 
+    //Postcondición:
+    void menu_registro_vehiculo(tPerfiles)
 
     //*******FUNCIONES PRIVADAS*******
 
@@ -60,5 +72,13 @@
     //Precondición: Recibe una cadena (matrícula) de longitud IDMAT, de manera que comprueba si es acorde al formato de matriculación española (000AAA).
     //Postcondición: Devuelve 1 si la matrícula es válida, 0 en caso contrario.
     static int comprobar_validez_mat(char []);
+    
+    //Precondición:
+    //Postcondición:
+    static void bajavehiculo(vehiculo_inf);
+    
+    //Precondición: Recibe una ID (que debe ser de un usuario ya existente bajo comprobación del administrador).
+    //Postcondición: Se habrá introducido un nuevo vehículo en el listado presente el fichero vehiculo.txt
+    static void altavehiculo(tPerfiles);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED

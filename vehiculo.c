@@ -8,6 +8,7 @@
 #include <locale.h>
 #include "vehiculo.h"
 #include "tipos.h"
+#include "perfiles.h"
 
    void cambiar_datos_veh(vehiculo_inf vehiculo, FILE *veh_txt){
         int opcion, i=0;
@@ -39,8 +40,9 @@
         	escribir_fichero(vehiculo, veh_txt);
     }
 
-    void introducir_datos_veh(vehiculo_inf vehiculo, FILE *veh_txt){
+    void introducir_datos_veh(vehiculo_inf vehiculo, tPerfiles usu){
 		int i;
+		FILE *veh_txt;
 		
     	printf("Rellene el formulario a continuación, por favor: \n");
     	
@@ -185,3 +187,65 @@
             i=comprobar_validez_mat(matricula);
 		}while(i!=1);
     }
+    
+    void menu_registro_vehiculo(tPerfiles usuario){
+		vehiculo_inf veh;
+		int S_N;
+		
+		do{
+			printf("¿Tiene planeado llevar a gente en coche?\n \n<1>Sí\n<2> No\n\n");
+			if(scanf("%i",&S_N)!=1){
+				fflush(stdin);
+				printf("Error: introduzca una entrada válida");
+				S_N=-1;
+			}
+			else{
+				switch(S_N){
+					case 1: introducir_datos_veh(veh, usuario); 
+					case 2: break;
+					default: printf("\nIntroduzca 1 o 2 según tenga coche y vaya a traer y llevar gente de la ESI"); break;
+				}
+			}
+		}while(S_N!=1&&S_N!=2);
+	}
+
+	void admin_veh(tPerfiles usu){
+		int op;
+		
+		do{
+			printf("¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.");
+			if(scanf("%i",&op)!=1){
+				fflush(stdin);
+				printf("Error: introduzca una entrada válida.");
+				op=-1;
+			}
+			else{
+				switch(op){
+					case 1: break;
+					case 2: break;
+					case 3: break;
+					case 4: break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); break;
+				}
+			}
+		}
+	}
+	
+	void usuario_veh(){
+		
+		
+	}
+	
+	static void bajavehiculo(vehiculo_inf veh){
+		
+		
+	}
+	
+	static void altavehiculo(char ID[IDUSU]){
+		vehiculo_inf veh;
+		
+		strcpy(veh.id_usuario,ID);
+		introducir_datos_veh(veh);
+	}
+	
+	
