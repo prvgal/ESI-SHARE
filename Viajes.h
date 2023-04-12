@@ -7,6 +7,7 @@
 #include <string.h>
 #include "tipos.h"
 
+#define MAX_VIAJES 80
 #define FECHA 11
 #define MATRICULA 8
 #define IMPORTE 7
@@ -77,6 +78,16 @@ static void modviaje(viajes *viaje, int posViaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Habrá imprimido en un fichero la estructura viaje
-static void imprimirviajes(viajes *viaje);
+void imprimirviajes(viajes *viaje);
+
+void leerviajes(viajes *viaje);
+
+void listarviajes(viajes *viaje);
+
+int numeroviajes();
+
+void reservarviaje(viajes *viaje);
+
+viajes *CrearListaViajes(void);
 
 #endif
