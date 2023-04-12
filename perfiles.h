@@ -4,76 +4,56 @@
 #define ID 5
 #define MAX_N 21
 #define MAX_L 21
-#define MAX_PU 13
+#define MAX_PU 14
 #define MAX_U 6
 #define MAX_C 9
+#define MAX_E 10
+#define MAX_LIN_FICH 70
 
 typedef struct {
     char Id_usuario[ID];        // 4 digitos.
     char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
     char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
-    char Perfil_usuario[MAX_PU];      // True para administrador y False para usuario.
-    char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema
-    char Contrasena[MAX_C];     // 8 caracteres mas el \0.
-} tPerfiles;
+    char Perfil_usuario[MAX_PU];    // 13 caracteres (administrador) incluyendo el \0. Verifica si el usuario es administrador o de tipo usuario
+    char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema.
+    char Contrasena[MAX_C];     // 8 caracteres mas el \0. 
+    char estado;     // Dos posibles estados, activo (1) / bloqueado (0). 
+} tPerfil;
 
-/* FUNCIONES PUBLICAS */
+int Inicio(tPerfil *infoper);
+void Menu(tPerfil *infoper, int posUsua);
+void MenuAdmin(tPerfil *infoper, int posUsua);
+void MenuUser(tPerfil *infoper, int posUsua);
+static void Perfil(tPerfil *infoper, int posUsua);
+static void Usuarios(tPerfil *infoper);
+void ImprimirESISHARE(void);
 
-/* Precondición: recibe un vector de estructuras tipo tPefiles el cual debe tener ¿¿un tamaño minimo?? */
-/* Poscondición: almacena en infoper los datos de Usuarios.txt*/
-void CargarPerfiles(tPerfiles *infoper);
+tPerfil *CrearListaDePerfiles(void);
+void ReservarNuevoPerfil(tPerfil *infoper);
+void CargarPerfiles(tPerfil *infoper);
 
-/* Precondición: recibe un vector de estructuras de tipo tPerfiles. */
-/* Poscondición: redimensiona el vector de estructuras tPerfiles para un nuevo elemento. */
-void ReservarPerfil(tPerfiles *infoper);
+int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos);
+int SignUp(tPerfil *infoper);
+void AltaUsuario(tPerfil *infoper);
+void BajaUsuario(tPerfil *infoper);
 
-/* Precondición: recibe un vector de estructuras de tipo tPerfiles el cual debe tener un tamaño mínimo. */
-/* Poscondición: introduce en el vector de estructuras de tipo tPerfiles los valores necesarios. */
-void RegistrarPerfil(tPerfiles *infoper);
-
-
-/* Precondición: recibe un vector de estructuras tipo tPerfiles y una cadena de caracteres que debe contener la ID de usuario*/
-/* Poscondición: imprime por pantalla todos los datos que hay en el registro */
-void ListarRegistro(tPerfiles *infoper, char id[ID]);
-
-/* Precondición: recibe un vector de estructuras de tipo tPerfiles el cual debe tener un tamaño mínimo y una cadena de caracteres (ID). */
-/* Poscondición: modifica algún campo de la estructura indicado por el usuario. */
-void ModificarCamposUsuario(tPerfiles *infoper, char id[ID]);
-
-// void LeerFicheroEnEstructura(tPerfiles *infoper, unsigned int numPerfiles);
-
-/* Precondición: recibe una cadena de caracteres(ID), el numero, se introducirá el número para el que se desea generar la ID. 
-                 Debe ser mayor o igual a cero. Y el numero de dígitos de la ID, debe ser mayor o igual a cero. */
-/* Poscondición: inicializa la cadena de caracteres con una ID, por ejemplo, si es el usuario
-                 18, en el vector id estará almacenado lo siguiente --> |0|0|1|8|. */
+void ListarPerfiles(tPerfil *infoper);
+void ModificarCamposUsuario(tPerfil *infoper, int pos);
+void ModificarCamposAdmin(tPerfil *infoper);
+int LongitudVectorEstructuras(void);
+void EliminarSaltoLinea(char *cad);
+void LimpiarCadena(char *cad, int tam);
 void GenerarID(char *id, int num, int numDigitos);
+int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam);
+int RestablecerContrasena(tPerfil *infoper, char *user);
 
-/* Precondición: recibe una cadena de caracteres (ID) y el numero de dígitos (mayor o igual a cero) que contiene la ID. */
-/* Poscondición: imprime por la cadena de caracteres de numDigitos. */
-void ImprimirID(char *id, int numDigitos);
+void ObtenerNombreUsuario(tPerfil *infoper, char *nomUsuario);
+void ObtenerLocalidad(char *nomLocalidad);
+void ObtenerUsuario(tPerfil *infoper, char *usuario);
+void ObtenerContrasena(char *contrasena);
 
-
-/* FUNCIONES NO EXPORTABLES*/
-
-/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero que indicará la posición del usuario en infoper. */
-/* Poscondición: Cambia los datos almacenados de Nomb_usuario en la estructura infoper de la posición posUsuario. */
-static void CambiarNombre(tPerfiles *infoper, int posUsuario);
-
-/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero que indicará la posición del usuario en infoper. */
-/* Poscondición: Cambia los datos almacenados de Localidad en la estructura infoper de la posición posUsuario. */
-static void CambiarLocalidad(tPerfiles *infoper, int posUsuario);
-
-/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero que indicará la posición del usuario en infoper. */
-/* Poscondición: Cambia los datos almacenados de Usuario en la estructura infoper de la posición posUsuario. */
-static void CambiarUsuarioAcceso(tPerfiles *infoper, int posUsuario);
-
-/* Precondición: Recibe un vector de estructuras de tipo tPerfiles y un entero que indicará la posición del usuario en infoper. */
-/* Poscondición: Cambia los datos almacenados de Contrasena en la estructura infoper de la posición posUsuario. */
-static void CambiarContrasena(tPerfiles *infoper, int posUsuario);
-
-/* Precondición: recibe un vector de estructuras ya inicializado y una cadena de caracteres (ID). */
-/* Poscondición: devuelve la posición en la que se encuentra el usuario con ID (char id[ID]) dentro del vector de estructuras infoper */
-static int PosicionUsuario(tPerfiles *infoper, char id[ID]);
+void PreguntarUsuario(char *user);
+void PreguntarContrasena(char *password);
 
 
 #endif
