@@ -6,26 +6,18 @@
 #include "tipos.h"
 
 viajes *viaje;
-int posViaje = 0;
-int numvector = 0;
+int posViaje = 2;
 int Iplazas = 4;
+int numviajes;
 
 int main(){     //Main temporal para probar que funciona correctamente
+    viaje = CrearListaViajes();
 
-    if (numvector == 0){
-
-        viaje = (viajes*)malloc(sizeof(viajes));
-
-        numvector = 1;
-    }
-    else{
-
-        viaje = (viajes*)realloc(viaje, (numvector + 1)*sizeof(viajes));
-        
-        numvector += 1;
-    }
+    reservarviaje(viaje);
 
     strcpy(viaje[posViaje].matricula, "8291JDK");
+
+    leerviajes(viaje);
 
     generar_ID_viaje(viaje, posViaje);
 
@@ -46,6 +38,8 @@ int main(){     //Main temporal para probar que funciona correctamente
     modviaje(viaje, posViaje);
 
     imprimirviajes(viaje);
+
+    listarviajes(viaje);
 
     free(viaje);
     return 0;
@@ -363,11 +357,16 @@ static void modviaje(viajes *viaje, int posViaje){
         printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
 }
 
-static void imprimirviajes(viajes *viaje){
-    int i;
+void imprimirviajes(viajes *viaje){
+    int i, tamoriginal = numeroviajes();
     char aux [11];
 
     FILE *vf;
+
+    vf = fopen("Viajes.txt", "w");
+
+    fclose(vf);
+
     vf = fopen("Viajes.txt", "a");
 
     if(vf == NULL){
@@ -375,7 +374,7 @@ static void imprimirviajes(viajes *viaje){
         exit(1);
     }
 
-    for(i = 0; i <= posViaje; i++){
+    for(i = 0; i < tamoriginal + 1; i++){
         if(viaje[i].estado.abierto == 1){
             strcpy(aux, "abierto");
         }
@@ -391,9 +390,157 @@ static void imprimirviajes(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
         }
-        fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+        if(tamoriginal + 1 == i + 1){
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+        }
+        else
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
     fclose(vf);
+}
+
+void leerviajes(viajes *viaje){
+    int i;
+    char aux[11];
+
+    FILE *vf;
+    char buff[MAX_VIAJES];
+
+    vf = fopen("Viajes.txt", "r");
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < numeroviajes(); i++){
+        if(fgets(buff, MAX_VIAJES, vf) != NULL){
+            buff[strcspn(buff, "\n")] = '\0';
+            sscanf(buff, "%i-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]", &viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+        }
+
+        if(strcmp(aux, "abierto") == 0){
+            viaje[i].estado.abierto = True;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "cerrado") == 0){
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = True;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "iniciado") == 0){
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = True;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "finalizado") == 0){
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = True;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "anulado") == 0){
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = True;
+            continue;
+        }
+    }
+}
+
+void listarviajes(viajes *viaje){
+    int i;
+    char aux[11];
+
+    printf("Viajes:\n");
+
+    for(i = 0; i < numeroviajes(); i++){
+        if(viaje[i].estado.abierto == 1){
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+    }
+}
+
+int numeroviajes(){
+    char aux[MAX_VIAJES];
+    FILE *vf;
+    int i = 1;
+
+    vf = fopen("Viajes.txt", "r");
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura del fichero.");
+        exit(1);
+    }
+
+    while(!feof(vf)){
+        fgets(aux, MAX_VIAJES, vf);
+        i++;
+    }
+
+    rewind(vf); 
+    fclose(vf);
+
+    return i-1;
+}
+
+viajes *CrearListaViajes(void){
+    viajes *viaje;
+
+    viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en asignacion de memoria");
+        exit(1);
+    }
+
+    return viaje;
+}
+
+void reservarviaje(viajes *viaje){
+
+    if(numeroviajes() == 0)
+        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
+    else
+        viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en la asignacion de memoria.");
+        exit(1);
+    }
 }
