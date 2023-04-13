@@ -174,6 +174,19 @@
 	
 	}
 
+	int comprobar_validez_id(char ID[]){
+		int i;
+		
+		if (strlen(ID)!=IDUSU)
+			return 0;
+		for(i=0;i++;i<IDUSU){
+			if(vehiculo.id_usuario[i]!=1&&vehiculo.id_usuario[i]!=2&&vehiculo.id_usuario[i]!=3&&vehiculo.id_usuario[i]!=4&&
+				vehiculo.id_usuario[i]!=5&&vehiculo.id_usuario[i]!=6&&vehiculo.id_usuario[i]!=7&&vehiculo.id_usuario[i]!=8&&
+				vehiculo.id_usuario[i]!=9&&vehiculo.id_usuario[i]!=0)
+				return 0;
+		}
+		return 1;
+	}
 	static void pedir_matricula(char *matricula){
         int i;
 
@@ -210,10 +223,10 @@
 	}
 
 	void admin_veh(tPerfiles usu){
-		int op;
+		int op,i=0;
 		
 		do{
-			printf("¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.");
+			printf("¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <0> Salir.");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
 				printf("Error: introduzca una entrada válida.");
@@ -221,14 +234,15 @@
 			}
 			else{
 				switch(op){
-					case 1: break;
-					case 2: break;
+					case 1: alta_vehiculo(); break;
+					case 2: baja_vehiculo_admin(); break;
 					case 3: break;
 					case 4: break;
-					default: printf("Introduzca una entrada dentro de la lista dada."); break;
+					case 0: exit(1); break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
 				}
 			}
-		}
+		}while(op!=1&&op!=2&&op!=3&&op!=4);
 	}
 	
 	void usuario_veh(){
@@ -236,16 +250,126 @@
 		
 	}
 	
-	static void bajavehiculo(vehiculo_inf veh){
-		
-		
-	}
-	
-	static void altavehiculo(char ID[IDUSU]){
+	static void alta_vehiculo(){
 		vehiculo_inf veh;
+		char ID[IDUSU];
+	
+		do{
+			printf("\n\nIntroduzca la ID a la que pertenecerá el vehículo: ");
+			gets(ID);
+			if(comprobar_validez_id(ID)==0)
+				printf("\nIntroduzca una ID válida.");
+		}while(comprobar_validez_id(ID)!=1);
 		
 		strcpy(veh.id_usuario,ID);
 		introducir_datos_veh(veh);
 	}
 	
+	static void baja_vehiculo_admin(vehiculo_inf *vehiculo){
+		FILE *pf; 
+    	char mat[IDMAT];
+    	int i, j, pos, tamOriginal = LongitudVectorEstructurasVehiculo(); 
+
+	    printf("\n####################################################################\n");
+	    printf("#          Configuracion del Sistema de Bajas de Vehículo            #\n");
+	    printf("####################################################################\n\n");
+	    
+	    Listar_vehiculos(vehiculo);
 	
+	    pf = fopen("vehiculo.txt", "w");
+	
+	    fclose(pf);  // Elminamos su contenido
+	
+	    pf = fopen("vehiculo.txt", "a");
+	
+	    if(pf == NULL){
+	        fprintf(stderr, "Error en la apertura de archivos.");
+	        exit(1);
+	    }
+	    
+	    do{
+	        printf("\nIndique la ID del usuario que desea dar de baja: ");
+	        fflush(stdin);
+	        fgets(id, ID, stdin);
+	        
+	        if(!ValidarID(vehiculo, id, &pos, tamOriginal))
+	            fprintf(stderr, "La ID no se encuentra disponible.\n");
+	        
+	        for(i = 0; i < tamOriginal; i++){
+	
+	                for(j = 0; j < tamOriginal; j++){
+	                    if(j+1 == tamOriginal)
+	                        fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+	                    else
+	                        fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+	
+	                    }
+	                exit(1);
+	            }
+	        }
+	
+	    } while(!validar_id_veh(vehiculo, id, &pos, tamOriginal));
+	
+	    system("cls");
+	
+	    for(; pos < tamOriginal-1; pos++)
+	        vehiculo[pos]= vehiculo[pos+1];
+	
+	    infoper = (vehiculo_inf *)realloc(vehiculo, (tamOriginal-1)*sizeof(vehiculo_inf));
+	
+	    if( == NULL){
+	        printf("Error en asignacion de memoria");
+	        exit(1);
+	    }
+	
+	    // Regeneramos las IDs
+	    for(i = 0; i < tamOriginal-1; i++)
+	        GenerarID(vhiculo[i].id_usuario, i+1, ID-1);    
+	   
+	    // Reescribimos el archivo.
+	    for(i = 0; i < tamOriginal-1; i++){
+	        if(i+1 == tamOriginal-1)
+	            fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+	        else
+	            fprintf(pf, "%s-%s-%i-%s\n", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+	
+	    }
+	
+	    fclose(pf);
+	}
+
+	static int LongitudVectorEstructurasVehiculo(){
+	    // Sabemos que el fichero vehiculo.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
+	    char aux[MAX_LIN_FICHVEH];   // MAX_LIN_FICHVEH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
+	    FILE *fich;
+	    int i = 1;
+	
+	    fich = fopen("vehiculo.txt", "r");
+	
+	    if(fich == NULL){
+	        fprintf(stderr, "Error en la apertura del fichero.");
+	        exit(1);
+	    }
+	
+	    while(!feof(fich)){
+	        fgets(aux, MAX_LIN_FICHVEH, fich);
+	        i++;
+	    }
+	
+	    rewind(fich); 
+	    fclose(fich);
+	
+	    return i;
+	}
+		
+	static int validar_id_veh(vehiculo_inf *vehiculo, char id[ID], int *pos_usu, int tam){
+	    int i, boole = 0;
+	
+	    for(i = 0; i < tam && !boole; i++){
+	        if(!strcmp(vehiculo[i].id_usuario, id))
+	            boole = 1;
+	    }
+	
+	    *pos_usu = i-1;
+	
+	    return boole;

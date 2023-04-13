@@ -9,6 +9,7 @@
 #define IDMAT 8
 #define IDUSU 5
 #define LONGVEC 5
+#define MAX_LIN_FICHVEH 65
 
     typedef struct{
         char id_mat[IDMAT];
@@ -46,7 +47,7 @@
     
     //Precondición: 
     //Postcondición:
-    void menu_registro_vehiculo(tPerfiles)
+    void menu_registro_vehiculo(tPerfiles);
 
     //*******FUNCIONES PRIVADAS*******
 
