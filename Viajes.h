@@ -33,6 +33,7 @@ typedef struct{
     char importe [IMPORTE];         //Entre 0 y 15 € por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
     logico hoy;                     //Indica si la fecha introducida es hoy
+    char anular;                    //Indica si quiere anular un viaje (S) o no (N)
 } viajes;
 
 //FUNCIONES PRIVADAS:
@@ -76,10 +77,15 @@ static void estado(viajes *viaje, int posViaje);
 //Postcondición: Se habrá modificado algo en la estructura
 static void modviaje(viajes *viaje, int posViaje);
 
+
 //FUNCIONES PÚBLICAS:
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
-//Postcondición: Habrá imprimido en un fichero la estructura viaje
+//Postcondición: Habrá imprimido en un fichero un nuevo viaje de la estructura viajes
+void imprimirnuevoviaje(viajes *viaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habrá imprimido en un fichero la estructura viajes
 void imprimirviajes(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
@@ -90,14 +96,35 @@ void leerviajes(viajes *viaje);
 //Postcondición: Imprime por pantalla el contenido de cada posición de la estructura viajes
 void listarviajes(viajes *viaje);
 
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Imprime por pantalla los viajes que estén en estado abierto
+void listarviajesabiertos(viajes *viaje);
+
 //Postcondición: Devuelve el número de lineas que tiene el fichero
 int numeroviajes(void);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
-//Postcondición: Redimensiona la estructura de viajes a un tamaño más
-void reservarviaje(viajes *viaje);
+//Postcondición: Redimensiona la estructura igual al número de viajes actuales del fichero Viajes.txt
+void reservarviajes(viajes *viaje);
 
 //Postcondición: Crea una estructura de viajes
 viajes *CrearListaViajes(void);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Postcondición: Imprime por pantalla el menú de opciones del usuario
+void menuviajesUsu(viajes *viaje, int posViaje);
+
+//Precondición: Recibe un vector de estructras de tipo viajes
+//Postcondición: Redimensiona la estructura a un tamaño más que el número de viajes actuales del fichero Viajes.txt
+void reservarnuevoviaje(viajes *viaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondicón: Habrá añadido un viaje nuevo a la estructura viajes y lo habrá imprimido en el fichero Viajes.txt
+void publicarviaje(viajes *viaje);
+
+/*Precondición: Recibe un vector de estructuras de tipo viajes, un entero que indicará la posición del usuario en viaje
+y un operador que indicará si se ejecutará la función menuviajesUsu o menuviajesAdmin*/
+//Postcondición: Lleva a la función menuviajesUsu o menuviajesAdmin
+void menuviajes(viajes *viaje, int posViaje, int op);
 
 #endif
