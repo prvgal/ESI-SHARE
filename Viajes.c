@@ -5,41 +5,17 @@
 #include "Viajes.h"
 #include "tipos.h"
 
-viajes *viaje;
-int posViaje = 3;
+int posViaje;
 int Iplazas = 4;
 int numviajes;
 
 int main(){     //Main temporal para probar que funciona correctamente
+    viajes *viaje;
     viaje = CrearListaViajes();
 
-    reservarviaje(viaje);
+    publicarviaje(viaje);
 
-    strcpy(viaje[posViaje].matricula, "8291JDK");
-
-    leerviajes(viaje);
-
-    generar_ID_viaje(viaje, posViaje);
-
-    introducir_fecha(viaje, posViaje);
-
-    horas(viaje, posViaje);
-
-    viaje[posViaje].Nplazas = Iplazas;
-
-    plazas(viaje, posViaje);
-
-    tipo(viaje, posViaje);
-
-    importe(viaje, posViaje);
-
-    estado(viaje, posViaje);
-
-    modviaje(viaje, posViaje);
-
-    imprimirviajes(viaje);
-
-    listarviajes(viaje);
+    listarviajesabiertos(viaje);
 
     free(viaje);
     return 0;
@@ -239,7 +215,6 @@ static void importe(viajes *viaje, int posViaje){
 
 static void estado(viajes *viaje, int posViaje){
     int minutos_llegada, minutos_inicio, minutos_actual, dia, mes, ano, hora, minuto;
-    char anular;
 
     time_t fecha_actual = time(NULL);
     struct tm* fecha_local = localtime(&fecha_actual);
@@ -303,14 +278,7 @@ static void estado(viajes *viaje, int posViaje){
         viaje[posViaje].estado.anulado = False;
     }
 
-    do
-    {
-        fflush(stdin);
-        printf("Desea anular el viaje %i? (S/N): ", viaje[posViaje].ID);
-        scanf("%c", &anular);
-    } while (anular != 'S' && anular != 'N');
-
-    if(anular == 'S'){
+    if(viaje[posViaje].anular == 'S'){
         viaje[posViaje].estado.abierto = False;
         viaje[posViaje].estado.cerrado = False;
         viaje[posViaje].estado.iniciado = False;
@@ -357,7 +325,7 @@ static void modviaje(viajes *viaje, int posViaje){
         printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
 }
 
-void imprimirviajes(viajes *viaje){
+void imprimirnuevoviaje(viajes *viaje){
     int i, tamoriginal = numeroviajes();
     char aux [11];
 
@@ -391,6 +359,52 @@ void imprimirviajes(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal + 1 == i + 1){
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+        }
+        else
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+    }
+    fclose(vf);
+}
+
+void imprimirviajes(viajes *viaje){
+    int i, tamoriginal = numeroviajes();
+    char aux [11];
+
+    FILE *vf;
+
+    vf = fopen("Viajes.txt", "w");
+
+    fclose(vf);
+
+    vf = fopen("Viajes.txt", "a");
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < tamoriginal; i++){
+        if(viaje[i].estado.abierto == 1){
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        if(tamoriginal == i + 1){
             fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
@@ -473,7 +487,7 @@ void listarviajes(viajes *viaje){
     int i;
     char aux[11];
 
-    printf("Viajes:\n");
+    printf("\nLista de todos los viajes:\n\n");
 
     for(i = 0; i < numeroviajes(); i++){
         if(viaje[i].estado.abierto == 1){
@@ -490,6 +504,34 @@ void listarviajes(viajes *viaje){
         }
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
+        }
+        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux);
+    }
+}
+
+void listarviajesabiertos(viajes *viaje){
+    int i;
+    char aux[11];
+
+    printf("\nViajes abiertos:\n\n");
+
+    for(i = 0; i < numeroviajes(); i++){
+        if(viaje[i].estado.abierto == 1){
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            continue;
+        }
+        if(viaje[i].estado.iniciado == 1){
+            continue;
+        }
+        if(viaje[i].estado.finalizado == 1){
+            continue;
+        }
+        if(viaje[i].estado.anulado == 1){
+            continue;
         }
         printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
@@ -533,7 +575,7 @@ viajes *CrearListaViajes(void){
     return viaje;
 }
 
-void reservarviaje(viajes *viaje){
+void reservarnuevoviaje(viajes *viaje){
 
     if(numeroviajes() == 0)
         viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
@@ -544,4 +586,100 @@ void reservarviaje(viajes *viaje){
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
+}
+
+void reservarviajes(viajes *viaje){
+
+    if(numeroviajes() == 0)
+        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
+    else
+        viaje = (viajes *)realloc(viaje, (numeroviajes())*sizeof(viajes));
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en la asignacion de memoria.");
+        exit(1);
+    }
+}
+
+void menuviajesUsu(viajes *viaje, int posViaje){
+    int op;
+
+    system("cls");
+
+    do{
+    printf("####################################\n");
+    printf("#              VIAJES              #\n");
+    printf("####################################\n\n");
+
+    reservarviajes(viaje);
+    leerviajes(viaje);
+    estado(viaje, posViaje);
+    imprimirviajes(viaje);
+    listarviajesabiertos(viaje);
+
+    printf("\nSeleccione que desea hacer:\n\n");
+    printf("<1> Unirse a un viaje.\n");
+    printf("<2> Publicar un nuevo viaje.\n");
+    printf("<3> Editar un viaje.\n");
+    printf("<0> Volver al menu principal.\n\n");
+
+    if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.");
+        } else{
+
+            switch(op){
+                //case 1: MenuUser(infoper, posViajes); break;
+                case 2: publicarviaje(viaje); break;
+                // case 3: Vehiculos(); break;
+                case 0: break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+}
+
+void publicarviaje(viajes *viaje){
+    reservarnuevoviaje(viaje);
+
+    int posViaje = numeroviajes();
+
+    strcpy(viaje[posViaje].matricula, "8291JDK");
+
+    leerviajes(viaje);
+
+    generar_ID_viaje(viaje, posViaje);
+
+    introducir_fecha(viaje, posViaje);
+
+    horas(viaje, posViaje);
+
+    viaje[posViaje].Nplazas = Iplazas;
+
+    plazas(viaje, posViaje);
+
+    tipo(viaje, posViaje);
+
+    importe(viaje, posViaje);
+
+    estado(viaje, posViaje);
+
+    imprimirnuevoviaje(viaje);
+
+    listarviajes(viaje);
+}
+
+void menuviajes(viajes *viaje, int posViaje, int op){
+    static int auxi = 1;
+
+    if(auxi == 1){
+        viaje = CrearListaViajes();
+        auxi = 0;
+    }
+
+    if(op == 0)
+        menuviajesUsu(viaje, posViaje);
+    //else
+        //menuviajesAdmin(viaje, posViaje);
 }
