@@ -23,7 +23,7 @@ typedef struct{
 } estado_viajes;
 
 typedef struct{
-    int ID;                         //6 dígitos
+    int i_d;                        //6 dígitos
     char matricula [MATRICULA];     //Matrícula de vehícula usado para el viaje
     char fecha[FECHA];              //Formato dd/mm/aa
     char hora_inicio [HORA];        //Formato 24h - Mínimo 06:00
@@ -105,7 +105,7 @@ int numeroviajes(void);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Redimensiona la estructura igual al número de viajes actuales del fichero Viajes.txt
-void reservarviajes(viajes *viaje);
+viajes *reservarviajes(viajes *viaje);
 
 //Postcondición: Crea una estructura de viajes
 viajes *CrearListaViajes(void);
@@ -116,7 +116,7 @@ void menuviajesUsu(viajes *viaje, int posViaje);
 
 //Precondición: Recibe un vector de estructras de tipo viajes
 //Postcondición: Redimensiona la estructura a un tamaño más que el número de viajes actuales del fichero Viajes.txt
-void reservarnuevoviaje(viajes *viaje);
+viajes *reservarnuevoviaje(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondicón: Habrá añadido un viaje nuevo a la estructura viajes y lo habrá imprimido en el fichero Viajes.txt
