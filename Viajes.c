@@ -28,11 +28,11 @@ static void generar_ID_viaje(viajes *viaje, int posViaje){
 
     {
         srand(time(NULL));   //Inicializa la semilla del generador de números aleatorios
-        viaje[posViaje].ID = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un número aleatorio entre 0 y 999999
+        viaje[posViaje].i_d = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un número aleatorio entre 0 y 999999
 
         for(i=0; i < posViaje && p == 0; i++)    //Compara la ID generada con las otras existentes, si es igual a otra se genera una nueva
     {
-        if(viaje[posViaje].ID == viaje[i].ID){
+        if(viaje[posViaje].i_d == viaje[i].i_d){
             p = 1;
             printf("Hubo un error generando la ID del viaje.");
             printf("Generando una nueva ID...");
@@ -42,7 +42,7 @@ static void generar_ID_viaje(viajes *viaje, int posViaje){
     } while (p==1);
 
     printf("ID del viaje generada correctamente.\n");
-    printf("ID del viaje = %i\n", viaje[posViaje].ID);
+    printf("ID del viaje = %i\n", viaje[posViaje].i_d);
 }
 
 static void introducir_fecha(viajes *viaje, int posViaje){
@@ -179,10 +179,10 @@ static void plazas(viajes *viaje, int posViaje){
     if(viaje[posViaje].Nplazas != 0){
         viaje[posViaje].Nplazas -= 1;
 
-        printf("Quedan %i plazas libres en el viaje %i\n", viaje[posViaje].Nplazas, viaje[posViaje].ID);
+        printf("Quedan %i plazas libres en el viaje %i\n", viaje[posViaje].Nplazas, viaje[posViaje].i_d);
     }
     else
-    printf("No quedan plazas en el viaje %i\n", viaje[posViaje].ID);
+    printf("No quedan plazas en el viaje %i\n", viaje[posViaje].i_d);
 }
 
 static void tipo(viajes *viaje, int posViaje){
@@ -299,7 +299,7 @@ static void modviaje(viajes *viaje, int posViaje){
     if(viaje[posViaje].Nplazas == Iplazas){
         do
         {
-            printf("Seleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n", viaje[posViaje].ID);
+            printf("Seleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n", viaje[posViaje].i_d);
             scanf("%i", &op);
         } while (op != 1 && op != 2 && op != 3 && op != 4);
         
@@ -359,12 +359,12 @@ void imprimirnuevoviaje(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal + 1 == i + 1){
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
         }
         else
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
@@ -405,12 +405,12 @@ void imprimirviajes(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal == i + 1){
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
         }
         else
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
@@ -434,7 +434,7 @@ void leerviajes(viajes *viaje){
     for(i = 0; i < numeroviajes(); i++){
         if(fgets(buff, MAX_VIAJES, vf) != NULL){
             buff[strcspn(buff, "\n")] = '\0';
-            sscanf(buff, "%i-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]", &viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+            sscanf(buff, "%i-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]", &viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
         }
@@ -505,7 +505,7 @@ void listarviajes(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
         }
-        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
@@ -533,7 +533,7 @@ void listarviajesabiertos(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             continue;
         }
-        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].ID, viaje[i].matricula, viaje[i].fecha,
+        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
@@ -542,7 +542,7 @@ void listarviajesabiertos(viajes *viaje){
 int numeroviajes(void){
     char aux[MAX_VIAJES];
     FILE *vf;
-    int i = 1;
+    int i = 0;
 
     vf = fopen("Viajes.txt", "r");
 
@@ -551,21 +551,23 @@ int numeroviajes(void){
         exit(1);
     }
 
-    while(!feof(vf)){
-        fgets(aux, MAX_VIAJES, vf);
+    while(fgets(aux, MAX_VIAJES, vf) != NULL){
         i++;
     }
 
     rewind(vf); 
     fclose(vf);
 
-    return i-1;
+    return i;
 }
 
 viajes *CrearListaViajes(void){
     viajes *viaje;
 
-    viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
+    if(numeroviajes() == 0)
+        viaje = (viajes *)calloc(1, sizeof(viajes));
+    else
+        viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en asignacion de memoria");
@@ -575,30 +577,29 @@ viajes *CrearListaViajes(void){
     return viaje;
 }
 
-void reservarnuevoviaje(viajes *viaje){
+viajes *reservarnuevoviaje(viajes *viaje){
 
-    if(numeroviajes() == 0)
-        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
-    else
-        viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
+    viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
+
+    return viaje;
 }
 
-void reservarviajes(viajes *viaje){
+viajes *reservarviajes(viajes *viaje){
 
-    if(numeroviajes() == 0)
-        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
-    else
+    if(numeroviajes() != 0)
         viaje = (viajes *)realloc(viaje, (numeroviajes())*sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
+
+    return viaje;
 }
 
 void menuviajesUsu(viajes *viaje, int posViaje){
@@ -611,7 +612,7 @@ void menuviajesUsu(viajes *viaje, int posViaje){
     printf("#              VIAJES              #\n");
     printf("####################################\n\n");
 
-    reservarviajes(viaje);
+    viaje = reservarviajes(viaje);
     leerviajes(viaje);
     estado(viaje, posViaje);
     imprimirviajes(viaje);
@@ -641,7 +642,7 @@ void menuviajesUsu(viajes *viaje, int posViaje){
 }
 
 void publicarviaje(viajes *viaje){
-    reservarnuevoviaje(viaje);
+    viaje = reservarnuevoviaje(viaje);
 
     int posViaje = numeroviajes();
 
@@ -671,11 +672,11 @@ void publicarviaje(viajes *viaje){
 }
 
 void menuviajes(viajes *viaje, int posViaje, int op){
-    static int auxi = 1;
+    static int auxi = 0;
 
-    if(auxi == 1){
+    if(auxi == 0){
         viaje = CrearListaViajes();
-        auxi = 0;
+        auxi = 1;
     }
 
     if(op == 0)
