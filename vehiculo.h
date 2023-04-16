@@ -2,7 +2,9 @@
 #define PRUEBA_VEHICULOS_H_INCLUDED
 
 #include "vehiculo.h"
+#include "tipos.h"
 #include "perfiles.h"
+#include "Viajes.h"
 
 #define CARACTERES 51
 #define IDMAT 8
@@ -34,13 +36,18 @@
     // <3> Listar todos los vehículos <4> Modificar la información de un vehículo <5> Volver al menú de administrador principal.
 	void admin_veh();
 
-	//Precondición:
-    //Postcondición:
+	//Precondición: Recibe una variable estructura tipo tPerfil.
+    //Postcondición: El usuario habrá realizado alguna acción entre: <1> Dar un vehículo de alta <2> Dar uno de sus vehículos de baja <3> Ver información de sus vehículos <4> Modificar información de algún vehículo
+    //<0> Volver al menú principal.
     void usuario_veh(tPerfil);
 
     //Precondición: Recibe la ID del usuario que se esté registrando en el momento.
     //Postcondición: Se habrán registrado los vehículos que haya indicado el usuario al registrarse si es que tiene, se habrá continuado normalmente el registro en caso contrario.
     void menu_registro_vehiculo(tPerfil);
+
+    //Precondición: Recibe la ID del usuario que esté  registrado en el momento, así como una estructura de tipo viajes con algún dato básico.
+    //Postcondición: Guarda en la estructura el número de plazas y la matrícula de alguno de los vehículos del usuario, si tiene. Indica que el usuario no tiene vehículos registrados en su cuenta en caso contrario.
+    void proc_jose(char [], viajes);
 
     //*******FUNCIONES PRIVADAS*******
 
@@ -96,8 +103,8 @@
     static void listar_vehiculos();
 
     //Precondición: Recibe un matrícula con la que comparar los vehículos del fichero vehiculo.txt.
-    //Postcondición: Imprime por pantalla los vehiculos del fichero vehiculo.txt que coincidan con la matricula dada.
-    static void listar_vehiculos_mat(char []);
+    //Postcondición: Imprime por pantalla el vehiculo del fichero vehiculo.txt que coincida con la matricula dada, si lo encuentra. Devuelve True en tal caso, y False en el contrario.
+    static logico listar_vehiculos_mat(char []);
 
     //Precondición: Ninguna.
     //Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con una matrícula y un usuario pedidos en el procedimiento, modifica los datos de dicha línea a gusto del administrador.
@@ -136,8 +143,12 @@
     //Postcondición: El procedimiento habrá modificado la información ligada a la matrícula recibida.
     static void usuario_modificar_vehiculo(char [], char []);
 
-    //Precondición: Recibe la ID del usuario que estña en el perfil en el momento.
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
     //Postcondición: El procedimiento habrá recibido una matrícula y con ella habrá llamado al procedimiento usuario_modificar_vehiculo, cambiando la información ligada a la matrícula recibida.
     static void usuario_cambiar_informacion_vehiculo(char []);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: Devuelve el número de vehículos asociados a la ID recibida.
+    static int contar_vehiculos(char []);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED
