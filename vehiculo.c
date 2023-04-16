@@ -1,6 +1,6 @@
 
-                /* MÃ³dulo VehÃ­culos - Contiene toda la informaciÃ³n referente al vehÃ­culo de cada usuario, si lo tiene.
-                            Todos los datos pertinentes serÃ¡n almacenados en el fichero vehiculos.txt*/
+                /* Módulo Vehículos - Contiene toda la información referente al vehículo de cada usuario, si lo tiene.
+                            Todos los datos pertinentes serán almacenados en el fichero vehiculos.txt*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,62 +10,63 @@
 #include "tipos.h"
 #include "perfiles.h"
 
-   void cambiar_datos_veh(vehiculo_inf vehiculo, FILE *veh_txt){
+   static void cambiar_datos_veh(vehiculo_inf vehiculo){
         int opcion, i=0;
         logico dato_camb=0;
+        FILE *veh_txt;
 
         do{
         	system("cls");
-       		printf("\nÂ¿Desea cambiar algÃºn dato?\n\n");
-        	printf("   *) Matricula - 1\n   *) NÃºmero de plazas - 2\n   *)DescripciÃ³n del vehÃ­culo - 3\n   *) Salir - 0\n\n");
+       		printf("\n¿Desea cambiar algún dato?\n\n");
+        	printf("   *) Matricula - 1\n   *) Número de plazas - 2\n   *)Descripción del vehículo - 3\n   *) Salir - 0\n\n");
         	if(scanf("%d",&opcion)!=1){
         		fflush(stdin);
-        		printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
+        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
         		opcion=-1;
-        		i++; 
-				if(i>5) 
-					printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 segÃºn lo que necesites.\n");
-			}	
+        		i++;
+				if(i>5)
+					printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");
+			}
 			else{
 				switch(opcion){
                		case 1: pedir_matricula(vehiculo.id_mat); dato_camb=True; break;
                		case 2: pedir_plazas_veh(vehiculo.num_plazas); dato_camb=True; break;
                		case 3: inserta_descripcion(vehiculo.desc_veh); dato_camb=True; break;
                		case 0: break;
-               		default: printf("\nPor favor, introduzca un nÃºmero vÃ¡lido.\n"); i++; if(i>5) printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 segÃºn lo que necesites."); break;
+               		default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites."); break;
            		}
-			}   
-		}while(opcion!=0);     			
+			}
+		}while(opcion!=0);
         if(dato_camb==True)
         	escribir_fichero(vehiculo, veh_txt);
     }
 
-    void introducir_datos_veh(vehiculo_inf vehiculo, tPerfiles usu){
+    static void introducir_datos_veh(vehiculo_inf vehiculo){
 		int i;
 		FILE *veh_txt;
-		
-    	printf("Rellene el formulario a continuaciÃ³n, por favor: \n");
-    	
-    	printf("		*) MatrÃ­cula: ");
+
+    	printf("Rellene el formulario a continuación, por favor: \n");
+
+    	printf("		*) Matrícula: ");
     	do{
-    		printf("\n		- La matrÃ­cula debe ser espaÃ±ola (formato 0000AAA) - ");
+    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
     		fflush(stdin);
     		gets(vehiculo.id_mat);
     		i=comprobar_validez_mat(vehiculo.id_mat);
 		}while(i!=1);
-		
-    	printf("\n		*) NÃºmero de plazas del vehÃ­culo (sin contar el conductor): ");
+
+    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
     	scanf("%i", &vehiculo.num_plazas);
     	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
-    		printf("\n		Introduzca un nÃºmero realista de plazas (2-9):");
+    		printf("\n		Introduzca un número realista de plazas (2-9):");
     		scanf("%i", &vehiculo.num_plazas);
 		}
 
-		printf("\n		*) Si deseas, incluye una breve descripciÃ³n de tu coche (color, modelo y marca, etc... - mÃ¡x. 50 caracteres): ");
+		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
 		fflush(stdin);
     	gets(vehiculo.desc_veh);
     	while(strlen(vehiculo.desc_veh)>50){
-    		printf("\n		Introduzca una descripciÃ³n mÃ¡s corta (o ninguna)");
+    		printf("\n		Introduzca una descripción más corta (o ninguna)");
     		fflush(stdin);
     		gets(vehiculo.desc_veh);
 		}
@@ -76,9 +77,9 @@
 	void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
         char guion[2]={'-','\0'};
 		int i;
-		
+
         if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
-        	printf("Error al guardar la informaciÃ³n");
+        	printf("Error al guardar la información");
 			}
 		else{
 				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
@@ -105,7 +106,7 @@
 		char buf[1024];
 
 		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
-  	      	printf("Error al guardar la informaciÃ³n");
+  	      	printf("Error al guardar la información");
 		}
 
 		else{
@@ -117,15 +118,15 @@
 			}
 		}
 		fclose(veh_txt);
-	}		
-	
+	}
+
 	static void inserta_descripcion(char descripcion[CARACTERES]){
 
-        printf("Escribe una pequeÃ±a descripciÃ³n de tu vehÃ­culo (recuerda, 50 caracteres mÃ¡ximo) - marca, modelo, color, etc...");
+        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, etc...");
         fflush(stdin);
         gets(descripcion);
         while(strlen(descripcion)>50){
-    		printf("Introduzca una descripciÃ³n mÃ¡s corta (o ninguna)");
+    		printf("Introduzca una descripción más corta (o ninguna)");
     		fflush(stdin);
     		gets(descripcion);
 		}
@@ -139,18 +140,18 @@
     				cadena[i]='\0';
 			}
 	}
-	
+
 	static void pedir_plazas_veh(int plazas){
     	plazas=-1;
 		while(plazas<1||plazas>9){
-			printf("Indica el nÃºmero total de plazas de las que dispone el vehÃ­culo sin el conductor (introduzca un nÃºmero realista): ");
+			printf("Indica el número total de plazas de las que dispone el vehículo sin el conductor (introduzca un número realista): ");
         	scanf("%i",&plazas);
 		}
     }
 
 	static int comprobar_validez_mat(char matricula[]){
 		int i;
-		
+
 		if(strlen(matricula)!=IDMAT-1){
 			return 0;
 		}
@@ -160,7 +161,7 @@
 				if(matricula[i]!='1'&&matricula[i]!='2'&&matricula[i]!='3'&&matricula[i]!='4'&&matricula[i]!='5'&&matricula[i]!='6'&&matricula[i]!='7'&&matricula[i]!='8'
 				&&matricula[i]!='9'&&matricula[i]!='0'){
 					return 0;
-				}		
+				}
 			}
 			else{
 				if(matricula[i]!='A'&&matricula[i]!='B'&&matricula[i]!='C'&&matricula[i]!='D'&&matricula[i]!='E'&&matricula[i]!='F'&&matricula[i]!='G'&&matricula[i]!='H'&&matricula[i]!='I'&&matricula[i]!='J'
@@ -170,16 +171,20 @@
 				}
 				return 1;
 			}
-		}		
-	
+		}
+
 	}
 
-	int comprobar_validez_id(char ID[]){
+	static int comprobar_validez_id(char id_aux[]){
 		int i;
-		
-		if (strlen(ID)!=IDUSU)
+		vehiculo_inf vehiculo;
+
+		if (strlen(id_aux)!=IDUSU-1)
 			return 0;
-		for(i=0;i++;i<IDUSU){
+
+        strcpy(vehiculo.id_usuario, id_aux);
+
+		for(i=0;i++;i<IDUSU-1){
 			if(vehiculo.id_usuario[i]!=1&&vehiculo.id_usuario[i]!=2&&vehiculo.id_usuario[i]!=3&&vehiculo.id_usuario[i]!=4&&
 				vehiculo.id_usuario[i]!=5&&vehiculo.id_usuario[i]!=6&&vehiculo.id_usuario[i]!=7&&vehiculo.id_usuario[i]!=8&&
 				vehiculo.id_usuario[i]!=9&&vehiculo.id_usuario[i]!=0)
@@ -190,186 +195,239 @@
 	static void pedir_matricula(char *matricula){
         int i;
 
-        printf("Indica la matrÃ­cula de tu vehÃ­culo: ");
+        printf("Indica la matrícula de tu vehículo: ");
         fflush(stdin);
         gets(matricula);
         do{
-    		printf("Por favor, introduce una matrÃ­cula espaÃ±ola vÃ¡lida (sin espacios): ");
+    		printf("Por favor, introduce una matrícula española válida (sin espacios): ");
             fflush(stdin);
             gets(matricula);
             i=comprobar_validez_mat(matricula);
 		}while(i!=1);
     }
-    
-    void menu_registro_vehiculo(tPerfiles usuario){
-		vehiculo_inf veh;
-		int S_N;
-		
-		do{
-			printf("Â¿Tiene planeado llevar a gente en coche?\n \n<1>SÃ­\n<2> No\n\n");
-			if(scanf("%i",&S_N)!=1){
-				fflush(stdin);
-				printf("Error: introduzca una entrada vÃ¡lida");
-				S_N=-1;
-			}
-			else{
-				switch(S_N){
-					case 1: introducir_datos_veh(veh, usuario); 
-					case 2: break;
-					default: printf("\nIntroduzca 1 o 2 segÃºn tenga coche y vaya a traer y llevar gente de la ESI"); break;
-				}
-			}
-		}while(S_N!=1&&S_N!=2);
-	}
 
-	void admin_veh(tPerfiles usu){
+	void admin_veh(){
 		int op,i=0;
-		
+
 		do{
-			printf("Â¿QuÃ© desea hacer?\n <1> Dar un vehÃ­culo de alta.\n <2> Dar un vehÃ­culo de baja.\n <3> Lista de vehÃ­culos\n <4> Modificar vehÃ­culo.\n <0> Salir.");
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver información de un vehículo.\n <0> Volver.");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
-				printf("Error: introduzca una entrada vÃ¡lida.");
+				printf("Error: introduzca una entrada válida.");
 				op=-1;
 			}
 			else{
 				switch(op){
 					case 1: alta_vehiculo(); break;
-					case 2: baja_vehiculo_admin(); break;
-					case 3: break;
-					case 4: break;
-					case 0: exit(1); break;
-					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 segÃºn lo que necesites.\n"); break;
+					case 2: baja_vehiculo(); break;
+					case 3: listar_vehiculos(); break;
+					case 4: admin_modif_veh(); break;
+					case 5: break;
+					case 0: break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
 				}
 			}
-		}while(op!=1&&op!=2&&op!=3&&op!=4);
+		}while(op!=1&&op!=2&&op!=3&&op!=4&&op!=5&&op!=0);
 	}
-	
+
 	void usuario_veh(){
-		
-		
+
 	}
-	
+
 	static void alta_vehiculo(){
 		vehiculo_inf veh;
-		char ID[IDUSU];
-	
+		char id_aux[IDUSU];
+		int i, num_veh;
+
+        printf("\n\nIntroduzca la ID a la que pertenecerá el vehículo: ");
 		do{
-			printf("\n\nIntroduzca la ID a la que pertenecerÃ¡ el vehÃ­culo: ");
-			gets(ID);
-			if(comprobar_validez_id(ID)==0)
-				printf("\nIntroduzca una ID vÃ¡lida.");
-		}while(comprobar_validez_id(ID)!=1);
-		
-		strcpy(veh.id_usuario,ID);
-		introducir_datos_veh(veh);
-	}
-	
-	static void baja_vehiculo_admin(vehiculo_inf *vehiculo){
-		FILE *pf; 
-    	char mat[IDMAT];
-    	int i, j, pos, tamOriginal = LongitudVectorEstructurasVehiculo(); 
+            fflush(stdin);
+            gets(id_aux);
+            if(comprobar_validez_id(id_aux)==0)
+                printf("\nIntroduzca una ID válida, por favor - ");
+        }while(comprobar_validez_id(id_aux)!=1);
 
-	    printf("\n####################################################################\n");
-	    printf("#          Configuracion del Sistema de Bajas de VehÃ­culo            #\n");
-	    printf("####################################################################\n\n");
-	    
-	    Listar_vehiculos(vehiculo);
-	
-	    pf = fopen("vehiculo.txt", "w");
-	
-	    fclose(pf);  // Elminamos su contenido
-	
-	    pf = fopen("vehiculo.txt", "a");
-	
-	    if(pf == NULL){
-	        fprintf(stderr, "Error en la apertura de archivos.");
-	        exit(1);
-	    }
-	    
-	    do{
-	        printf("\nIndique la ID del usuario que desea dar de baja: ");
-	        fflush(stdin);
-	        fgets(id, ID, stdin);
-	        
-	        if(!ValidarID(vehiculo, id, &pos, tamOriginal))
-	            fprintf(stderr, "La ID no se encuentra disponible.\n");
-	        
-	        for(i = 0; i < tamOriginal; i++){
-	
-	                for(j = 0; j < tamOriginal; j++){
-	                    if(j+1 == tamOriginal)
-	                        fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
-	                    else
-	                        fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
-	
-	                    }
-	                exit(1);
-	            }
-	        }
-	
-	    } while(!validar_id_veh(vehiculo, id, &pos, tamOriginal));
-	
-	    system("cls");
-	
-	    for(; pos < tamOriginal-1; pos++)
-	        vehiculo[pos]= vehiculo[pos+1];
-	
-	    infoper = (vehiculo_inf *)realloc(vehiculo, (tamOriginal-1)*sizeof(vehiculo_inf));
-	
-	    if( == NULL){
-	        printf("Error en asignacion de memoria");
-	        exit(1);
-	    }
-	
-	    // Regeneramos las IDs
-	    for(i = 0; i < tamOriginal-1; i++)
-	        GenerarID(vhiculo[i].id_usuario, i+1, ID-1);    
-	   
-	    // Reescribimos el archivo.
-	    for(i = 0; i < tamOriginal-1; i++){
-	        if(i+1 == tamOriginal-1)
-	            fprintf(pf, "%s-%s-%i-%s", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
-	        else
-	            fprintf(pf, "%s-%s-%i-%s\n", vehiculo[i].id_mat, vehiculo[i].id_usuario, vehiculo[i].num_plazas, vehiculo[i].desc_veh);
-	
-	    }
-	
-	    fclose(pf);
+        strcpy(veh.id_usuario,id_aux);
+
+        printf("¿Cuántos vehículos quiere borrar del usuario? - ");
+        if(scanf("%d",&num_veh)!=1){
+        		fflush(stdin);
+        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		num_veh=-1;
+        		i++;
+				if(i>5)
+					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
+			}
+			else
+                for(i=0;i<num_veh;i++)
+                    introducir_datos_veh(veh);
 	}
 
-	static int LongitudVectorEstructurasVehiculo(){
-	    // Sabemos que el fichero vehiculo.txt tendrÃ¡ tantas lÃ­neas como la longitud del vector de estructuras infoper.
-	    char aux[MAX_LIN_FICHVEH];   // MAX_LIN_FICHVEH es el tamaÃ±o mÃ¡ximo que habrÃ¡ en cada linea, incluyendo los guiones
-	    FILE *fich;
-	    int i = 1;
-	
-	    fich = fopen("vehiculo.txt", "r");
-	
-	    if(fich == NULL){
-	        fprintf(stderr, "Error en la apertura del fichero.");
-	        exit(1);
-	    }
-	
-	    while(!feof(fich)){
-	        fgets(aux, MAX_LIN_FICHVEH, fich);
-	        i++;
-	    }
-	
-	    rewind(fich); 
-	    fclose(fich);
-	
-	    return i;
-	}
-		
-	static int validar_id_veh(vehiculo_inf *vehiculo, char id[ID], int *pos_usu, int tam){
-	    int i, boole = 0;
-	
-	    for(i = 0; i < tam && !boole; i++){
-	        if(!strcmp(vehiculo[i].id_usuario, id))
-	            boole = 1;
-	    }
-	
-	    *pos_usu = i-1;
-	
-	    return boole;
+    void baja_vehiculo(){
+        int i=0, num_veh;
+        char id_aux[IDUSU];
+
+        do{
+            printf("\nIntroduzca una ID de usuario válida: ");
+            gets(id_aux);
+        }while(comprobar_validez_id(id_aux)!=1);
+
+        printf("¿Cuántos vehículos quiere borrar del usuario?");
+        if(scanf("%d",&num_veh)!=1){
+        		fflush(stdin);
+        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		num_veh=-1;
+        		i++;
+				if(i>5)
+					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
+			}
+			else
+                borrar_vehiculos(id_aux, num_veh);
+    }
+
+    static void borrar_vehiculos(char cadena_a_borrar[], int num_veh){
+        FILE *file_temp;
+        FILE *file_original;
+        int i;
+
+        const char* archivo_original = "archivo.txt";
+        const char* archivo_temporal = "archivo_temp.txt";
+
+        // Abrimos el archivo original en modo lectura y escritura
+        if ((file_original=fopen(archivo_original, "r+"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        // Ahora abrimos el archivo temporal en modo escritura
+        if ((file_temp=fopen(archivo_temporal, "w"))==NULL){
+            printf("Error al abrir el archivo temporal.\n");
+            fclose(file_original);
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        i=0;
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos la segunda cadena
+            char segunda_cadena[IDUSU];
+            strncpy(segunda_cadena, linea+8, 4);
+            segunda_cadena[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+
+            // Comprobamos si hay coincidencia
+            if (strcmp(segunda_cadena, cadena_a_borrar)!=0&&i<num_veh){
+                fputs(linea, file_temp);
+                i++;
+            }
+        }
+
+        fclose(file_original);
+        fclose(file_temp);
+
+        if (remove(archivo_original)!=0){
+            printf("Error al eliminar el archivo original.\n");
+            exit(0);
+        }
+
+        if (rename(archivo_temporal, archivo_original)!=0){
+            printf("Error al renombrar el archivo temporal.\n");
+            exit(0);
+        }
+
+        printf("Línea borrada exitosamente.\n");
+    }
+
+    static void listar_vehiculos(){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+
+        if((veh=fopen("vehiculo.txt","r"))==NULL)
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+        else
+            while(fgets(linea,sizeof(linea),veh)!=NULL)
+                printf("%s",linea);
+        fclose(veh);
+    }
+
+    static void admin_modif_veh(){
+        char mat[IDMAT], usu[IDUSU];
+
+        do{
+            printf("\nIntroduzca una ID válida a buscar: ");
+            gets(usu);
+        }while(comprobar_validez_id(usu)!=1);
+
+        do{
+            printf("\nAhora introduzca una matrícula válida a buscar: ");
+            gets(mat);
+        }while(comprobar_validez_mat(mat)!=1);
+
+        buscar_modificar_vehiculo(mat, usu);
+    }
+
+    static void buscar_modificar_vehiculo(char matricula[IDMAT], char usuario[IDUSU]){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+        vehiculo_inf vehiculo;
+        int posicion;
+
+        strcpy(vehiculo.id_usuario, usuario );
+        strcpy(vehiculo.id_mat, matricula);
+
+        if((veh=fopen("vehiculo.txt","r+"))==NULL){
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+            exit(1);
+        }
+        else{
+            while (fgets(linea, sizeof(linea), veh) != NULL){
+                // Copiamos la matricula y el usuario de la línea a variables temporales
+                char usuario_actual[IDUSU];
+                char matricula_actual[IDMAT];
+                strncpy(usuario_actual, linea+8, 4);
+                usuario_actual[4] = '\0';
+                strncpy(matricula_actual, linea+8, 4);
+                matricula_actual[4] = '\0';
+
+                // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
+                if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
+                    // Calcular la posición de la línea en el archivo
+                    posicion = ftell(veh) - sizeof(linea);
+
+                    // Mover la posición del archivo para escribir la nueva línea
+                    fseek(veh, posicion, SEEK_SET);
+
+                    cambiar_datos_veh(vehiculo);
+                }
+            }
+        }
+        fclose(veh);
+    }
+
+    void menu_registro_vehiculo(tPerfil usuario){
+        int op, i, num_veh;
+        vehiculo_inf vehiculo[num_veh];
+
+        do{
+            system("cls");
+            printf("\n¿Tienes usted planeado llevar y/o traer otra gente de la ESI?\n\n");
+            printf("   <1> Sí.\n   <2> No\n\n");
+            if(scanf("%d",&op)!=1){
+                fflush(stdin);
+                printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+                op=-1;
+                i++;
+                if(i>5)
+                    printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");
+            }
+            else{
+                switch(op){
+                    case 1: if(scanf("%d",&op)!=1){ fflush(stdin); printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+                            op=-1; i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");} else{ for(i=0;i<num_veh;i++){
+                            strcpy(vehiculo[i].id_usuario, usuario.Id_usuario); introducir_datos_veh(vehiculo[i]);}}
+                    case 2: break;
+                    default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1 o 2 según lo que necesites."); break;
+                }
+            }
+        }while(op!=1&&op!=2);
+    }
