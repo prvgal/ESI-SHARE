@@ -1,5 +1,5 @@
 
-            /*Módulo de viaje: se guarda la ID única del viaje, la matrícula del vehículo, fecha y hora de inicio y llegada,
+            /*MÃ³dulo de viaje: se guarda la ID Ãºnica del viaje, la matrÃ­cula del vehÃ­culo, fecha y hora de inicio y llegada,
                         plazas libres, tipo de viaje, el importe y estado del viaje en el fichero Viajes.txt*/
 
 #include "Viajes.h"
@@ -9,14 +9,26 @@ int posViaje;
 int Iplazas = 4;
 int numviajes;
 
+int main(){     //Main temporal para probar que funciona correctamente
+    viajes *viaje;
+    viaje = CrearListaViajes();
+
+    viaje = menuviajesUsu(viaje);
+
+    listarviajesabiertos(viaje);
+
+    free(viaje);
+    return 0;
+}
+
 static void generar_ID_viaje(viajes *viaje, int posViaje){
     int i, p = 0;
 
     do
 
     {
-        srand(time(NULL));   //Inicializa la semilla del generador de números aleatorios
-        viaje[posViaje].i_d = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un número aleatorio entre 0 y 999999
+        srand(time(NULL));   //Inicializa la semilla del generador de nÃºmeros aleatorios
+        viaje[posViaje].i_d = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un nÃºmero aleatorio entre 0 y 999999
 
         for(i=0; i < posViaje && p == 0; i++)    //Compara la ID generada con las otras existentes, si es igual a otra se genera una nueva
     {
@@ -34,7 +46,7 @@ static void generar_ID_viaje(viajes *viaje, int posViaje){
 }
 
 static void introducir_fecha(viajes *viaje, int posViaje){
-    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es válida
+    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es vÃ¡lida
 
     time_t tiempo_actual;
     struct tm *fecha_actual;
@@ -42,7 +54,7 @@ static void introducir_fecha(viajes *viaje, int posViaje){
     do {
         printf("Introduzca una fecha en el formato Dia/Mes/Ano: ");
     
-        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 números esperados con "/" separándolos
+        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 nÃºmeros esperados con "/" separÃ¡ndolos
 
             while (getchar() != '\n');                  //se limpia el buffer de entrada
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
@@ -73,15 +85,15 @@ static void introducir_fecha(viajes *viaje, int posViaje){
             continue;
         }
 
-        if (ano > 2024 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el día, mes y año sean válidos
+        if (ano > fecha_actual->tm_year + 1901 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el dÃ­a, mes y aÃ±o sean vÃ¡lidos
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
 
             continue;
         }
 
-        dias_en_mes = 31;   //Se establece el valor por defecto de días en el mes
+        dias_en_mes = 31;   //Se establece el valor por defecto de dÃ­as en el mes
 
-        //Se calcula el número de días del mes introducido
+        //Se calcula el nÃºmero de dÃ­as del mes introducido
         if (mes == 2){
             dias_en_mes = (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28;
 
@@ -123,7 +135,7 @@ static void horas(viajes *viaje, int posViaje){
 
         minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;
 
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posViaje].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posViaje].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es vÃ¡lida
             sprintf(viaje[posViaje].hora_inicio, "%02d:%02d", horas, minutos);
 
             estado = 1;
@@ -144,7 +156,7 @@ static void horas(viajes *viaje, int posViaje){
 
         minutos_llegada = atoi(entrada+3) + atoi(entrada) * 60;
 
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es vÃ¡lida
             sprintf(viaje[posViaje].hora_llegada, "%02d:%02d", horas, minutos);
 
             if (minutos_llegada >= minutos_inicio + 5){
@@ -196,117 +208,137 @@ static void importe(viajes *viaje, int posViaje){
         scanf("%f", &aux);
     } while (aux < 0 || aux > 15);
 
-    sprintf(viaje[posViaje].importe, "%.2f€", aux);
+    sprintf(viaje[posViaje].importe, "%.2fâ‚¬", aux);
     
     printf("El importe introducido es de %.2f euros\n", aux);
 }
 
-static void estado(viajes *viaje, int posViaje){
-    int minutos_llegada, minutos_inicio, minutos_actual, dia, mes, ano, hora, minuto;
+static void estado(viajes *viaje){
+    int minutos_llegada, minutos_inicio, minutos_actual, dia, mes, ano, hora, minuto, i;
 
     time_t fecha_actual = time(NULL);
     struct tm* fecha_local = localtime(&fecha_actual);
     
     minutos_actual = fecha_local->tm_hour * 60 + fecha_local->tm_min; //Convierte la hora local a minutos
 
-    sscanf(viaje[posViaje].fecha, "%d/%d/%d", &dia, &mes, &ano);
+    for(i = 0; i < numeroviajes(); i++){
+
+    sscanf(viaje[i].fecha, "%d/%d/%d", &dia, &mes, &ano);
 
     if(dia == fecha_local->tm_mday && mes == fecha_local->tm_mon + 1 && ano == fecha_local->tm_year + 1900){
-        viaje[posViaje].hoy = True;
+        viaje[i].hoy = True;
     }
     else
-        viaje[posViaje].hoy = False;
+        viaje[i].hoy = False;
 
-    sscanf(viaje[posViaje].hora_inicio, "%d:%d", &hora, &minuto);
+    sscanf(viaje[i].hora_inicio, "%d:%d", &hora, &minuto);
 
     minutos_inicio = hora*60 + minuto;
 
-    sscanf(viaje[posViaje].hora_llegada, "%d:%d", &hora, &minuto);
+    sscanf(viaje[i].hora_llegada, "%d:%d", &hora, &minuto);
 
     minutos_llegada = hora*60 + minuto;
 
-    if(viaje[posViaje].Nplazas > 0 &&
+    if(viaje[i].Nplazas > 0 &&
     ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
-    (viaje[posViaje].hoy == True && minutos_actual < minutos_inicio))){
+    (viaje[i].hoy == True && minutos_actual < minutos_inicio))){
 
-        viaje[posViaje].estado.abierto = True;            //Abierto
-        viaje[posViaje].estado.cerrado = False;
-        viaje[posViaje].estado.iniciado = False;
-        viaje[posViaje].estado.finalizado = False;
-        viaje[posViaje].estado.anulado = False;
+        viaje[i].estado.abierto = True;            //Abierto
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
     }
 
-    if(viaje[posViaje].Nplazas == 0 && 
+    if(viaje[i].Nplazas == 0 && 
     ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
-    (viaje[posViaje].hoy == True && minutos_actual < minutos_inicio))){
+    (viaje[i].hoy == True && minutos_actual < minutos_inicio))){
 
-        viaje[posViaje].estado.abierto = False;
-        viaje[posViaje].estado.cerrado = True;            //Cerrado
-        viaje[posViaje].estado.iniciado = False;
-        viaje[posViaje].estado.finalizado = False;
-        viaje[posViaje].estado.anulado = False;
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = True;            //Cerrado
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
     }
 
-    if(viaje[posViaje].hoy == True && minutos_actual >= minutos_inicio && minutos_actual < minutos_llegada + 60){
+    if(viaje[i].hoy == True && minutos_actual >= minutos_inicio && minutos_actual < minutos_llegada + 60){
 
-        viaje[posViaje].estado.abierto = False;
-        viaje[posViaje].estado.cerrado = False;
-        viaje[posViaje].estado.iniciado = True;           //Iniciado
-        viaje[posViaje].estado.finalizado = False;
-        viaje[posViaje].estado.anulado = False;
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = True;           //Iniciado
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
     }
 
     if(((ano < fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes < fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia < fecha_local->tm_mday)) ||
-    (viaje[posViaje].hoy == True && minutos_actual >= minutos_llegada + 60))){
+    (viaje[i].hoy == True && minutos_actual >= minutos_llegada + 60))){
 
-        viaje[posViaje].estado.abierto = False;
-        viaje[posViaje].estado.cerrado = False;
-        viaje[posViaje].estado.iniciado = False;
-        viaje[posViaje].estado.finalizado = True;        //Finalizado
-        viaje[posViaje].estado.anulado = False;
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = True;        //Finalizado
+        viaje[i].estado.anulado = False;
     }
 
-    if(viaje[posViaje].anular == 'S'){
-        viaje[posViaje].estado.abierto = False;
-        viaje[posViaje].estado.cerrado = False;
-        viaje[posViaje].estado.iniciado = False;
-        viaje[posViaje].estado.finalizado = False;
-        viaje[posViaje].estado.anulado = True;            //Anulado
+    if(viaje[i].anular == 'S'){
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = True;            //Anulado
     }
 
-    printf("El estado abierto esta a %i\n", viaje[posViaje].estado.abierto);
-    printf("El estado cerrado esta a %i\n", viaje[posViaje].estado.cerrado);
-    printf("El estado iniciado esta a %i\n", viaje[posViaje].estado.iniciado);
-    printf("El estado finalizado esta a %i\n", viaje[posViaje].estado.finalizado);
-    printf("El estado anulado esta a %i\n", viaje[posViaje].estado.anulado);
+    printf("\nEl estado abierto esta a %i\n", viaje[i].estado.abierto);
+    printf("El estado cerrado esta a %i\n", viaje[i].estado.cerrado);
+    printf("El estado iniciado esta a %i\n", viaje[i].estado.iniciado);
+    printf("El estado finalizado esta a %i\n", viaje[i].estado.finalizado);
+    printf("El estado anulado esta a %i\n", viaje[i].estado.anulado);
+    }
 }
 
 static void modviaje(viajes *viaje, int posViaje){
     int op;
 
     if(viaje[posViaje].Nplazas == Iplazas){
-        do
+        if(viaje[posViaje].anular == 'S'){
+            printf("\nEste viaje ha sido anulado.\n");
+        }
+        else{
+            do
         {
-            printf("Seleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n", viaje[posViaje].i_d);
+            printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n\n", viaje[posViaje].i_d);
+            fflush(stdin);
             scanf("%i", &op);
         } while (op != 1 && op != 2 && op != 3 && op != 4);
         
         switch (op)
         {
-        case 1:
+        case 1: {
             introducir_fecha(viaje, posViaje);
             break;
-        
-        case 2:
+        }
+        case 2: {
             horas(viaje, posViaje);
             break;
-        
-        case 3:
+        }
+        case 3: {
             tipo(viaje, posViaje);
             break;
-        
-        case 4:
+        }
+        case 4: {
             importe(viaje, posViaje);
+            break;
+        }
+        case 5: {
+            estado(viaje);
+            if(viaje[posViaje].estado.iniciado == 1 || viaje[posViaje].estado.finalizado == 1)
+                printf("El viaje no se puede anular porque ya se ha iniciado.\n");
+            else
+                viaje[posViaje].anular = 'S';
+        }
+        }
+
+        estado(viaje);
         }
     }
     else
@@ -530,7 +562,7 @@ void listarviajesabiertos(viajes *viaje){
 int numeroviajes(void){
     char aux[MAX_VIAJES];
     FILE *vf;
-    int i = 1;
+    int i = 0;
 
     vf = fopen("Viajes.txt", "r");
 
@@ -539,21 +571,23 @@ int numeroviajes(void){
         exit(1);
     }
 
-    while(!feof(vf)){
-        fgets(aux, MAX_VIAJES, vf);
+    while(fgets(aux, MAX_VIAJES, vf) != NULL){
         i++;
     }
 
     rewind(vf); 
     fclose(vf);
 
-    return i-1;
+    return i;
 }
 
 viajes *CrearListaViajes(void){
     viajes *viaje;
 
-    viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
+    if(numeroviajes() == 0)
+        viaje = (viajes *)calloc(1, sizeof(viajes));
+    else
+        viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en asignacion de memoria");
@@ -563,45 +597,45 @@ viajes *CrearListaViajes(void){
     return viaje;
 }
 
-void reservarnuevoviaje(viajes *viaje){
+viajes *reservarnuevoviaje(viajes *viaje){
 
-    if(numeroviajes() == 0)
-        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
-    else
-        viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
+    viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
+
+    return viaje;
 }
 
-void reservarviajes(viajes *viaje){
+viajes *reservarviajes(viajes *viaje){
 
-    if(numeroviajes() == 0)
-        viaje = (viajes *)calloc(numeroviajes() + 1, sizeof(viajes));
-    else
+    if(numeroviajes() != 0)
         viaje = (viajes *)realloc(viaje, (numeroviajes())*sizeof(viajes));
 
     if(viaje == NULL){
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
+
+    return viaje;
 }
 
-void menuviajesUsu(viajes *viaje, int posViaje){
+viajes *menuviajesUsu(viajes *viaje){
     int op;
 
     system("cls");
+
+    viaje = reservarviajes(viaje);
+    leerviajes(viaje);
 
     do{
     printf("####################################\n");
     printf("#              VIAJES              #\n");
     printf("####################################\n\n");
 
-    reservarviajes(viaje);
-    leerviajes(viaje);
-    estado(viaje, posViaje);
+    estado(viaje);
     imprimirviajes(viaje);
     listarviajesabiertos(viaje);
 
@@ -618,7 +652,7 @@ void menuviajesUsu(viajes *viaje, int posViaje){
 
             switch(op){
                 //case 1: MenuUser(infoper, posViajes); break;
-                case 2: publicarviaje(viaje); break;
+                case 2: viaje = publicarviaje(viaje); break;
                 // case 3: Vehiculos(); break;
                 case 0: break;
                 default: printf("\nElige una de las opciones.\n"); break;
@@ -626,48 +660,57 @@ void menuviajesUsu(viajes *viaje, int posViaje){
         }
 
     } while(op != 0);
+
+    return viaje;
 }
 
-void publicarviaje(viajes *viaje){
-    reservarnuevoviaje(viaje);
+viajes *publicarviaje(viajes *viaje){
+    //if(numVehiculos > 0){
+        viaje = reservarnuevoviaje(viaje);
 
-    int posViaje = numeroviajes();
+        int posViaje = numeroviajes();
 
-    strcpy(viaje[posViaje].matricula, "8291JDK");
+        //printf("Seleccione el vehÃ­culo con el que se va a realizar el viaje:\n");
 
-    leerviajes(viaje);
+        strcpy(viaje[posViaje].matricula, "8291JDK");
 
-    generar_ID_viaje(viaje, posViaje);
+        leerviajes(viaje);
 
-    introducir_fecha(viaje, posViaje);
+        generar_ID_viaje(viaje, posViaje);
 
-    horas(viaje, posViaje);
+        introducir_fecha(viaje, posViaje);
 
-    viaje[posViaje].Nplazas = Iplazas;
+        horas(viaje, posViaje);
 
-    plazas(viaje, posViaje);
+        viaje[posViaje].Nplazas = Iplazas;
 
-    tipo(viaje, posViaje);
+        plazas(viaje, posViaje);
 
-    importe(viaje, posViaje);
+        tipo(viaje, posViaje);
 
-    estado(viaje, posViaje);
+        importe(viaje, posViaje);
 
-    imprimirnuevoviaje(viaje);
+        estado(viaje);
 
-    listarviajes(viaje);
+        imprimirnuevoviaje(viaje);
+
+        listarviajes(viaje);
+    //}
+    //else
+    //    printf("No puedes publicar un viaje porque no tienes ningÃºn vehÃ­culo registrado.\n");
+    return viaje;
 }
 
 void menuviajes(viajes *viaje, int posViaje, int op){
-    static int auxi = 1;
+    static int auxi = 0;
 
-    if(auxi == 1){
+    if(auxi == 0){
         viaje = CrearListaViajes();
-        auxi = 0;
+        auxi = 1;
     }
 
     if(op == 0)
-        menuviajesUsu(viaje, posViaje);
+        menuviajesUsu(viaje);
     //else
         //menuviajesAdmin(viaje, posViaje);
 }
