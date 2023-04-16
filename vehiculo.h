@@ -36,7 +36,7 @@
 
 	//Precondición:
     //Postcondición:
-    void usuario_veh();
+    void usuario_veh(tPerfil);
 
     //Precondición: Recibe la ID del usuario que se esté registrando en el momento.
     //Postcondición: Se habrán registrado los vehículos que haya indicado el usuario al registrarse si es que tiene, se habrá continuado normalmente el registro en caso contrario.
@@ -51,7 +51,7 @@
 
     //Precondición: El usuario habrá creado su propia cuenta, de manera el dato lógico "tienecoche" es igual a 1.
     //Postcondición: El usuario habrá cambiado algún dato acerca de su vehículo.
-    static void cambiar_datos_veh(vehiculo_inf);
+    //static void cambiar_datos_veh(vehiculo_inf);
 
     //Precondición: Recoge un vector de caracter o cadena de caracteres del campo id_mat del registro vehiculo, con lo que
     //debe estar habilitada la información del vehículo.
@@ -81,19 +81,23 @@
 
     //Precondición: Recibe la ID de un usuario (cadena) dada por un administrador para borrar su información de vehículo/s.
     //Postcondición: El vehículo/s asociado/s al usuario habrá/n sido borrado/s del listado en vehiculo.txt
-    static void borrar_vehiculos(char [], int );
+    static void admin_borrar_vehiculos(char [], int );
 
     //Precondición: Ninguna.
     //Postcondición: El administrador habrá introducido los datos necesarios para poder llamar a borrar_vehiculos y así borrar los vehículos deseados del listado.
-    static void baja_vehiculo();
+    static void admin_baja_vehiculo();
 
     //Precondición: Ninguna.
     //Postcondición: Se habrán introducido uno o más nuevos vehículos en el listado presente en el fichero vehiculo.txt, asociados a una ID dada por el administrador.
-    static void alta_vehiculo();
+    static void admin_alta_vehiculo();
 
     //Precondición: Debe existir el fichero vehiculo.txt.
     //Postcondición: Imprime por pantalla el contenido del fichero vehiculo.txt
     static void listar_vehiculos();
+
+    //Precondición: Recibe un matrícula con la que comparar los vehículos del fichero vehiculo.txt.
+    //Postcondición: Imprime por pantalla los vehiculos del fichero vehiculo.txt que coincidan con la matricula dada.
+    static void listar_vehiculos_mat(char []);
 
     //Precondición: Ninguna.
     //Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con una matrícula y un usuario pedidos en el procedimiento, modifica los datos de dicha línea a gusto del administrador.
@@ -101,11 +105,39 @@
 
     //Precondición: Recibe una ID de usuario y una matrícula (ambos cadenas) que han sido verificados previamente.
     //Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con la matrícula y el usuario, modifica los datos de dicha línea a gusto del administrador.
-    static void buscar_modificar_vehiculo(char [], char []);
+    static void admin_buscar_modificar_vehiculo(char [], char []);
 
     //Precondición: Recibe una matrícula dada por el administrador.
     //Postcondición: Busca y, si encuentra una línea del fichero Viajes.txt coincidente con la matrícula dada y tenga la etiqueta de "finalizado", imprime los datos de dicha línea por pantalla hasta que termine el fichero.
-    static void listar_viajes(char []);
+    static void viajes_veh(char []);
 
+    //Precondición: Ninguna.
+    //Postcondición: El procedimiento habrá pedido al usuario una matrícula para buscar y, en caso afirmativo, habrá impreso por pantalla todos los viajes finalizados en los que figure el vehículo con esa matrícula.
+    static void listar_viajes();
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: El procedimiento habrá realizado alguna de las tareas: <1> Dar un vehículo de alta <2> Dar uno de sus vehículo de baja <3> Modificar información de algún vehículo. <4> Ver información de sus vehículos.
+    //<0> Volver al menú anterior.
+    static void usuario_alta_vehiculo(char []);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento, así como una matrícula dada por el usuario.
+    //Postcondición: El procedimiento habrá borrado del registro el vehículo con la matrícula dada (sólo si es suyo), no hace nada en caso contrario.
+    static void usuario_borrar_vehiculo(char [], char []);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: El procedimiento habrá borrado del registro el vehículo con la matrícula dada dentro del mismo (sólo si es suyo), no hace nada en caso contrario.
+    static void usuario_baja_vehiculo(char []);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: El procedimiento habrá impreso la información de los vehículos que el usuario tenga dados de alta.
+    static void usuario_listar_vehiculos(char []);
+
+    //Precondición: Recibe una matrícula e ID de usuario (cadenas) con las que buscar en el fichero vehiculo.txt
+    //Postcondición: El procedimiento habrá modificado la información ligada a la matrícula recibida.
+    static void usuario_modificar_vehiculo(char [], char []);
+
+    //Precondición: Recibe la ID del usuario que estña en el perfil en el momento.
+    //Postcondición: El procedimiento habrá recibido una matrícula y con ella habrá llamado al procedimiento usuario_modificar_vehiculo, cambiando la información ligada a la matrícula recibida.
+    static void usuario_cambiar_informacion_vehiculo(char []);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED

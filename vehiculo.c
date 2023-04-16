@@ -11,7 +11,7 @@
 #include "perfiles.h"
 #include "Viajes.h"
 
-   static void cambiar_datos_veh(vehiculo_inf vehiculo){
+   /*static void cambiar_datos_veh(vehiculo_inf vehiculo){
         int opcion, i=0;
         logico dato_camb=0;
         FILE *veh_txt;
@@ -40,7 +40,7 @@
 		}while(opcion!=0);
         if(dato_camb==True)
         	escribir_fichero(vehiculo, veh_txt);
-    }
+    }*/
 
     static void introducir_datos_veh(vehiculo_inf vehiculo){
 		int i;
@@ -211,7 +211,7 @@
 		int op,i=0;
 
 		do{
-			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver información de un vehículo.\n <0> Volver.");
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver la información de un vehículo.\n <0> Volver.");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
 				printf("Error: introduzca una entrada válida.");
@@ -219,11 +219,11 @@
 			}
 			else{
 				switch(op){
-					case 1: alta_vehiculo(); break;
-					case 2: baja_vehiculo(); break;
+					case 1: admin_alta_vehiculo(); break;
+					case 2: admin_baja_vehiculo(); break;
 					case 3: listar_vehiculos(); break;
 					case 4: admin_modif_veh(); break;
-					case 5: break;
+					case 5: listar_viajes(); break;
 					case 0: break;
 					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
 				}
@@ -231,11 +231,51 @@
 		}while(op!=1&&op!=2&&op!=3&&op!=4&&op!=5&&op!=0);
 	}
 
-	void usuario_veh(){
+	void usuario_veh(tPerfil usuario){
+        int op, i;
+
+        do{
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar uno de sus vehículo de baja.\n <3> Ver información de sus vehículos.\n <4> Modificar información de algún vehículo.\n <0> Volver.");
+			if(scanf("%i",&op)!=1){
+				fflush(stdin);
+				printf("Error: introduzca una entrada válida.");
+				op=-1;
+			}
+			else{
+				switch(op){
+					case 1:  usuario_alta_vehiculo(usuario.Id_usuario); break;
+					case 2:  usuario_baja_vehiculo(usuario.Id_usuario); break;
+					case 3:  usuario_listar_vehiculos(usuario.Id_usuario); break;
+					case 4:  usuario_cambiar_informacion_vehiculo(usuario.Id_usuario); break;
+					case 0:  break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
+				}
+			}
+		}while(op!=1&&op!=2&&op!=3&&op!=4&&op!=5&&op!=0);
 
 	}
 
-	static void alta_vehiculo(){
+    static void usuario_alta_vehiculo(char idusuario[IDUSU]){
+        vehiculo_inf vehiculo;
+        int num_veh,i=0;
+
+        strcmp(vehiculo.id_usuario,idusuario);
+
+        printf("\n¿Cuántos vehículos quiere añadir del usuario? - ");
+        if(scanf("%d",&num_veh)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra: ");
+            num_veh=-1;
+            i++;
+            if(i>5)
+                printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
+        }
+        else
+            for(i=0;i<num_veh;i++)
+                introducir_datos_veh(vehiculo);
+    }
+
+	static void admin_alta_vehiculo(){
 		vehiculo_inf veh;
 		char id_aux[IDUSU];
 		int i, num_veh;
@@ -250,21 +290,21 @@
 
         strcpy(veh.id_usuario,id_aux);
 
-        printf("¿Cuántos vehículos quiere borrar del usuario? - ");
+        printf("¿Cuántos vehículos quiere añadir del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
         		fflush(stdin);
         		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
         		num_veh=-1;
         		i++;
 				if(i>5)
-					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
+					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
 			}
 			else
                 for(i=0;i<num_veh;i++)
                     introducir_datos_veh(veh);
 	}
 
-    void baja_vehiculo(){
+    void admin_baja_vehiculo(){
         int i=0, num_veh;
         char id_aux[IDUSU];
 
@@ -283,25 +323,22 @@
 					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
 			}
 			else
-                borrar_vehiculos(id_aux, num_veh);
+                admin_borrar_vehiculos(id_aux, num_veh);
     }
 
-    static void borrar_vehiculos(char cadena_a_borrar[], int num_veh){
+    static void admin_borrar_vehiculos(char cadena_a_borrar[], int num_veh){
         FILE *file_temp;
         FILE *file_original;
         int i;
 
-        const char* archivo_original = "archivo.txt";
-        const char* archivo_temporal = "archivo_temp.txt";
-
         // Abrimos el archivo original en modo lectura y escritura
-        if ((file_original=fopen(archivo_original, "r+"))==NULL){
+        if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
             printf("Error al abrir el archivo original.\n");
             exit(0);
         }
 
         // Ahora abrimos el archivo temporal en modo escritura
-        if ((file_temp=fopen(archivo_temporal, "w"))==NULL){
+        if ((file_temp=fopen("vehiculo_temp.txt", "w"))==NULL){
             printf("Error al abrir el archivo temporal.\n");
             fclose(file_original);
             exit(0);
@@ -322,21 +359,8 @@
                 i++;
             }
         }
-
         fclose(file_original);
         fclose(file_temp);
-
-        if (remove(archivo_original)!=0){
-            printf("Error al eliminar el archivo original.\n");
-            exit(0);
-        }
-
-        if (rename(archivo_temporal, archivo_original)!=0){
-            printf("Error al renombrar el archivo temporal.\n");
-            exit(0);
-        }
-
-        printf("Línea borrada exitosamente.\n");
     }
 
     static void listar_vehiculos(){
@@ -345,9 +369,31 @@
 
         if((veh=fopen("vehiculo.txt","r"))==NULL)
             printf("\nError al abrir el fichero vehiculo.txt\n");
-        else
+        else{
             while(fgets(linea,sizeof(linea),veh)!=NULL)
                 printf("%s",linea);
+        }
+
+        fclose(veh);
+    }
+
+    static void listar_vehiculos_mat(char mat[IDMAT]){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+
+        if((veh=fopen("vehiculo.txt","r"))==NULL)
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+        else{
+            while(fgets(linea,sizeof(linea),veh)!=NULL){
+                char matricula_actual[IDMAT];
+                strncpy(matricula_actual, linea+8, 4);
+                matricula_actual[4] = '\0';
+
+                if(strcmp(matricula_actual,mat)==0)
+                    printf("%s",linea);
+            }
+        }
+
         fclose(veh);
     }
 
@@ -356,18 +402,20 @@
 
         do{
             printf("\nIntroduzca una ID válida a buscar: ");
+            fflush(stdin);
             gets(usu);
         }while(comprobar_validez_id(usu)!=1);
 
         do{
             printf("\nAhora introduzca una matrícula válida a buscar: ");
+            fflush(stdin);
             gets(mat);
         }while(comprobar_validez_mat(mat)!=1);
 
-        buscar_modificar_vehiculo(mat, usu);
+        admin_buscar_modificar_vehiculo(mat, usu);
     }
 
-    static void buscar_modificar_vehiculo(char matricula[IDMAT], char usuario[IDUSU]){
+    static void admin_buscar_modificar_vehiculo(char matricula[IDMAT], char usuario[IDUSU]){
         FILE *veh;
         char linea[MAX_LIN_FICHVEH];
         vehiculo_inf vehiculo;
@@ -385,11 +433,10 @@
                 // Copiamos la matricula y el usuario de la línea a variables temporales
                 char usuario_actual[IDUSU];
                 char matricula_actual[IDMAT];
-                strncpy(matricula_actual, linea, 4);
+                strncpy(matricula_actual, linea, 7);
                 matricula_actual[4] = '\0';
                 strncpy(usuario_actual, linea+8, 4);
                 usuario_actual[4] = '\0';
-
 
                 // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
                 if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
@@ -399,7 +446,7 @@
                     // Mover la posición del archivo para escribir la nueva línea
                     fseek(veh, posicion, SEEK_SET);
 
-                    cambiar_datos_veh(vehiculo);
+                    introducir_datos_veh(vehiculo);
                 }
             }
         }
@@ -433,7 +480,19 @@
         }while(op!=1&&op!=2);
     }
 
-    static void listar_viajes(char matricula[IDMAT]){
+    static void listar_viajes(){
+        char matricula[IDMAT];
+
+        do{
+            printf("\nIntroduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(matricula);
+        }while(comprobar_validez_mat(matricula)!=1);
+
+        listar_vehiculos_mat(matricula);
+        viajes_veh(matricula);
+    }
+    static void viajes_veh(char matricula[IDMAT]){
         FILE *viaj;
         int aux_id;
         char linea[MAX_LIN_FICHVIAJE];
@@ -455,3 +514,135 @@
         }
         fclose(viaj);
     }
+
+    static void usuario_baja_vehiculo(char idusuario[IDUSU]){
+        char matricula[IDMAT];
+
+        do{
+            printf("\nIntroduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(matricula);
+        }while(comprobar_validez_mat(matricula)!=1);
+
+        usuario_borrar_vehiculo(idusuario, matricula);
+    }
+
+    static void usuario_borrar_vehiculo(char usuario[IDUSU], char matricula[IDMAT]){
+        FILE *file_temp;
+        FILE *file_original;
+        int i;
+        logico coincidencia=0;
+
+        // Abrimos el archivo original en modo lectura y escritura
+        if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        // Ahora abrimos el archivo temporal en modo escritura
+        if ((file_temp=fopen("vehiculo_temp.txt", "w"))==NULL){
+            printf("Error al abrir el archivo temporal.\n");
+            fclose(file_original);
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        i=0;
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos las cadenas
+            char matricula_actual[IDMAT];
+            strncpy(matricula_actual,linea,7);
+            char usuario_actual[IDUSU];
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+
+            // Comprobamos si hay coincidencia
+            if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual,matricula)==0){
+                coincidencia=1;
+            }
+            else
+                fputs(linea, file_temp);
+        }
+        if(coincidencia==0)
+            printf("\nEl vehículo no se encuentra en el registro.");
+        fclose(file_original);
+        fclose(file_temp);
+    }
+
+    static void usuario_listar_vehiculos(char usuario[IDUSU]){
+        FILE *file_original;
+        logico coincidencia=0;
+
+        // Abrimos el archivo original en modo lectura
+        if ((file_original=fopen("vehiculo.txt", "r"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos las cadenas
+            char matricula_actual[IDMAT];
+            strncpy(matricula_actual,linea,7);
+            char usuario_actual[IDUSU];
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+
+            // Comprobamos si hay coincidencia
+            if (strcmp(usuario_actual, usuario)==0){
+                coincidencia=1;
+                printf("%s",linea);
+            }
+        }
+        if(coincidencia==0)
+            printf("\nEl vehículo no se encuentra en el registro.");
+        fclose(file_original);
+    }
+
+    static void usuario_cambiar_informacion_vehiculo(char idusuario[IDUSU]){
+        char matricula[IDMAT];
+
+        do{
+            printf("\nIntroduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(matricula);
+        }while(comprobar_validez_mat(matricula)!=1);
+
+        usuario_modificar_vehiculo(idusuario,matricula);
+    }
+
+    static void usuario_modificar_vehiculo(char idusuario[IDUSU], char matricula[IDMAT]){
+       FILE* archivo;
+       int posicion;
+       vehiculo_inf veh;
+
+        if ((archivo = fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo.\n");
+            exit(1);
+        }
+
+        char linea[MAX_LIN_FICHVEH];
+        while (fgets(linea, sizeof(linea), archivo)!=NULL){
+            char matricula_actual[8];
+            strncpy(matricula_actual, linea, 7);
+            matricula_actual[7] = '\0';
+
+            char usuario_actual[5];
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0';
+
+            if (strcmp(matricula_actual, matricula)==0&&strcmp(usuario_actual, idusuario)==0){
+                posicion=ftell(archivo)-sizeof(linea);
+
+                // Movemos la posición del archivo para escribir la nueva línea
+                fseek(archivo, posicion, SEEK_SET);
+                introducir_datos_veh(veh);
+            }
+        }
+    fclose(archivo);
+    }
+
+
+
