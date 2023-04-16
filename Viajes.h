@@ -15,22 +15,22 @@
 #define HORA 6
 
 typedef struct{
-    logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no est√° anulado
-    logico cerrado;                 //Si Nplazas = 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no est√° anulado
-    logico iniciado;                //Si el viaje ha iniciado (la hora actual est√° entre la hora de inicio y hora de llegada) y no se anula
+    logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no est· anulado
+    logico cerrado;                 //Si Nplazas = 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no est· anulado
+    logico iniciado;                //Si el viaje ha iniciado (la hora actual est· entre la hora de inicio y hora de llegada) y no se anula
     logico finalizado;              //Si el viaje ha finalizado (la hora actual es  mayor que la hora de llegada) y no ha sido anulado
     logico anulado;                 //Si el viaje ha sido anulado
 } estado_viajes;
 
 typedef struct{
-    int i_d;                        //6 d√≠gitos
-    char matricula [MATRICULA];     //Matr√≠cula de veh√≠cula usado para el viaje
+    int i_d;                         //6 dÌgitos
+    char matricula [MATRICULA];     //MatrÌcula de vehÌcula usado para el viaje
     char fecha[FECHA];              //Formato dd/mm/aa
-    char hora_inicio [HORA];        //Formato 24h - M√≠nimo 06:00
-    char hora_llegada [HORA];       //Formato 24h - M√°ximo 22:30
-    int Nplazas;                    //N√∫mero de plazas disponibles
+    char hora_inicio [HORA];        //Formato 24h - MÌnimo 06:00
+    char hora_llegada [HORA];       //Formato 24h - M·ximo 22:30
+    int Nplazas;                    //N˙mero de plazas disponibles
     char tipo [TIPO];               //Ida o Vuelta
-    char importe [IMPORTE];         //Entre 0 y 15 ‚Ç¨ por persona
+    char importe [IMPORTE];         //Entre 0 y 15 Ä por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
     logico hoy;                     //Indica si la fecha introducida es hoy
     char anular;                    //Indica si quiere anular un viaje (S) o no (N)
@@ -38,93 +38,93 @@ typedef struct{
 
 //FUNCIONES PRIVADAS:
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Asigna una ID en la estructura viaje de la posici√≥n posViaje
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Asigna una ID en la estructura viaje de la posiciÛn posViaje
 
 static void generar_ID_viaje(viajes *viaje, int posViaje);
 
-/*Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje*/
-//Postcondici√≥n: Habr√° introducido fecha en la estructura viaje de la posici√≥n posViaje
+/*PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje*/
+//PostcondiciÛn: Habr· introducido fecha en la estructura viaje de la posiciÛn posViaje
 
 static void introducir_fecha(viajes *viaje, int posViaje);
 
-/*Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje*/
-//Postcondici√≥n: Habr√° introducido hora_inicio y hora_llegada en la estructura viaje de la posici√≥n posViaje
+/*PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje*/
+//PostcondiciÛn: Habr· introducido hora_inicio y hora_llegada en la estructura viaje de la posiciÛn posViaje
 
 static void horas(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Actualiza el n√∫mero de plazas en la estructura viaje de la posici√≥n posViaje
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Actualiza el n˙mero de plazas en la estructura viaje de la posiciÛn posViaje
 
 static void plazas(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Habr√° introducido el tipo de viaje en la estructura viaje de la posici√≥n posViaje: (I) Ida o (V) Vuelta
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Habr· introducido el tipo de viaje en la estructura viaje de la posiciÛn posViaje: (I) Ida o (V) Vuelta
 
 static void tipo(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondicion: Habr√° introducido el importe del viaje en la estructura viaje de la posici√≥n posViaje
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//Postcondicion: Habr· introducido el importe del viaje en la estructura viaje de la posiciÛn posViaje
 
 static void importe(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Se activar√° (True) el estado en el que se encuentre el viaje y se desactivar√° (False) el anterior si era diferente
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Se activar· (True) el estado en el que se encuentre el viaje y se desactivar· (False) el anterior si era diferente
 
 static void estado(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Se habr√° modificado algo en la estructura
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Se habr· modificado algo en la estructura
 static void modviaje(viajes *viaje, int posViaje);
 
 
-//FUNCIONES P√öBLICAS:
+//FUNCIONES P⁄BLICAS:
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Habr√° imprimido en un fichero un nuevo viaje de la estructura viajes
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Habr· imprimido en un fichero un nuevo viaje de la estructura viajes
 void imprimirnuevoviaje(viajes *viaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Habr√° imprimido en un fichero la estructura viajes
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Habr· imprimido en un fichero la estructura viajes
 void imprimirviajes(viajes *viaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Rellena la estructura viajes con el contenido del fichero Viajes.txt
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Rellena la estructura viajes con el contenido del fichero Viajes.txt
 void leerviajes(viajes *viaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Imprime por pantalla el contenido de cada posici√≥n de la estructura viajes
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Imprime por pantalla el contenido de cada posiciÛn de la estructura viajes
 void listarviajes(viajes *viaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Imprime por pantalla los viajes que est√©n en estado abierto
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Imprime por pantalla los viajes que estÈn en estado abierto
 void listarviajesabiertos(viajes *viaje);
 
-//Postcondici√≥n: Devuelve el n√∫mero de lineas que tiene el fichero
+//PostcondiciÛn: Devuelve el n˙mero de lineas que tiene el fichero
 int numeroviajes(void);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondici√≥n: Redimensiona la estructura igual al n√∫mero de viajes actuales del fichero Viajes.txt
-viajes *reservarviajes(viajes *viaje);
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondiciÛn: Redimensiona la estructura igual al n˙mero de viajes actuales del fichero Viajes.txt
+void reservarviajes(viajes *viaje);
 
-//Postcondici√≥n: Crea una estructura de viajes
+//PostcondiciÛn: Crea una estructura de viajes
 viajes *CrearListaViajes(void);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes y un entero que indicar√° la posici√≥n del usuario en viaje
-//Postcondici√≥n: Imprime por pantalla el men√∫ de opciones del usuario
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes y un entero que indicar· la posiciÛn del usuario en viaje
+//PostcondiciÛn: Imprime por pantalla el men˙ de opciones del usuario
 void menuviajesUsu(viajes *viaje, int posViaje);
 
-//Precondici√≥n: Recibe un vector de estructras de tipo viajes
-//Postcondici√≥n: Redimensiona la estructura a un tama√±o m√°s que el n√∫mero de viajes actuales del fichero Viajes.txt
-viajes *reservarnuevoviaje(viajes *viaje);
+//PrecondiciÛn: Recibe un vector de estructras de tipo viajes
+//PostcondiciÛn: Redimensiona la estructura a un tamaÒo m·s que el n˙mero de viajes actuales del fichero Viajes.txt
+void reservarnuevoviaje(viajes *viaje);
 
-//Precondici√≥n: Recibe un vector de estructuras de tipo viajes
-//Postcondic√≥n: Habr√° a√±adido un viaje nuevo a la estructura viajes y lo habr√° imprimido en el fichero Viajes.txt
+//PrecondiciÛn: Recibe un vector de estructuras de tipo viajes
+//PostcondicÛn: Habr· aÒadido un viaje nuevo a la estructura viajes y lo habr· imprimido en el fichero Viajes.txt
 void publicarviaje(viajes *viaje);
 
-/*Precondici√≥n: Recibe un vector de estructuras de tipo viajes, un entero que indicar√° la posici√≥n del usuario en viaje
-y un operador que indicar√° si se ejecutar√° la funci√≥n menuviajesUsu o menuviajesAdmin*/
-//Postcondici√≥n: Lleva a la funci√≥n menuviajesUsu o menuviajesAdmin
+/*PrecondiciÛn: Recibe un vector de estructuras de tipo viajes, un entero que indicar· la posiciÛn del usuario en viaje
+y un operador que indicar· si se ejecutar· la funciÛn menuviajesUsu o menuviajesAdmin*/
+//PostcondiciÛn: Lleva a la funciÛn menuviajesUsu o menuviajesAdmin
 void menuviajes(viajes *viaje, int posViaje, int op);
 
 #endif
