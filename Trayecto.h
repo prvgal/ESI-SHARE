@@ -11,7 +11,7 @@ void gestionar_trayecto(viajes);
 
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
 //postcondición: Imprime por pantalla al usuario una lista con todos los viajes que pasen por su localidad con sus respectivas ID
-void mostrar_paradas(viajes, tPerfil);
+void mostrar_paradas(tPerfil);
 
 
 
