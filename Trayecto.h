@@ -3,15 +3,15 @@
 #include "viajes.h"
 
 
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-//postcondición: Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
+//precondici?n: Debe haberse generado una ID para un viaje (esta ID ser?a de tipo entero)
+//postcondici?n: Permite la elecci?n entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
 void gestionar_trayecto(viajes);
 
 
 
-//*Nota*: Las siguientes funciones cuentan con la misma precondición y postcondición
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-//postcondición: Despliega un menú sin funcionalidad, meramente visual e ilustrativo
+//*Nota*: Las siguientes funciones cuentan con la misma precondici?n y postcondici?n
+//precondici?n: Debe haberse generado una ID para un viaje (esta ID ser?a de tipo entero)
+//postcondici?n: Despliega un men? sin funcionalidad, meramente visual e ilustrativo
 //********************************************************************************************************
 
 
@@ -52,9 +52,9 @@ static void ESI_puertostamaria(viajes);
 
 
 
-//*Nota*: Las siguientes funciones cuentan con la misma precondición y postcondición
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-//postcondición: Imprime en el fichero Pasos.txt la ID del viaje y las paradas a las que el mismo está asociado e imprime la ruta paso a paso por pantalla al usuario
+//*Nota*: Las siguientes funciones cuentan con la misma precondici?n y postcondici?n
+//precondici?n: Debe haberse generado una ID para un viaje (esta ID ser?a de tipo entero)
+//postcondici?n: Imprime en el fichero Pasos.txt la ID del viaje y las paradas a las que el mismo est? asociado e imprime la ruta paso a paso por pantalla al usuario
 //********************************************************************************************************
 
 
@@ -115,14 +115,14 @@ static void ESI_puerto_fin(viajes);
 
 
 
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-//postcondición: Permite al usuario modificar las paradas de su trayecto en caso de equivocación
+//precondici?n: Debe haberse generado una ID para un viaje (esta ID ser?a de tipo entero)
+//postcondici?n: Permite al usuario modificar las paradas de su trayecto en caso de equivocaci?n
 static void modificar_trayecto(viajes);
 
 
 
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-//postcondición: Permite al usuario borrar su registro de trayecto del fichero Pasos.txt
+//precondici?n: Debe haberse generado una ID para un viaje (esta ID ser?a de tipo entero)
+//postcondici?n: Permite al usuario borrar su registro de trayecto del fichero Pasos.txt
 static void borrar_trayecto(viajes);
 
 
