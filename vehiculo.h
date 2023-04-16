@@ -7,14 +7,15 @@
 #define CARACTERES 51
 #define IDMAT 8
 #define IDUSU 5
-#define LONGVEC 5
-#define MAX_LIN_FICHVEH 65
+
+#define MAX_LIN_FICHVEH 66
+#define MAX_LIN_FICHVIAJE 60
 
     typedef struct{
-        char id_mat[IDMAT];
-        char id_usuario[IDUSU];
-        char desc_veh[CARACTERES];
-        int num_plazas;
+        char id_mat[IDMAT];         //Matrícula del vehículo
+        char id_usuario[IDUSU];     //ID de usuario asociado al vehículo
+        char desc_veh[CARACTERES];  //Breve descripción del vehículo
+        int num_plazas;             //Número de plazas de las que dispone el vehículo
     }vehiculo_inf;
 
     //*******FUNCIONES PUBLICAS*******
@@ -26,7 +27,7 @@
 
     //Precondición: El procedimiento recibe un vector de estructuras para captar los datos del fichero dado.
     //Postcondición: El procedimiento habrá leído la información del fichero dado y la habrá guardado en el vector de estructuras dado.
-    void leer_fichero_vehiculo(vehiculo_inf *, FILE *);
+    void leer_fichero_vehiculo(int , vehiculo_inf *, FILE *);
 
     //Precondición: Ninguna.
     //Postcondición: El administrador habrá elegido alguna de las opciones expuestas en un switch que permite: <1> Dar un vehículo de alta <2> Dar un vehículo de baja
@@ -35,7 +36,7 @@
 
 	//Precondición:
     //Postcondición:
-    void usuario();
+    void usuario_veh();
 
     //Precondición: Recibe la ID del usuario que se esté registrando en el momento.
     //Postcondición: Se habrán registrado los vehículos que haya indicado el usuario al registrarse si es que tiene, se habrá continuado normalmente el registro en caso contrario.
@@ -101,5 +102,10 @@
     //Precondición: Recibe una ID de usuario y una matrícula (ambos cadenas) que han sido verificados previamente.
     //Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con la matrícula y el usuario, modifica los datos de dicha línea a gusto del administrador.
     static void buscar_modificar_vehiculo(char [], char []);
+
+    //Precondición: Recibe una matrícula dada por el administrador.
+    //Postcondición: Busca y, si encuentra una línea del fichero Viajes.txt coincidente con la matrícula dada y tenga la etiqueta de "finalizado", imprime los datos de dicha línea por pantalla hasta que termine el fichero.
+    static void listar_viajes(char []);
+
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED

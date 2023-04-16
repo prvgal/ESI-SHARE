@@ -9,6 +9,7 @@
 #include "vehiculo.h"
 #include "tipos.h"
 #include "perfiles.h"
+#include "Viajes.h"
 
    static void cambiar_datos_veh(vehiculo_inf vehiculo){
         int opcion, i=0;
@@ -101,7 +102,7 @@
 	   	fclose(veh_txt);
 	}
 
-	void leer_fichero_vehiculo(vehiculo_inf vehiculo[LONGVEC], FILE *veh_txt){
+	void leer_fichero_vehiculo(int veces, vehiculo_inf vehiculo[veces], FILE *veh_txt){
 		int i;
 		char buf[1024];
 
@@ -110,10 +111,10 @@
 		}
 
 		else{
-			for(i=0;i<LONGVEC;i++){
+			for(i=0;i<veces;i++){
 				if(fgets(buf, 1024, veh_txt)!=NULL){
 					buf[strcspn(buf,"\n")]='\0';
-					sscanf(buf,"%[^-]-%[^-]-%d-%[^\0]",vehiculo[i].id_mat, vehiculo[i].id_usuario, &vehiculo[i].num_plazas, vehiculo[i].desc_veh);
+					sscanf(buf,"%[^-]-%[^-]-%d-%[^\n]",vehiculo[i].id_mat, vehiculo[i].id_usuario, &vehiculo[i].num_plazas, vehiculo[i].desc_veh);
 				}
 			}
 		}
@@ -380,19 +381,20 @@
             exit(1);
         }
         else{
-            while (fgets(linea, sizeof(linea), veh) != NULL){
+            while (fgets(linea, sizeof(linea), veh)!=NULL){
                 // Copiamos la matricula y el usuario de la línea a variables temporales
                 char usuario_actual[IDUSU];
                 char matricula_actual[IDMAT];
+                strncpy(matricula_actual, linea, 4);
+                matricula_actual[4] = '\0';
                 strncpy(usuario_actual, linea+8, 4);
                 usuario_actual[4] = '\0';
-                strncpy(matricula_actual, linea+8, 4);
-                matricula_actual[4] = '\0';
+
 
                 // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
                 if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
                     // Calcular la posición de la línea en el archivo
-                    posicion = ftell(veh) - sizeof(linea);
+                    posicion=ftell(veh) - sizeof(linea);
 
                     // Mover la posición del archivo para escribir la nueva línea
                     fseek(veh, posicion, SEEK_SET);
@@ -409,8 +411,7 @@
         vehiculo_inf vehiculo[num_veh];
 
         do{
-            system("cls");
-            printf("\n¿Tienes usted planeado llevar y/o traer otra gente de la ESI?\n\n");
+            printf("\n¿Tiene planeado llevar y/o traer otra gente de la ESI?\n\n");
             printf("   <1> Sí.\n   <2> No\n\n");
             if(scanf("%d",&op)!=1){
                 fflush(stdin);
@@ -418,7 +419,7 @@
                 op=-1;
                 i++;
                 if(i>5)
-                    printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");
+                    printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, o 2 según lo que necesites.\n");
             }
             else{
                 switch(op){
@@ -430,4 +431,27 @@
                 }
             }
         }while(op!=1&&op!=2);
+    }
+
+    static void listar_viajes(char matricula[IDMAT]){
+        FILE *viaj;
+        int aux_id;
+        char linea[MAX_LIN_FICHVIAJE];
+        viajes viaje;
+
+        if((viaj=fopen("Viajes.txt","r+"))==NULL){
+            printf("\nError al abrir el fichero Viajes.txt\n");
+            exit(1);
+        }
+        else{
+            while(fgets(linea, sizeof(linea), viaj)!=NULL){
+                sscanf(linea, "%d-%[^-]-%[^-]-%[^-]-%[^-]-%d-%[^-]-%[^-]-%[^-]-%[^-]-%c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo,
+                                                                                            viaje.importe, viaje.estado, viaje.hoy, &viaje.anular);
+                if(strcmp(viaje.matricula,matricula)==0&&viaje.estado.finalizado==True){
+                    printf("%d - %s - %s - %s - %s - %d - %s - %s - %s - %c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
+                                                                                viaje.estado, viaje.anular);
+                }
+            }
+        }
+        fclose(viaj);
     }
