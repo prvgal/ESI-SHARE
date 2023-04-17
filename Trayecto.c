@@ -30,7 +30,7 @@ void gestionar_trayecto(viajes viaje, tPerfil usuario){
 
 
 
-static void inicio_trayecto(viajes viaje){
+void inicio_trayecto(viajes viaje){
      int op;
     do{
         system("cls");
@@ -744,7 +744,7 @@ static void borrar_trayecto(viajes viaje){
 }
 
 
-static void mostrar_paradas(tPerfil usuario){
+void mostrar_paradas(tPerfil usuario){
 
     FILE *pasos;
     int id_viaje;
