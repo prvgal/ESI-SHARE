@@ -74,9 +74,12 @@ static void importe(viajes *viaje, int posViaje);
 static void estado(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
-//Postcondición: Se habrá modificado algo en la estructura
-static void modviaje(viajes *viaje, int posViaje);
+//Postcondición: Se habrá podido modificar algún viaje del usuario
+static viajes *modviaje(viajes *viaje, int posViaje);
 
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Se habrá podido modificar cualquier viaje de la estructura
+static viajes *modviajeAdmin(viajes *viaje);
 
 //FUNCIONES PÚBLICAS:
 
@@ -110,9 +113,13 @@ viajes *reservarviajes(viajes *viaje);
 //Postcondición: Crea una estructura de viajes
 viajes *CrearListaViajes(void);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Imprime por pantalla el menú de opciones del usuario
 viajes *menuviajesUsu(viajes *viaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Imprime por pantalla el menú de opciones del usuario
+viajes *menuviajesAdmin(viajes *viaje);
 
 //Precondición: Recibe un vector de estructras de tipo viajes
 //Postcondición: Redimensiona la estructura a un tamaño más que el número de viajes actuales del fichero Viajes.txt
