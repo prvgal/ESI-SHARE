@@ -7,12 +7,13 @@
 #include <string.h>
 #include "tipos.h"
 
-#define MAX_VIAJES 80
+#define MAX_VIAJES 90
 #define FECHA 11
 #define MATRICULA 8
 #define IMPORTE 7
 #define TIPO 7
 #define HORA 6
+#define MAX_U 6
 
 typedef struct{
     logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no está anulado
@@ -34,6 +35,7 @@ typedef struct{
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
     logico hoy;                     //Indica si la fecha introducida es hoy
     char anular;                    //Indica si quiere anular un viaje (S) o no (N)
+    char usuviaje[MAX_U];
 } viajes;
 
 //FUNCIONES PRIVADAS:
@@ -75,7 +77,7 @@ static void estado(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
 //Postcondición: Se habrá podido modificar algún viaje del usuario
-static viajes *modviaje(viajes *viaje, int posViaje);
+static viajes *modviaje(viajes *viaje, char viajeusu [6]);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Se habrá podido modificar cualquier viaje de la estructura
@@ -115,11 +117,11 @@ viajes *CrearListaViajes(void);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Imprime por pantalla el menú de opciones del usuario
-viajes *menuviajesUsu(viajes *viaje);
+viajes *menuviajesUsu(viajes *viaje, char viajeusu [6]);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Imprime por pantalla el menú de opciones del usuario
-viajes *menuviajesAdmin(viajes *viaje);
+viajes *menuviajesAdmin(viajes *viaje, char viajeusu [6]);
 
 //Precondición: Recibe un vector de estructras de tipo viajes
 //Postcondición: Redimensiona la estructura a un tamaño más que el número de viajes actuales del fichero Viajes.txt
@@ -127,11 +129,13 @@ viajes *reservarnuevoviaje(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondicón: Habrá añadido un viaje nuevo a la estructura viajes y lo habrá imprimido en el fichero Viajes.txt
-viajes *publicarviaje(viajes *viaje);
+viajes *publicarviaje(viajes *viaje, char viajeusu [6]);
 
 /*Precondición: Recibe un vector de estructuras de tipo viajes, un entero que indicará la posición del usuario en viaje
 y un operador que indicará si se ejecutará la función menuviajesUsu o menuviajesAdmin*/
 //Postcondición: Lleva a la función menuviajesUsu o menuviajesAdmin
-void menuviajes(viajes *viaje, int posViaje, int op);
+void menuviajes(viajes *viaje, int posViaje, char viajeusu [6], int op);
+
+int listartusviajes(viajes *viaje, char viajeusu [6]);
 
 #endif
