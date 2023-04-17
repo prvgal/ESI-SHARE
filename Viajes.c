@@ -7,13 +7,12 @@
 
 int posViaje;
 int Iplazas = 4;
-int numviajes;
 
 int main(){     //Main temporal para probar que funciona correctamente
     viajes *viaje;
     viaje = CrearListaViajes();
 
-    viaje = menuviajesUsu(viaje);
+    viaje = menuviajesAdmin(viaje);
 
     listarviajesabiertos(viaje);
 
@@ -296,7 +295,7 @@ static void estado(viajes *viaje){
     }
 }
 
-static void modviaje(viajes *viaje, int posViaje){
+static viajes *modviaje(viajes *viaje, int posViaje){
     int op;
 
     if(viaje[posViaje].Nplazas == Iplazas){
@@ -306,11 +305,13 @@ static void modviaje(viajes *viaje, int posViaje){
         else{
             do
         {
-            printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n\n", viaje[posViaje].i_d);
-            fflush(stdin);
-            scanf("%i", &op);
-        } while (op != 1 && op != 2 && op != 3 && op != 4);
+            printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[posViaje].i_d);
         
+        if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
         switch (op)
         {
         case 1: {
@@ -331,18 +332,84 @@ static void modviaje(viajes *viaje, int posViaje){
         }
         case 5: {
             estado(viaje);
-            if(viaje[posViaje].estado.iniciado == 1 || viaje[posViaje].estado.finalizado == 1)
-                printf("El viaje no se puede anular porque ya se ha iniciado.\n");
-            else
+            if(viaje[posViaje].estado.finalizado == 1)
+                printf("El viaje no se puede anular porque ya ha finalizado.\n");
+            else{
                 viaje[posViaje].anular = 'S';
+                printf("\nViaje anulado\n");
+            }
         }
         }
+        }
+        } while (op != 0);
 
         estado(viaje);
         }
     }
     else
         printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
+    
+    return viaje;
+}
+
+static viajes *modviajeAdmin(viajes *viaje){
+    int op, i;
+
+    if(numeroviajes() == 0)
+        printf("No hay ningun viaje.\n");
+    else{
+        do
+    {
+        do
+        {
+            listarviajes(viaje);
+            printf("\nSelecciona cual viaje quieres modificar: ");
+
+            if(scanf("%i", &i) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        }
+        } while (i < 1 || i > numeroviajes());
+        
+        printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[i-1].i_d);
+        
+        if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+        switch (op)
+        {
+        case 1: {
+            introducir_fecha(viaje, i-1);
+            break;
+        }
+        case 2: {
+            horas(viaje, i-1);
+            break;
+        }
+        case 3: {
+            tipo(viaje, i-1);
+            break;
+        }
+        case 4: {
+            importe(viaje, i-1);
+            break;
+        }
+        case 5: {
+            viaje[i-1].anular = 'S';
+            printf("\nViaje anulado.\n");
+        }
+        case 0: break;
+        default: printf("Elige una de las opciones.\n"); break;
+        }
+    }
+    } while (op != 0);
+
+    estado(viaje);
+    }
+
+    return viaje;
 }
 
 void imprimirnuevoviaje(viajes *viaje){
@@ -525,7 +592,7 @@ void listarviajes(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
         }
-        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+        printf("<%i> %i-%s-%s-%s-%s-%i-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux);
     }
@@ -567,7 +634,7 @@ int numeroviajes(void){
     vf = fopen("Viajes.txt", "r");
 
     if(vf == NULL){
-        fprintf(stderr, "Error en la apertura del fichero.");
+        fprintf(stderr, "Error en la apertura del fichero.\n");
         exit(1);
     }
 
@@ -590,7 +657,7 @@ viajes *CrearListaViajes(void){
         viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));
 
     if(viaje == NULL){
-        fprintf(stderr, "Error en asignacion de memoria");
+        fprintf(stderr, "Error en asignacion de memoria\n");
         exit(1);
     }
 
@@ -602,7 +669,7 @@ viajes *reservarnuevoviaje(viajes *viaje){
     viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));
 
     if(viaje == NULL){
-        fprintf(stderr, "Error en la asignacion de memoria.");
+        fprintf(stderr, "Error en la asignacion de memoria.\n");
         exit(1);
     }
 
@@ -615,7 +682,7 @@ viajes *reservarviajes(viajes *viaje){
         viaje = (viajes *)realloc(viaje, (numeroviajes())*sizeof(viajes));
 
     if(viaje == NULL){
-        fprintf(stderr, "Error en la asignacion de memoria.");
+        fprintf(stderr, "Error en la asignacion de memoria.\n");
         exit(1);
     }
 
@@ -631,9 +698,9 @@ viajes *menuviajesUsu(viajes *viaje){
     leerviajes(viaje);
 
     do{
-    printf("####################################\n");
-    printf("#              VIAJES              #\n");
-    printf("####################################\n\n");
+    printf("\n########################################\n");
+    printf("#              MENU VIAJES              #\n");
+    printf("########################################\n\n");
 
     estado(viaje);
     imprimirviajes(viaje);
@@ -647,13 +714,56 @@ viajes *menuviajesUsu(viajes *viaje){
 
     if(scanf("%i", &op) != 1){
             fflush(stdin);
-            fprintf(stderr, "Entrada no valida. Debe ser un numero.");
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
         } else{
 
             switch(op){
                 //case 1: MenuUser(infoper, posViajes); break;
                 case 2: viaje = publicarviaje(viaje); break;
-                // case 3: Vehiculos(); break;
+                //case 3: viaje = modviaje(viaje); break;
+                case 0: break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+
+    return viaje;
+}
+
+viajes *menuviajesAdmin(viajes *viaje){
+    int op;
+
+    system("cls");
+
+    viaje = reservarviajes(viaje);
+    leerviajes(viaje);
+
+    do{
+    printf("\n#######################################################\n");
+    printf("#              MENU VIAJES (ADMINISTRADOR)            #\n");
+    printf("#######################################################\n\n");
+
+    estado(viaje);
+    imprimirviajes(viaje);
+
+    printf("\nSeleccione que desea hacer:\n\n");
+    printf("<1> Listar viajes.\n");
+    printf("<2> Publicar un nuevo viaje.\n");
+    printf("<3> Editar un viaje.\n");
+    printf("<4> Eliminar un viaje.\n");
+    printf("<0> Volver al menu principal.\n\n");
+
+    if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+            switch(op){
+                case 1: listarviajes(viaje); break;
+                case 2: viaje = publicarviaje(viaje); break;
+                case 3: viaje = modviajeAdmin(viaje); break;
+                //case 4: eliminarviaje(viaje); break;
                 case 0: break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -710,7 +820,7 @@ void menuviajes(viajes *viaje, int posViaje, int op){
     }
 
     if(op == 0)
-        menuviajesUsu(viaje);
-    //else
-        //menuviajesAdmin(viaje, posViaje);
+        viaje = menuviajesUsu(viaje);
+    else
+        viaje = menuviajesAdmin(viaje);
 }
