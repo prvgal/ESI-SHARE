@@ -740,7 +740,6 @@ static void borrar_trayecto(viajes viaje){
 
     remove("Pasos.txt");
     rename("PasosAux.txt", "Pasos.txt");
-    setlocale(LC_ALL, "");
     printf("Paradas borradas correctamene \n");
 }
 
