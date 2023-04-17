@@ -46,7 +46,7 @@
 		int i;
 		FILE *veh_txt;
 
-    	printf("Rellene el formulario a continuación, por favor: \n");
+    	printf("\nRellene el formulario a continuación, por favor: \n");
 
     	printf("		*) Matrícula: ");
     	do{
@@ -211,7 +211,7 @@
 		int op,i=0;
 
 		do{
-			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver la información de un vehículo.\n <0> Volver.");
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver la información de un vehículo.\n <0> Volver.\n Elija una opción: ");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
 				printf("Error: introduzca una entrada válida.");
@@ -221,24 +221,26 @@
 				switch(op){
 					case 1: admin_alta_vehiculo(); break;
 					case 2: admin_baja_vehiculo(); break;
-					case 3: listar_vehiculos(); break;
+					case 3: printf("\n"); listar_vehiculos(); break;
 					case 4: admin_modif_veh(); break;
 					case 5: listar_viajes(); break;
 					case 0: break;
 					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
 				}
 			}
-		}while(op!=1&&op!=2&&op!=3&&op!=4&&op!=5&&op!=0);
+		}while(op!=0);
 	}
 
 	void usuario_veh(tPerfil usuario){
         int op, i;
 
+        system("cls");
+
         do{
-			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar uno de sus vehículos de baja.\n <3> Ver información de sus vehículos.\n <4> Modificar información de algún vehículo.\n <0> Volver.");
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar uno de sus vehículos de baja.\n <3> Ver información de sus vehículos.\n <4> Modificar información de algún vehículo.\n <0> Volver.\n Elija una entrada: ");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
-				printf("Error: introduzca una entrada válida.");
+				printf("Error: introduzca una entrada válida - ");
 				op=-1;
 			}
 			else{
@@ -251,7 +253,7 @@
 					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
 				}
 			}
-		}while(op!=1&&op!=2&&op!=3&&op!=4&&op!=5&&op!=0);
+		}while(op!=0);
 
 	}
 
@@ -259,7 +261,7 @@
         vehiculo_inf vehiculo;
         int num_veh,i=0;
 
-        strcmp(vehiculo.id_usuario,idusuario);
+        strcpy(vehiculo.id_usuario,idusuario);
 
         printf("\n¿Cuántos vehículos quiere añadir del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
@@ -280,7 +282,7 @@
 		char id_aux[IDUSU];
 		int i, num_veh;
 
-        printf("\n\nIntroduzca la ID a la que pertenecerá el vehículo: ");
+        printf("\nIntroduzca la ID a la que pertenecerá el vehículo: ");
 		do{
             fflush(stdin);
             gets(id_aux);
@@ -308,12 +310,15 @@
         int i=0, num_veh;
         char id_aux[IDUSU];
 
-        do{
-            printf("\nIntroduzca una ID de usuario válida: ");
+        printf("\nIntroduzca la ID a la que pertenece el vehículo: ");
+		do{
+            fflush(stdin);
             gets(id_aux);
+            if(comprobar_validez_id(id_aux)==0)
+                printf("\nIntroduzca una ID válida, por favor - ");
         }while(comprobar_validez_id(id_aux)!=1);
 
-        printf("¿Cuántos vehículos quiere borrar del usuario?");
+        printf("¿Cuántos vehículos quiere borrar del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
         		fflush(stdin);
         		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -329,38 +334,52 @@
     static void admin_borrar_vehiculos(char cadena_a_borrar[], int num_veh){
         FILE *file_temp;
         FILE *file_original;
-        int i;
+        int i=0;
+        logico encontrado=False;
+        char segunda_cadena[IDUSU];
 
         // Abrimos el archivo original en modo lectura y escritura
         if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
-            printf("Error al abrir el archivo original.\n");
+            printf("Error al abrir el archivo vehiculo.txt.\n");
             exit(0);
         }
 
         // Ahora abrimos el archivo temporal en modo escritura
         if ((file_temp=fopen("vehiculo_temp.txt", "w"))==NULL){
-            printf("Error al abrir el archivo temporal.\n");
+            printf("Error al abrir vehiculo_temp.\n");
             fclose(file_original);
             exit(0);
         }
 
         // Leemos el fichero línea por línea
         char linea[MAX_LIN_FICHVEH];
-        i=0;
         while (fgets(linea, sizeof(linea), file_original) != NULL){
             // Obtenemos la segunda cadena
-            char segunda_cadena[IDUSU];
+
             strncpy(segunda_cadena, linea+8, 4);
             segunda_cadena[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
-
             // Comprobamos si hay coincidencia
-            if (strcmp(segunda_cadena, cadena_a_borrar)!=0&&i<num_veh){
+            if (strcmp(segunda_cadena, cadena_a_borrar)!=0)
                 fputs(linea, file_temp);
+            else{
+                encontrado=True;
                 i++;
+                if(i>num_veh)
+                    fputs(linea,file_temp);
             }
         }
-        fclose(file_original);
-        fclose(file_temp);
+        if(encontrado==False){
+            printf("\nEl usuario dado no figura en el registro.\n");
+            fclose(file_original);
+            fclose(file_temp);
+        }
+        else{
+            fclose(file_original);
+            fclose(file_temp);
+            remove("vehiculo.txt");
+            int v=rename("vehiculo_temp.txt", "vehiculo.txt");
+            printf("%d",v);
+        }
     }
 
     static void listar_vehiculos(){
@@ -379,19 +398,19 @@
     static logico listar_vehiculos_mat(char mat[IDMAT]){
         FILE *veh;
         char linea[MAX_LIN_FICHVEH];
+        char matricula_actual[IDMAT];
         logico encontrado=False;
 
         if((veh=fopen("vehiculo.txt","r"))==NULL)
             printf("\nError al abrir el fichero vehiculo.txt\n");
         else{
-            while(fgets(linea,sizeof(linea),veh)!=NULL){
-                char matricula_actual[IDMAT];
+            while(fgets(linea,sizeof(linea),veh)!=NULL&&encontrado==False){
                 strncpy(matricula_actual, linea+8, 4);
                 matricula_actual[4] = '\0';
 
                 if(strcmp(matricula_actual,mat)==0){
-                    printf("%s",linea);
                     encontrado=True;
+                    printf("%s",linea);
                 }
             }
         }
@@ -424,6 +443,9 @@
         char linea[MAX_LIN_FICHVEH];
         vehiculo_inf vehiculo;
         int posicion;
+        logico encontrado=False;
+        char usuario_actual[IDUSU];
+        char matricula_actual[IDMAT];
 
         strcpy(vehiculo.id_usuario, usuario );
         strcpy(vehiculo.id_mat, matricula);
@@ -435,25 +457,27 @@
         else{
             while (fgets(linea, sizeof(linea), veh)!=NULL){
                 // Copiamos la matricula y el usuario de la línea a variables temporales
-                char usuario_actual[IDUSU];
-                char matricula_actual[IDMAT];
+
                 strncpy(matricula_actual, linea, 7);
-                matricula_actual[4] = '\0';
+                matricula_actual[7] = '\0';
                 strncpy(usuario_actual, linea+8, 4);
                 usuario_actual[4] = '\0';
 
                 // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
                 if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
+                    encontrado=True;
                     // Calcular la posición de la línea en el archivo
-                    posicion=ftell(veh) - sizeof(linea);
+                    posicion=ftell(veh)-sizeof(linea);
 
                     // Mover la posición del archivo para escribir la nueva línea
-                    fseek(veh, posicion, SEEK_SET);
-
+                    fseek(veh, posicion,  SEEK_SET);
+                    printf("\n");
                     introducir_datos_veh(vehiculo);
                 }
             }
         }
+        if(encontrado==False)
+            printf("\nNo se encontró el vehículo indicado. Compruebe que el usuario y su matrícula son correctos.\n");
         fclose(veh);
     }
 
@@ -572,6 +596,8 @@
             printf("\nEl vehículo no se encuentra en el registro.");
         fclose(file_original);
         fclose(file_temp);
+
+        remove("vehiculo_temp.txt");
     }
 
     static void usuario_listar_vehiculos(char usuario[IDUSU]){
@@ -601,7 +627,7 @@
             }
         }
         if(coincidencia==0)
-            printf("\nEl vehículo no se encuentra en el registro.");
+            printf("\nNo existe ningún vehículo asociado a su cuenta.\n");
         fclose(file_original);
     }
 
@@ -621,6 +647,9 @@
        FILE* archivo;
        int posicion;
        vehiculo_inf veh;
+       logico coincidencia=False;
+       char matricula_actual[IDMAT];
+       char usuario_actual[IDUSU];
 
         if ((archivo = fopen("vehiculo.txt", "r+"))==NULL){
             printf("Error al abrir el archivo.\n");
@@ -629,15 +658,15 @@
 
         char linea[MAX_LIN_FICHVEH];
         while (fgets(linea, sizeof(linea), archivo)!=NULL){
-            char matricula_actual[8];
+
             strncpy(matricula_actual, linea, 7);
             matricula_actual[7] = '\0';
 
-            char usuario_actual[5];
             strncpy(usuario_actual, linea+8, 4);
             usuario_actual[4] = '\0';
 
             if (strcmp(matricula_actual, matricula)==0&&strcmp(usuario_actual, idusuario)==0){
+                coincidencia=True;
                 posicion=ftell(archivo)-sizeof(linea);
 
                 // Movemos la posición del archivo para escribir la nueva línea
@@ -645,6 +674,8 @@
                 introducir_datos_veh(veh);
             }
         }
+    if(coincidencia==False)
+        printf("\n El vehículo indicado no se encuentra asociado a su cuenta.\n");
     fclose(archivo);
     }
 
