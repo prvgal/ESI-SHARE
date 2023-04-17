@@ -4,7 +4,7 @@
 #include "perfiles.h"
 
 
-//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
+//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
 //postcondición: Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
 void gestionar_trayecto(viajes, tPerfil);
 
