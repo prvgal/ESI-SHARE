@@ -752,10 +752,11 @@ static void mostrar_paradas(tPerfil usuario){
     char linea[30], parada[21];
     pasos = fopen("Pasos.txt", "r");
 
+    printf("Los viajes que pasan por su localidad son:\n\n")
     while (fgets(linea, sizeof(linea), pasos)!=NULL){
         sscanf(linea,"%d-%[^\n]", &id_viaje, parada);
         if(strcmp(usuario.Localidad, parada)==0)
-            printf("%d-%s", &id_viaje, parada);
+            printf("  %d-%s\n", &id_viaje, parada);
     }
 
     fclose(pasos);
