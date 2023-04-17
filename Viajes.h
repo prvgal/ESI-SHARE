@@ -13,7 +13,7 @@
 #define IMPORTE 7
 #define TIPO 7
 #define HORA 6
-#define MAX_U 6
+#define MAX_U 5
 
 typedef struct{
     logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no está anulado
@@ -24,7 +24,7 @@ typedef struct{
 } estado_viajes;
 
 typedef struct{
-    int i_d;                        //6 dígitos
+    char i_d [7];                        //6 dígitos
     char matricula [MATRICULA];     //Matrícula de vehícula usado para el viaje
     char fecha[FECHA];              //Formato dd/mm/aa
     char hora_inicio [HORA];        //Formato 24h - Mínimo 06:00
@@ -45,7 +45,7 @@ typedef struct{
 
 static void generar_ID_viaje(viajes *viaje, int posViaje);
 
-/*Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje*/
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
 //Postcondición: Habrá introducido fecha en la estructura viaje de la posición posViaje
 
 static void introducir_fecha(viajes *viaje, int posViaje);
@@ -75,67 +75,95 @@ static void importe(viajes *viaje, int posViaje);
 
 static void estado(viajes *viaje);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicará la posición del usuario en viaje
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
 //Postcondición: Se habrá podido modificar algún viaje del usuario
-static viajes *modviaje(viajes *viaje, char viajeusu [6]);
+
+static viajes *modviaje(viajes *viaje, char viajeusu [5]);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Se habrá podido modificar cualquier viaje de la estructura
+
 static viajes *modviajeAdmin(viajes *viaje);
 
 //FUNCIONES PÚBLICAS:
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Habrá imprimido en un fichero un nuevo viaje de la estructura viajes
+
 void imprimirnuevoviaje(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Habrá imprimido en un fichero la estructura viajes
+
 void imprimirviajes(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habrá imprimido en un fichero la estructura viajes actualizada tras haber borrado uno
+
+void imprimirviajesborrado(viajes *viaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Rellena la estructura viajes con el contenido del fichero Viajes.txt
+
 void leerviajes(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Imprime por pantalla el contenido de cada posición de la estructura viajes
+
 void listarviajes(viajes *viaje);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Imprime por pantalla los viajes que estén en estado abierto
+
 void listarviajesabiertos(viajes *viaje);
 
 //Postcondición: Devuelve el número de lineas que tiene el fichero
+
 int numeroviajes(void);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes
 //Postcondición: Redimensiona la estructura igual al número de viajes actuales del fichero Viajes.txt
+
 viajes *reservarviajes(viajes *viaje);
 
 //Postcondición: Crea una estructura de viajes
+
 viajes *CrearListaViajes(void);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
 //Postcondición: Imprime por pantalla el menú de opciones del usuario
-viajes *menuviajesUsu(viajes *viaje, char viajeusu [6]);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes
-//Postcondición: Imprime por pantalla el menú de opciones del usuario
-viajes *menuviajesAdmin(viajes *viaje, char viajeusu [6]);
+viajes *menuviajesUsu(viajes *viaje, char viajeusu [5]);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Imprime por pantalla el menú de opciones del administrador
+
+viajes *menuviajesAdmin(viajes *viaje, char viajeusu [5]);
 
 //Precondición: Recibe un vector de estructras de tipo viajes
 //Postcondición: Redimensiona la estructura a un tamaño más que el número de viajes actuales del fichero Viajes.txt
+
 viajes *reservarnuevoviaje(viajes *viaje);
 
-//Precondición: Recibe un vector de estructuras de tipo viajes
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
 //Postcondicón: Habrá añadido un viaje nuevo a la estructura viajes y lo habrá imprimido en el fichero Viajes.txt
-viajes *publicarviaje(viajes *viaje, char viajeusu [6]);
 
-/*Precondición: Recibe un vector de estructuras de tipo viajes, un entero que indicará la posición del usuario en viaje
-y un operador que indicará si se ejecutará la función menuviajesUsu o menuviajesAdmin*/
+viajes *publicarviaje(viajes *viaje, char viajeusu [5]);
+
+/*Precondición: Recibe una cadena de caracteres que indica la ID del usuario que accede al programa,
+una cadena de la estructura tPerfil que indicará si está accediendo un usuario o un administrador y un vector de estructuras de tipo viajes*/
 //Postcondición: Lleva a la función menuviajesUsu o menuviajesAdmin
-void menuviajes(viajes *viaje, int posViaje, char viajeusu [6], int op);
 
-int listartusviajes(viajes *viaje, char viajeusu [6]);
+void menuviajes(char viajeusu [5], char [], viajes *viaje);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Habrá imprimido por pantalla la lista de viajes que ha creado el usuario
+
+int listartusviajes(viajes *viaje, char viajeusu [5]);
+
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habrá dado la posibilidad a eliminar algún viaje a elección del administrador
+
+viajes *eliminarviaje(viajes *viaje);
 
 #endif
