@@ -6,13 +6,17 @@
 #include "tipos.h"
 
 int posViaje;
-int Iplazas = 4;
+int Iplazas = 3;
 
 int main(){     //Main temporal para probar que funciona correctamente
+    char viajeusu [6];
+
+    strcpy(viajeusu, "usu01");
+
     viajes *viaje;
     viaje = CrearListaViajes();
 
-    viaje = menuviajesAdmin(viaje);
+    viaje = menuviajesUsu(viaje, viajeusu);
 
     listarviajesabiertos(viaje);
 
@@ -286,26 +290,85 @@ static void estado(viajes *viaje){
         viaje[i].estado.finalizado = False;
         viaje[i].estado.anulado = True;            //Anulado
     }
-
-    printf("\nEl estado abierto esta a %i\n", viaje[i].estado.abierto);
-    printf("El estado cerrado esta a %i\n", viaje[i].estado.cerrado);
-    printf("El estado iniciado esta a %i\n", viaje[i].estado.iniciado);
-    printf("El estado finalizado esta a %i\n", viaje[i].estado.finalizado);
-    printf("El estado anulado esta a %i\n", viaje[i].estado.anulado);
     }
 }
 
-static viajes *modviaje(viajes *viaje, int posViaje){
-    int op;
-
-    if(viaje[posViaje].Nplazas == Iplazas){
-        if(viaje[posViaje].anular == 'S'){
-            printf("\nEste viaje ha sido anulado.\n");
+int listartusviajes(viajes *viaje, char viajeusu [6]){
+    int i, j = 0;
+    char aux [11];
+    
+    for(i = 0; i < numeroviajes(); i++){
+        if(strcmp(viajeusu, viaje[i].usuviaje) == 0){
+            if(viaje[i].estado.abierto == 1){
+                strcpy(aux, "abierto");
+            }
+            if(viaje[i].estado.cerrado == 1){
+                        strcpy(aux, "cerrado");
+            }
+            if(viaje[i].estado.iniciado == 1){
+                        strcpy(aux, "iniciado");
+            }
+            if(viaje[i].estado.finalizado == 1){
+                        strcpy(aux, "finalizado");
+            }
+            if(viaje[i].estado.anulado == 1){
+                        strcpy(aux, "anulado");
+            }
+            printf("<%i> %i-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", j+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+            j++;
         }
-        else{
-            do
+    }
+    
+    return j;
+}
+
+static viajes *modviaje(viajes *viaje, char viajeusu [6]){
+    int op, i, j, p, m = 0;
+
+    if(numeroviajes() == 0)
+        printf("No hay ningun viaje.\n");
+    else{
+        do
         {
-            printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[posViaje].i_d);
+            j = listartusviajes(viaje, viajeusu);
+
+            if(j == 0){
+                printf("\nNo has publicado ningun viaje aun.\n");
+                return viaje;
+            }
+
+            printf("\nSelecciona cual viaje quieres modificar o si quiere salir (0): ");
+
+            if(scanf("%i", &i) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        }
+        } while (i < 0 || i > j);
+
+        if(i == 0){
+            return viaje;
+        }
+
+        for(p = 0; p < numeroviajes() && m != i; p++){
+            if(strcmp(viajeusu, viaje[p].usuviaje) == 0){
+                m++;
+            }
+            printf("\nM es: %i\n", m);
+            printf("\nP es: %i\n", p);
+        }
+
+        printf("%i", viaje[p].Nplazas);
+        printf("%i", Iplazas);
+
+        if(viaje[p].Nplazas == Iplazas){
+        if(viaje[p].anular == 'S'){
+            printf("\nEste viaje ha sido anulado.\n");
+        } else{
+        
+        do{
+        printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[p].i_d);
         
         if(scanf("%i", &op) != 1){
             fflush(stdin);
@@ -315,42 +378,47 @@ static viajes *modviaje(viajes *viaje, int posViaje){
         switch (op)
         {
         case 1: {
-            introducir_fecha(viaje, posViaje);
+            introducir_fecha(viaje, p);
             break;
         }
         case 2: {
-            horas(viaje, posViaje);
+            horas(viaje, p);
             break;
         }
         case 3: {
-            tipo(viaje, posViaje);
+            tipo(viaje, p);
             break;
         }
         case 4: {
-            importe(viaje, posViaje);
+            importe(viaje, p);
             break;
         }
         case 5: {
             estado(viaje);
-            if(viaje[posViaje].estado.finalizado == 1)
+            if(viaje[p].estado.finalizado == 1)
                 printf("El viaje no se puede anular porque ya ha finalizado.\n");
             else{
-                viaje[posViaje].anular = 'S';
+                viaje[p].anular = 'S';
                 printf("\nViaje anulado\n");
             }
         }
-        }
-        }
-        } while (op != 0);
-
-        estado(viaje);
+        case 0: break;
+        default: printf("Elige una de las opciones.\n"); break;
         }
     }
-    else
-        printf("Hay al menos una plaza ocupada, para modificar un viaje no debe haber ninguna plaza ocupada.\n");
+    } while (op != 0);
     
+        }
+    } else{
+        printf("\nPara modificar un viaje no debe haber ninguna plaza ocupada.\n");
+    }
+
+    estado(viaje);
+    }
+
     return viaje;
 }
+
 
 static viajes *modviajeAdmin(viajes *viaje){
     int op, i;
@@ -363,13 +431,17 @@ static viajes *modviajeAdmin(viajes *viaje){
         do
         {
             listarviajes(viaje);
-            printf("\nSelecciona cual viaje quieres modificar: ");
+            printf("\nSelecciona cual viaje quieres modificar o si quiere salir (0): ");
 
             if(scanf("%i", &i) != 1){
             fflush(stdin);
             fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
         }
-        } while (i < 1 || i > numeroviajes());
+        } while (i < 0 || i > numeroviajes());
+
+        if(i == 0){
+            return viaje;
+        }
         
         printf("\nSeleccione que desea modificar del viaje con ID %i:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[i-1].i_d);
         
@@ -446,14 +518,14 @@ void imprimirnuevoviaje(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal + 1 == i + 1){
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
         else
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
     fclose(vf);
 }
@@ -492,14 +564,14 @@ void imprimirviajes(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal == i + 1){
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
         else
-            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+            fprintf(vf, "%i-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
     fclose(vf);
 }
@@ -521,9 +593,9 @@ void leerviajes(viajes *viaje){
     for(i = 0; i < numeroviajes(); i++){
         if(fgets(buff, MAX_VIAJES, vf) != NULL){
             buff[strcspn(buff, "\n")] = '\0';
-            sscanf(buff, "%i-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]", &viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+            sscanf(buff, "%i-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]-%[^-]", &viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
 
         if(strcmp(aux, "abierto") == 0){
@@ -592,9 +664,9 @@ void listarviajes(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
         }
-        printf("<%i> %i-%s-%s-%s-%s-%i-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+        printf("<%i> %i-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
 }
 
@@ -620,9 +692,9 @@ void listarviajesabiertos(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             continue;
         }
-        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+        printf("%i-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
                                                 viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
-                                                viaje[i].tipo, viaje[i].importe, aux);
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
 }
 
@@ -689,7 +761,7 @@ viajes *reservarviajes(viajes *viaje){
     return viaje;
 }
 
-viajes *menuviajesUsu(viajes *viaje){
+viajes *menuviajesUsu(viajes *viaje, char viajeusu [6]){
     int op;
 
     system("cls");
@@ -719,8 +791,8 @@ viajes *menuviajesUsu(viajes *viaje){
 
             switch(op){
                 //case 1: MenuUser(infoper, posViajes); break;
-                case 2: viaje = publicarviaje(viaje); break;
-                //case 3: viaje = modviaje(viaje); break;
+                case 2: viaje = publicarviaje(viaje, viajeusu); break;
+                case 3: viaje = modviaje(viaje, viajeusu); break;
                 case 0: break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -731,7 +803,7 @@ viajes *menuviajesUsu(viajes *viaje){
     return viaje;
 }
 
-viajes *menuviajesAdmin(viajes *viaje){
+viajes *menuviajesAdmin(viajes *viaje, char viajeusu [6]){
     int op;
 
     system("cls");
@@ -761,7 +833,7 @@ viajes *menuviajesAdmin(viajes *viaje){
 
             switch(op){
                 case 1: listarviajes(viaje); break;
-                case 2: viaje = publicarviaje(viaje); break;
+                case 2: viaje = publicarviaje(viaje, viajeusu); break;
                 case 3: viaje = modviajeAdmin(viaje); break;
                 //case 4: eliminarviaje(viaje); break;
                 case 0: break;
@@ -774,7 +846,7 @@ viajes *menuviajesAdmin(viajes *viaje){
     return viaje;
 }
 
-viajes *publicarviaje(viajes *viaje){
+viajes *publicarviaje(viajes *viaje, char viajeusu [6]){
     //if(numVehiculos > 0){
         viaje = reservarnuevoviaje(viaje);
 
@@ -783,6 +855,8 @@ viajes *publicarviaje(viajes *viaje){
         //printf("Seleccione el vehículo con el que se va a realizar el viaje:\n");
 
         strcpy(viaje[posViaje].matricula, "8291JDK");
+
+        strcpy(viaje[posViaje].usuviaje, viajeusu);
 
         leerviajes(viaje);
 
@@ -811,7 +885,7 @@ viajes *publicarviaje(viajes *viaje){
     return viaje;
 }
 
-void menuviajes(viajes *viaje, int posViaje, int op){
+void menuviajes(viajes *viaje, int posViaje, char viajeusu [6], int op){
     static int auxi = 0;
 
     if(auxi == 0){
@@ -820,7 +894,7 @@ void menuviajes(viajes *viaje, int posViaje, int op){
     }
 
     if(op == 0)
-        viaje = menuviajesUsu(viaje);
+        viaje = menuviajesUsu(viaje, viajeusu);
     else
-        viaje = menuviajesAdmin(viaje);
+        viaje = menuviajesAdmin(viaje, viajeusu);
 }
