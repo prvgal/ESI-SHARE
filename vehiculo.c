@@ -1,6 +1,6 @@
 
-                /* Módulo Vehículos - Contiene toda la información referente al vehículo de cada usuario, si lo tiene.
-                            Todos los datos pertinentes serán almacenados en el fichero vehiculos.txt*/
+                /* MÃ³dulo VehÃ­culos - Contiene toda la informaciÃ³n referente al vehÃ­culo de cada usuario, si lo tiene.
+                            Todos los datos pertinentes serÃ¡n almacenados en el fichero vehiculos.txt*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,15 +18,15 @@
 
         do{
         	system("cls");
-       		printf("\n¿Desea cambiar algún dato?\n\n");
-        	printf("   *) Matricula - 1\n   *) Número de plazas - 2\n   *)Descripción del vehículo - 3\n   *) Salir - 0\n\n");
+       		printf("\nÂ¿Desea cambiar algÃºn dato?\n\n");
+        	printf("   *) Matricula - 1\n   *) NÃºmero de plazas - 2\n   *)DescripciÃ³n del vehÃ­culo - 3\n   *) Salir - 0\n\n");
         	if(scanf("%d",&opcion)!=1){
         		fflush(stdin);
-        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
         		opcion=-1;
         		i++;
 				if(i>5)
-					printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");
+					printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 segÃºn lo que necesites.\n");
 			}
 			else{
 				switch(opcion){
@@ -34,7 +34,7 @@
                		case 2: pedir_plazas_veh(vehiculo.num_plazas); dato_camb=True; break;
                		case 3: inserta_descripcion(vehiculo.desc_veh); dato_camb=True; break;
                		case 0: break;
-               		default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites."); break;
+               		default: printf("\nPor favor, introduzca un nÃºmero vÃ¡lido.\n"); i++; if(i>5) printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 segÃºn lo que necesites."); break;
            		}
 			}
 		}while(opcion!=0);
@@ -46,28 +46,28 @@
 		int i;
 		FILE *veh_txt;
 
-    	printf("\nRellene el formulario a continuación, por favor: \n");
+    	printf("\nRellene el formulario a continuaciÃ³n, por favor: \n");
 
-    	printf("		*) Matrícula: ");
+    	printf("		*) MatrÃ­cula: ");
     	do{
-    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
+    		printf("\n		- La matrÃ­cula debe ser espaÃ±ola (formato 0000AAA) - ");
     		fflush(stdin);
     		gets(vehiculo.id_mat);
     		i=comprobar_validez_mat(vehiculo.id_mat);
 		}while(i!=1);
 
-    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
+    	printf("\n		*) NÃºmero de plazas del vehÃ­culo (sin contar el conductor): ");
     	scanf("%i", &vehiculo.num_plazas);
     	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
-    		printf("\n		Introduzca un número realista de plazas (2-9):");
+    		printf("\n		Introduzca un nÃºmero realista de plazas (2-9):");
     		scanf("%i", &vehiculo.num_plazas);
 		}
 
-		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
+		printf("\n		*) Si deseas, incluye una breve descripciÃ³n de tu coche (color, modelo y marca, etc... - mÃ¡x. 50 caracteres): ");
 		fflush(stdin);
     	gets(vehiculo.desc_veh);
     	while(strlen(vehiculo.desc_veh)>50){
-    		printf("\n		Introduzca una descripción más corta (o ninguna)");
+    		printf("\n		Introduzca una descripciÃ³n mÃ¡s corta (o ninguna)");
     		fflush(stdin);
     		gets(vehiculo.desc_veh);
 		}
@@ -80,7 +80,7 @@
 		int i;
 
         if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
-        	printf("Error al guardar la información");
+        	printf("Error al guardar la informaciÃ³n");
 			}
 		else{
 				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
@@ -107,7 +107,7 @@
 		char buf[1024];
 
 		if((veh_txt=fopen("vehiculo.txt","r"))==NULL){
-  	      	printf("Error al guardar la información");
+  	      	printf("Error al guardar la informaciÃ³n");
 		}
 
 		else{
@@ -123,11 +123,11 @@
 
 	static void inserta_descripcion(char descripcion[CARACTERES]){
 
-        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, etc...");
+        printf("Escribe una pequeÃ±a descripciÃ³n de tu vehÃ­culo (recuerda, 50 caracteres mÃ¡ximo) - marca, modelo, color, etc...");
         fflush(stdin);
         gets(descripcion);
         while(strlen(descripcion)>50){
-    		printf("Introduzca una descripción más corta (o ninguna)");
+    		printf("Introduzca una descripciÃ³n mÃ¡s corta (o ninguna)");
     		fflush(stdin);
     		gets(descripcion);
 		}
@@ -145,7 +145,7 @@
 	static void pedir_plazas_veh(int plazas){
     	plazas=-1;
 		while(plazas<1||plazas>9){
-			printf("Indica el número total de plazas de las que dispone el vehículo sin el conductor (introduzca un número realista): ");
+			printf("Indica el nÃºmero total de plazas de las que dispone el vehÃ­culo sin el conductor (introduzca un nÃºmero realista): ");
         	scanf("%i",&plazas);
 		}
     }
@@ -196,11 +196,11 @@
 	static void pedir_matricula(char *matricula){
         int i;
 
-        printf("Indica la matrícula de tu vehículo: ");
+        printf("Indica la matrÃ­cula de tu vehÃ­culo: ");
         fflush(stdin);
         gets(matricula);
         do{
-    		printf("Por favor, introduce una matrícula española válida (sin espacios): ");
+    		printf("Por favor, introduce una matrÃ­cula espaÃ±ola vÃ¡lida (sin espacios): ");
             fflush(stdin);
             gets(matricula);
             i=comprobar_validez_mat(matricula);
@@ -211,10 +211,10 @@
 		int op,i=0;
 
 		do{
-			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver la información de un vehículo.\n <0> Volver.\n Elija una opción: ");
+			printf("\nÂ¿QuÃ© desea hacer?\n <1> Dar un vehÃ­culo de alta.\n <2> Dar un vehÃ­culo de baja.\n <3> Lista de vehÃ­culos\n <4> Modificar vehÃ­culo.\n <5> Ver la informaciÃ³n de un vehÃ­culo.\n <0> Volver.\n Elija una opciÃ³n: ");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
-				printf("Error: introduzca una entrada válida.");
+				printf("Error: introduzca una entrada vÃ¡lida.");
 				op=-1;
 			}
 			else{
@@ -225,7 +225,7 @@
 					case 4: admin_modif_veh(); break;
 					case 5: listar_viajes(); break;
 					case 0: break;
-					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 segÃºn lo que necesites.\n"); break;
 				}
 			}
 		}while(op!=0);
@@ -237,10 +237,10 @@
         system("cls");
 
         do{
-			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar uno de sus vehículos de baja.\n <3> Ver información de sus vehículos.\n <4> Modificar información de algún vehículo.\n <0> Volver.\n Elija una entrada: ");
+			printf("\nÂ¿QuÃ© desea hacer?\n <1> Dar un vehÃ­culo de alta.\n <2> Dar uno de sus vehÃ­culos de baja.\n <3> Ver informaciÃ³n de sus vehÃ­culos.\n <4> Modificar informaciÃ³n de algÃºn vehÃ­culo.\n <0> Volver.\n Elija una entrada: ");
 			if(scanf("%i",&op)!=1){
 				fflush(stdin);
-				printf("Error: introduzca una entrada válida - ");
+				printf("Error: introduzca una entrada vÃ¡lida - ");
 				op=-1;
 			}
 			else{
@@ -250,7 +250,7 @@
 					case 3:  usuario_listar_vehiculos(usuario.Id_usuario); break;
 					case 4:  usuario_cambiar_informacion_vehiculo(usuario.Id_usuario); break;
 					case 0:  break;
-					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 segÃºn lo que necesites.\n"); break;
 				}
 			}
 		}while(op!=0);
@@ -263,14 +263,14 @@
 
         strcpy(vehiculo.id_usuario,idusuario);
 
-        printf("\n¿Cuántos vehículos quiere añadir del usuario? - ");
+        printf("\nÂ¿CuÃ¡ntos vehÃ­culos quiere aÃ±adir del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
             fflush(stdin);
-            printf("\nError: no has introducido una entrada válida, prueba con otra: ");
+            printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra: ");
             num_veh=-1;
             i++;
             if(i>5)
-                printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
+                printf("\nVenga va, tÃº puedes, que no es tan complicado: introduce un nÃºmero que indique los coches a aÃ±adir al registro.\n");
         }
         else
             for(i=0;i<num_veh;i++)
@@ -282,24 +282,24 @@
 		char id_aux[IDUSU];
 		int i, num_veh;
 
-        printf("\nIntroduzca la ID a la que pertenecerá el vehículo: ");
+        printf("\nIntroduzca la ID a la que pertenecerÃ¡ el vehÃ­culo: ");
 		do{
             fflush(stdin);
             gets(id_aux);
             if(comprobar_validez_id(id_aux)==0)
-                printf("\nIntroduzca una ID válida, por favor - ");
+                printf("\nIntroduzca una ID vÃ¡lida, por favor - ");
         }while(comprobar_validez_id(id_aux)!=1);
 
         strcpy(veh.id_usuario,id_aux);
 
-        printf("¿Cuántos vehículos quiere añadir del usuario? - ");
+        printf("Â¿CuÃ¡ntos vehÃ­culos quiere aÃ±adir del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
         		fflush(stdin);
-        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
         		num_veh=-1;
         		i++;
 				if(i>5)
-					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
+					printf("\nVenga va, tÃº puedes, que no es tan complicado: introduce un nÃºmero que indique los coches a aÃ±adir al registro.\n");
 			}
 			else
                 for(i=0;i<num_veh;i++)
@@ -310,22 +310,22 @@
         int i=0, num_veh;
         char id_aux[IDUSU];
 
-        printf("\nIntroduzca la ID a la que pertenece el vehículo: ");
+        printf("\nIntroduzca la ID a la que pertenece el vehÃ­culo: ");
 		do{
             fflush(stdin);
             gets(id_aux);
             if(comprobar_validez_id(id_aux)==0)
-                printf("\nIntroduzca una ID válida, por favor - ");
+                printf("\nIntroduzca una ID vÃ¡lida, por favor - ");
         }while(comprobar_validez_id(id_aux)!=1);
 
-        printf("¿Cuántos vehículos quiere borrar del usuario? - ");
+        printf("Â¿CuÃ¡ntos vehÃ­culos quiere borrar del usuario? - ");
         if(scanf("%d",&num_veh)!=1){
         		fflush(stdin);
-        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
         		num_veh=-1;
         		i++;
 				if(i>5)
-					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
+					printf("\nVenga va, tÃº puedes, que no es tan complicado: introduce un nÃºmero que indique los coches a borrar.\n");
 			}
 			else
                 admin_borrar_vehiculos(id_aux, num_veh);
@@ -351,7 +351,7 @@
             exit(0);
         }
 
-        // Leemos el fichero línea por línea
+        // Leemos el fichero lÃ­nea por lÃ­nea
         char linea[MAX_LIN_FICHVEH];
         while (fgets(linea, sizeof(linea), file_original) != NULL){
             // Obtenemos la segunda cadena
@@ -415,7 +415,7 @@
             }
         }
         if(encontrado==False)
-            printf("\nNo se encontró el vehículo indicado.");
+            printf("\nNo se encontrÃ³ el vehÃ­culo indicado.");
         fclose(veh);
         return encontrado;
     }
@@ -424,13 +424,13 @@
         char mat[IDMAT], usu[IDUSU];
 
         do{
-            printf("\nIntroduzca una ID válida a buscar: ");
+            printf("\nIntroduzca una ID vÃ¡lida a buscar: ");
             fflush(stdin);
             gets(usu);
         }while(comprobar_validez_id(usu)!=1);
 
         do{
-            printf("\nAhora introduzca una matrícula válida a buscar: ");
+            printf("\nAhora introduzca una matrÃ­cula vÃ¡lida a buscar: ");
             fflush(stdin);
             gets(mat);
         }while(comprobar_validez_mat(mat)!=1);
@@ -456,20 +456,20 @@
         }
         else{
             while (fgets(linea, sizeof(linea), veh)!=NULL){
-                // Copiamos la matricula y el usuario de la línea a variables temporales
+                // Copiamos la matricula y el usuario de la lÃ­nea a variables temporales
 
                 strncpy(matricula_actual, linea, 7);
                 matricula_actual[7] = '\0';
                 strncpy(usuario_actual, linea+8, 4);
                 usuario_actual[4] = '\0';
 
-                // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
+                // Comparamos la primera y la segunda cadena de la lÃ­nea con las cadenas dadas
                 if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
                     encontrado=True;
-                    // Calcular la posición de la línea en el archivo
+                    // Calcular la posiciÃ³n de la lÃ­nea en el archivo
                     posicion=ftell(veh)-sizeof(linea);
 
-                    // Mover la posición del archivo para escribir la nueva línea
+                    // Mover la posiciÃ³n del archivo para escribir la nueva lÃ­nea
                     fseek(veh, posicion,  SEEK_SET);
                     printf("\n");
                     introducir_datos_veh(vehiculo);
@@ -477,7 +477,7 @@
             }
         }
         if(encontrado==False)
-            printf("\nNo se encontró el vehículo indicado. Compruebe que el usuario y su matrícula son correctos.\n");
+            printf("\nNo se encontrÃ³ el vehÃ­culo indicado. Compruebe que el usuario y su matrÃ­cula son correctos.\n");
         fclose(veh);
     }
 
@@ -486,23 +486,23 @@
         vehiculo_inf vehiculo[num_veh];
 
         do{
-            printf("\n¿Tiene planeado llevar y/o traer otra gente de la ESI?\n\n");
-            printf("   <1> Sí.\n   <2> No\n\n");
+            printf("\nÂ¿Tiene planeado llevar y/o traer otra gente de la ESI?\n\n");
+            printf("   <1> SÃ­.\n   <2> No\n\n");
             if(scanf("%d",&op)!=1){
                 fflush(stdin);
-                printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+                printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
                 op=-1;
                 i++;
                 if(i>5)
-                    printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, o 2 según lo que necesites.\n");
+                    printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, o 2 segÃºn lo que necesites.\n");
             }
             else{
                 switch(op){
-                    case 1: if(scanf("%d",&op)!=1){ fflush(stdin); printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
-                            op=-1; i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");} else{ for(i=0;i<num_veh;i++){
+                    case 1: if(scanf("%d",&op)!=1){ fflush(stdin); printf("\nError: no has introducido una entrada vÃ¡lida, prueba con otra.\n");
+                            op=-1; i++; if(i>5) printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 segÃºn lo que necesites.\n");} else{ for(i=0;i<num_veh;i++){
                             strcpy(vehiculo[i].id_usuario, usuario.Id_usuario); introducir_datos_veh(vehiculo[i]);}}
                     case 2: break;
-                    default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1 o 2 según lo que necesites."); break;
+                    default: printf("\nPor favor, introduzca un nÃºmero vÃ¡lido.\n"); i++; if(i>5) printf("\nVenga va, tÃº puedes, que no es tan complicado: pulsa 1 o 2 segÃºn lo que necesites."); break;
                 }
             }
         }while(op!=1&&op!=2);
@@ -512,7 +512,7 @@
         char matricula[IDMAT];
 
         do{
-            printf("\nIntroduzca una matrícula válida a buscar: ");
+            printf("\nIntroduzca una matrÃ­cula vÃ¡lida a buscar: ");
             fflush(stdin);
             gets(matricula);
         }while(comprobar_validez_mat(matricula)!=1);
@@ -547,7 +547,7 @@
         char matricula[IDMAT];
 
         do{
-            printf("\nIntroduzca una matrícula válida a buscar: ");
+            printf("\nIntroduzca una matrÃ­cula vÃ¡lida a buscar: ");
             fflush(stdin);
             gets(matricula);
         }while(comprobar_validez_mat(matricula)!=1);
@@ -574,7 +574,7 @@
             exit(0);
         }
 
-        // Leemos el fichero línea por línea
+        // Leemos el fichero lÃ­nea por lÃ­nea
         char linea[MAX_LIN_FICHVEH];
         i=0;
         while (fgets(linea, sizeof(linea), file_original) != NULL){
@@ -593,7 +593,7 @@
                 fputs(linea, file_temp);
         }
         if(coincidencia==0)
-            printf("\nEl vehículo no se encuentra en el registro.");
+            printf("\nEl vehÃ­culo no se encuentra en el registro.");
         fclose(file_original);
         fclose(file_temp);
 
@@ -610,7 +610,7 @@
             exit(0);
         }
 
-        // Leemos el fichero línea por línea
+        // Leemos el fichero lÃ­nea por lÃ­nea
         char linea[MAX_LIN_FICHVEH];
         while (fgets(linea, sizeof(linea), file_original) != NULL){
             // Obtenemos las cadenas
@@ -627,7 +627,7 @@
             }
         }
         if(coincidencia==0)
-            printf("\nNo existe ningún vehículo asociado a su cuenta.\n");
+            printf("\nNo existe ningÃºn vehÃ­culo asociado a su cuenta.\n");
         fclose(file_original);
     }
 
@@ -635,7 +635,7 @@
         char matricula[IDMAT];
 
         do{
-            printf("\nIntroduzca una matrícula válida a buscar: ");
+            printf("\nIntroduzca una matrÃ­cula vÃ¡lida a buscar: ");
             fflush(stdin);
             gets(matricula);
         }while(comprobar_validez_mat(matricula)!=1);
@@ -669,13 +669,13 @@
                 coincidencia=True;
                 posicion=ftell(archivo)-sizeof(linea);
 
-                // Movemos la posición del archivo para escribir la nueva línea
+                // Movemos la posiciÃ³n del archivo para escribir la nueva lÃ­nea
                 fseek(archivo, posicion, SEEK_SET);
                 introducir_datos_veh(veh);
             }
         }
     if(coincidencia==False)
-        printf("\n El vehículo indicado no se encuentra asociado a su cuenta.\n");
+        printf("\n El vehÃ­culo indicado no se encuentra asociado a su cuenta.\n");
     fclose(archivo);
     }
 
@@ -716,7 +716,7 @@
             usuario_listar_vehiculos(usu);
             do{
                 do{
-                    printf("\nIntroduzca la matrícula del vehículo que va a utilizar: ");
+                    printf("\nIntroduzca la matrÃ­cula del vehÃ­culo que va a utilizar: ");
                     fflush(stdin);
                     gets(mat);
                 }while(comprobar_validez_mat(mat)!=1);
@@ -739,9 +739,6 @@
             fclose(veh);
         }
         else{
-            printf("\nNo es posible iniciar el viaje - no figura ningún vehículo en su cuenta.\n");
+            printf("\nNo es posible iniciar el viaje - no figura ningÃºn vehÃ­culo en su cuenta.\n");
         }
     }
-
-
-
