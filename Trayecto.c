@@ -6,11 +6,11 @@
 #include "Trayecto.h"
 #include "perfiles.h"
 
-void gestionar_trayecto(viajes viaje){
+void gestionar_trayecto(viajes viaje, tPerfil usuario){
     int op;
     do{
         system("cls");
-        printf("\n Elija una opción: \n \n   1. Agregar paradas \n   2. Modificar paradas \n   3. Borrar paradas \n   0. Cancelar \n");
+        printf("\n Elija una opción: \n \n   1. Agregar paradas \n   2. Modificar paradas \n   3. Borrar paradas \n   4. Mostrar viajes con paradas en su localidad   0. Cancelar \n");
         if(scanf("%d",&op)!=1){
             fflush(stdin);
             printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
@@ -21,6 +21,7 @@ void gestionar_trayecto(viajes viaje){
                 case 1: inicio_trayecto(viaje); op=0; break;
                 case 2: modificar_trayecto(viaje); op=0; break;
                 case 3: borrar_trayecto(viaje); op=0; break;
+                case 4: mostrar_paradas(usuario); op=0; break;
                 case 0: break;
             }
         }
@@ -744,7 +745,7 @@ static void borrar_trayecto(viajes viaje){
 }
 
 
-void mostrar_paradas(tPerfil usuario){
+static void mostrar_paradas(tPerfil usuario){
 
     FILE *pasos;
     int id_viaje;

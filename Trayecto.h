@@ -1,17 +1,18 @@
 #ifndef TRAYECTO_H_INCLUDED
 #define TRAYECTO_H_INCLUDED
 #include "viajes.h"
+#include "perfiles.h"
 
 
 //precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
 //postcondición: Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
-void gestionar_trayecto(viajes);
+void gestionar_trayecto(viajes, tPerfil);
 
 
 
 //precondición: Debe haberse generado una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
 //postcondición: Imprime por pantalla al usuario una lista con todos los viajes que pasen por su localidad con sus respectivas ID
-void mostrar_paradas(tPerfil);
+static void mostrar_paradas(tPerfil);
 
 
 
