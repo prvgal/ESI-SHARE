@@ -47,7 +47,16 @@
 
     //Precondición: Recibe la ID del usuario que esté  registrado en el momento, así como una estructura de tipo viajes con algún dato básico.
     //Postcondición: Guarda en la estructura el número de plazas y la matrícula de alguno de los vehículos del usuario, si tiene. Indica que el usuario no tiene vehículos registrados en su cuenta en caso contrario.
-    void proc_jose(char [], viajes);
+    //Devuelve 1 si el usuario no tiene vehículo, 0 en caso contrario.
+    int proc_jose(char [], viajes);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: El procedimiento habrá impreso la información de los vehículos que el usuario tenga dados de alta.
+    void usuario_listar_vehiculos(char []);
+
+    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+    //Postcondición: Devuelve el número de vehículos asociados a la ID recibida.
+    int contar_vehiculos(char []);
 
     //*******FUNCIONES PRIVADAS*******
 
@@ -135,10 +144,6 @@
     //Postcondición: El procedimiento habrá borrado del registro el vehículo con la matrícula dada dentro del mismo (sólo si es suyo), no hace nada en caso contrario.
     static void usuario_baja_vehiculo(char []);
 
-    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
-    //Postcondición: El procedimiento habrá impreso la información de los vehículos que el usuario tenga dados de alta.
-    static void usuario_listar_vehiculos(char []);
-
     //Precondición: Recibe una matrícula e ID de usuario (cadenas) con las que buscar en el fichero vehiculo.txt
     //Postcondición: El procedimiento habrá modificado la información ligada a la matrícula recibida.
     static void usuario_modificar_vehiculo(char [], char []);
@@ -146,9 +151,5 @@
     //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
     //Postcondición: El procedimiento habrá recibido una matrícula y con ella habrá llamado al procedimiento usuario_modificar_vehiculo, cambiando la información ligada a la matrícula recibida.
     static void usuario_cambiar_informacion_vehiculo(char []);
-
-    //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
-    //Postcondición: Devuelve el número de vehículos asociados a la ID recibida.
-    static int contar_vehiculos(char []);
 
 #endif // PRUEBA_VEHICULOS_H_INCLUDED
