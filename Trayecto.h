@@ -12,7 +12,7 @@ void gestionar_trayecto(viajes, tPerfil);
 
 //precondición: Debe haberse generado una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
 //postcondición: Imprime por pantalla al usuario una lista con todos los viajes que pasen por su localidad con sus respectivas ID
-static void mostrar_paradas(tPerfil);
+void mostrar_paradas(tPerfil);
 
 
 
@@ -22,7 +22,7 @@ static void mostrar_paradas(tPerfil);
 //********************************************************************************************************
 
 
-static void inicio_trayecto(viajes);
+void inicio_trayecto(viajes);
 
 static void final_ESI(viajes);
 
