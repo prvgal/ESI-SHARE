@@ -2978,8 +2978,39 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 |                 Datos empleados                  |                    Descripción del error                     | resultado |
 | :----------------------------------------------: | :----------------------------------------------------------: | :-------: |
-| Cadena de formato distinto a la ID de un usuario | Siempre imprimirá por pantalla el mensaje de "no existe vehículo asociado a la cuenta." |  ¿Error?  |
-|                   Cadena vacía                   |                        Error anterior                        |  ¿Error?  |
+| Cadena de formato distinto a la ID de un usuario | Siempre imprimirá por pantalla el mensaje de "no existe vehículo asociado a la cuenta." |   Error   |
+|                   Cadena vacía                   |                        Error anterior                        |   Error   |
+
+
+
+* *int contar_vehiculos(char []);*
+
+|              datos empleados               |                    descripción del error                     | resultado |
+| :----------------------------------------: | :----------------------------------------------------------: | :-------: |
+| ID inexistente o con formato erróneo/vacío | Devuelve cero al no coincidir ninguna ID con las guardadas en vehiculo.txt |   Error   |
+
+* *static void introducir_datos_veh(vehiculo_inf);*  - El procedimiento necesita una ID de usuario concreta para guardar un vehículo en vehiculo.txt adecuadamente.
+
+|        datos empleados        |                    descripción del error                     | resultado |
+| :---------------------------: | :----------------------------------------------------------: | :-------: |
+|       Estructura vacía        | Se guarda la información del nuevo vehículo adecuadamente, pero la ID se guarda como basura o directamente no se guarda nada en su sección. |   Error   |
+| Estructura con datos erróneos | Se guarda la información del nuevo vehículo adecuadamente, pero si la ID es errónea también se guardará en vehiculo.txt - esto puede afectar a la hora de leer IDs, entre otras funcionalidades. |   Error   |
+
+* *static void acortar_cadena(char []);*
+
+|                       datos empleados                        |                    descripción del error                     |            resultado            |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :-----------------------------: |
+| Cadena con distintos formatos (objetivamente no es posible que sea errónea) | No ocurre ningún error, si encuentra un '\n' acorta la cadena cambiándolo por '\0'. En caso contrario mantiene la cadena igual. | Funcionamiento siempre adecuado |
+
+* *static int comprobar_validez_mat(char []);*
+
+|                       datos empleados                       |                    descripción del error                     |            resultado            |
+| :---------------------------------------------------------: | :----------------------------------------------------------: | :-----------------------------: |
+| Cadena con formato erróneo y correcto de matrícula española | No ocurre ningún error, si el formato es erróneo devuelve 0, en caso contrario devuelve 1 | Funcionamiento siempre adecuado |
+
+* *static int comprobar_validez_id(char []);* - Se repite el caso anterior
+
+
 
 ***Pruebas de Caja Blanca***
 
