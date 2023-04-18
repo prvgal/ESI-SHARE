@@ -22,10 +22,6 @@
     //*******FUNCIONES PUBLICAS*******
 
 
-    //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
-    //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
-    void escribir_fichero(vehiculo_inf);
-
     //Precondición: Ninguna.
     //Postcondición: El administrador habrá elegido alguna de las opciones expuestas en un switch que permite: <1> Dar un vehículo de alta <2> Dar un vehículo de baja
     //<3> Listar todos los vehículos <4> Modificar la información de un vehículo <5> Volver al menú de administrador principal.
@@ -56,6 +52,9 @@
 
     //*******FUNCIONES PRIVADAS*******
 
+	//Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
+    //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
+    static void escribir_fichero(vehiculo_inf);
 
     //Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
     //Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.

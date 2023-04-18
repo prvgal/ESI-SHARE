@@ -44,7 +44,7 @@
 		escribir_fichero(vehiculo);
 	}
 
-	void escribir_fichero(vehiculo_inf vehiculo){
+	static void escribir_fichero(vehiculo_inf vehiculo){
         char guion[2]={'-','\0'};
         FILE *veh_txt;
 
@@ -296,7 +296,6 @@
             fclose(file_temp);
             remove("vehiculo.txt");
             int v=rename("vehiculo_temp.txt", "vehiculo.txt");
-            printf("%d",v);
         }
     }
 
@@ -442,6 +441,7 @@
         FILE *viaj;
         char linea[MAX_LIN_FICHVIAJE];
         viajes viaje;
+        logico coincidencia=False;
 
         if((viaj=fopen("Viajes.txt","r+"))==NULL){
             printf("\nError al abrir el fichero Viajes.txt\n");
@@ -454,9 +454,12 @@
                 if(strcmp(viaje.matricula,matricula)==0&&viaje.estado.finalizado==True){
                     printf("%d - %s - %s - %s - %s - %d - %s - %s - %s - %c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
                                                                                 viaje.estado, viaje.anular);
+                    coincidencia=True;
                 }
             }
         }
+        if(coincidencia==False)
+            printf("\nEl vehículo dado no figura en ningún viaje.\n");
         fclose(viaj);
     }
 
