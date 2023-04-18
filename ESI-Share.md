@@ -3460,7 +3460,7 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 ###### III. **Vehículo**
 
-***Datos de Prueba***
+***Prueba de procedimientos y funciones***
 
 * *void escribir_fichero(vehiculo_inf);* - El procedimiento debe recibir una estructura rellenada previamente mediante *void introducir_datos_veh();*
 
@@ -3502,7 +3502,7 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 |                       datos empleados                        |                    descripción del error                     | resultado |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :-------: |
-| Cadena de formato distinto a ID de usuario o no existente, estructura vacía | No se encuentra nunca un vehículo que pertenezca a la ID dada. Variable viajes no se ve afectada |   Error   |
+| Cadena de formato distinto a ID de usuario o no existente, estructura vacía | No se encuentra nunca un vehículo que pertenezca a la ID dada. Variable viajes no se ve afectada |  ¿Error?  |
 
 
 
@@ -3510,8 +3510,8 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 |                 Datos empleados                  |                    Descripción del error                     | resultado |
 | :----------------------------------------------: | :----------------------------------------------------------: | :-------: |
-| Cadena de formato distinto a la ID de un usuario | Siempre imprimirá por pantalla el mensaje de "no existe vehículo asociado a la cuenta." |   Error   |
-|                   Cadena vacía                   |                        Error anterior                        |   Error   |
+| Cadena de formato distinto a la ID de un usuario | Siempre imprimirá por pantalla el mensaje de "no existe vehículo asociado a la cuenta." |  ¿Error?  |
+|                   Cadena vacía                   |                        Error anterior                        |  ¿Error?  |
 
 
 
@@ -3519,7 +3519,7 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 |              datos empleados               |                    descripción del error                     | resultado |
 | :----------------------------------------: | :----------------------------------------------------------: | :-------: |
-| ID inexistente o con formato erróneo/vacío | Devuelve cero al no coincidir ninguna ID con las guardadas en vehiculo.txt |   Error   |
+| ID inexistente o con formato erróneo/vacío | Devuelve cero al no coincidir ninguna ID con las guardadas en vehiculo.txt |  ¿Error?  |
 
 * *static void introducir_datos_veh(vehiculo_inf);*  - El procedimiento necesita una ID de usuario concreta para guardar un vehículo en vehiculo.txt adecuadamente.
 
@@ -3528,11 +3528,15 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 |       Estructura vacía        | Se guarda la información del nuevo vehículo adecuadamente, pero la ID se guarda como basura o directamente no se guarda nada en su sección. |   Error   |
 | Estructura con datos erróneos | Se guarda la información del nuevo vehículo adecuadamente, pero si la ID es errónea también se guardará en vehiculo.txt - esto puede afectar a la hora de leer IDs, entre otras funcionalidades. |   Error   |
 
+
+
 * *static void acortar_cadena(char []);*
 
 |                       datos empleados                        |                    descripción del error                     |            resultado            |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :-----------------------------: |
 | Cadena con distintos formatos (objetivamente no es posible que sea errónea) | No ocurre ningún error, si encuentra un '\n' acorta la cadena cambiándolo por '\0'. En caso contrario mantiene la cadena igual. | Funcionamiento siempre adecuado |
+
+
 
 * *static int comprobar_validez_mat(char []);*
 
@@ -3540,7 +3544,131 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 | :---------------------------------------------------------: | :----------------------------------------------------------: | :-----------------------------: |
 | Cadena con formato erróneo y correcto de matrícula española | No ocurre ningún error, si el formato es erróneo devuelve 0, en caso contrario devuelve 1 | Funcionamiento siempre adecuado |
 
+
+
 * *static int comprobar_validez_id(char []);* - Se repite el caso anterior
+
+* *static void admin_borrar_vehiculos(char [], int );*
+
+|                       datos empleados                        |                    descripción del error                     | resultado |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :-------: |
+|  Entero poco realista e ID inexistente o de formato erróneo  | No se borra ningún vehículo ya sea porque el entero es menor o igual que cero, o porque no se encuentra la ID en el fichero vehiculo.txt |   Error   |
+|            ID real, entero menor o igual que cero            | El sistema encuentra al usuario pero no borra ninguno de sus vehículos al ser el entero menor o igual que cero |   Error   |
+| ID real, entero mayor que el número de vehículos del usuario | Se borran todos los vehículos asociados a la ID. Puede servir si se desea borrar todo lo referente a un usuario concreto. |  ¿Error?  |
+
+
+
+* *static void admin_baja_vehiculo();*  
+
+|                   Datos empleados                    | Descripción del error | resultado |
+| :--------------------------------------------------: | :-------------------: | :-------: |
+| Ninguno, el procedimiento no recibe datos de entrada |           X           |     X     |
+
+
+
+* *static void admin_alta_vehiculo();*  
+
+|                   Datos empleados                    | Descripción del error | resultado |
+| :--------------------------------------------------: | :-------------------: | :-------: |
+| Ninguno, el procedimiento no recibe datos de entrada |           X           |     X     |
+
+
+
+* *static void listar_vehiculos();*  
+
+|                   Datos empleados                    | Descripción del error | resultado |
+| :--------------------------------------------------: | :-------------------: | :-------: |
+| Ninguno, el procedimiento no recibe datos de entrada |           X           |     X     |
+
+
+
+* *static void admin_modif_veh();*  
+
+|                   Datos empleados                    | Descripción del error | resultado |
+| :--------------------------------------------------: | :-------------------: | :-------: |
+| Ninguno, el procedimiento no recibe datos de entrada |           X           |     X     |
+
+
+
+* *static logico listar_vehiculos_mat(char []);*
+
+|              Datos empleados               |                    Descripción del error                     | resultado |
+| :----------------------------------------: | :----------------------------------------------------------: | :-------: |
+| Matrícula inexistente o de formato erróneo | El procedimiento nunca encuentra un vehículo que coincida con la matrícula dada, con lo que siempre se imprime el mensaje de "No se encontró el vehículo indicado." |  ¿Error?  |
+|                Cadena vacía                |                 Se repite el error anterior                  |  ¿Error?  |
+
+
+
+* *static void admin_buscar_modificar_vehiculo(char [], char []);* - Debe recibir una matrícula e ID válidos del administrador para borrar un vehículo del registro de vehículos.
+
+|           Datos empleados           |                    Descripción del error                     | resultado |
+| :---------------------------------: | :----------------------------------------------------------: | :-------: |
+| Matrícula errónea/inexistente/vacía | Nunca se encuentra la línea en vehiculo.txt adecuada, con lo que esta no se borrará jamás. Siempre se mostrará el mensaje "No se ha encontrado el vehículo indicado" |  ¿Error?  |
+|    ID errónea/inexistente/vacía     |                 Se repite el error anterior                  |  ¿Error?  |
+
+
+
+* *static void viajes_veh(char []);*
+
+|                 Datos empleados                  |                    Descripción del error                     | resultado |
+| :----------------------------------------------: | :----------------------------------------------------------: | :-------: |
+|          Matrícula errónea/inexistente           | Jamás se encuentra un vehículo en el fichero vehiculo.txt que coincida, con lo que no habrá viajes asociados. Nunca se mostrará algún viaje. |  ¿Error?  |
+|                 Matrícula vacía                  |                        Error anterior                        |  ¿Error?  |
+| Matrícula de coche que nunca ha realizado viajes | El procedimiento no devuelve ningún mensaje que indique que el vehículo nunca ha formado parte de un viaje. |   Error   |
+
+
+
+* *static void listar_viajes();*
+
+|                   Datos empleados                    | Descripción del error | resultado |
+| :--------------------------------------------------: | :-------------------: | :-------: |
+| Ninguno, el procedimiento no recibe datos de entrada |           X           |     X     |
+
+
+
+* *static void usuario_alta_vehiculo(char []);*
+
+|       Datos empleados        |                    Descripción del error                     | resultado |
+| :--------------------------: | :----------------------------------------------------------: | :-------: |
+| ID con formato erróneo/vacía | La ID asociada al nuevo vehículo se guardará con formato erróneo/como caracteres basura |   Error   |
+
+
+
+* *static void usuario_borrar_vehiculo(char [], char []);*
+
+|       Datos empleados       |                    Descripción del error                     |                          resultado                           |
+| :-------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ID vacía/de formato erróneo | Nunca se borrará el vehículo deseado al no coincidir la ID guardada en vehiculo.txt |                            Error                             |
+| Matrícula inexistente/vacía | No se borrará ningún vehículo dado que la matrícula dada no se encuentra en vehiculo.txt |                   Funcionamiento adecuado                    |
+|   Ambos campos corruptos    | Nunca se borrará nada dado que se comprueban ambos campos (ID y matrícula) | Error (parcialmente por el mismo motivo que el primer error) |
+
+
+
+* *static void usuario_baja_vehiculo(char []);*
+
+| Datos empleados  |                    Descripción del error                     | resultado |
+| :--------------: | :----------------------------------------------------------: | :-------: |
+| ID errónea/vacía | Se repetirá el mismo problema que en *static void usuario_borrar_vehiculo(char [], char []);* |   Error   |
+
+
+
+* *static void usuario_modificar_vehiculo(char [], char []);*
+
+|       Datos empleados        |                    Descripción del error                     |                   resultado                    |
+| :--------------------------: | :----------------------------------------------------------: | :--------------------------------------------: |
+| ID con formato erróneo/vacía | Nunca se modificará el vehículo deseado al no coincidir la ID guardada en vehiculo.txt. Siempre se repetirá el mensaje "El vehículo indicado no se encuentra asociado a su cuenta" |                     Error                      |
+|      Matrícula errónea       | Nunca se modificará el vehículo deseado al no coincidir la ID guardada en vehiculo.txt. Siempre se repetirá el mensaje "El vehículo indicado no se encuentra asociado a su cuenta" |            Funcionamiento adecuado             |
+|    Ambos campos erróneos     | Nunca se modificará el vehículo deseado al no coincidir la ID guardada en vehiculo.txt. Siempre se repetirá el mensaje "El vehículo indicado no se encuentra asociado a su cuenta" | Error (por tratarse en parte del caso inicial) |
+
+
+
+* *static void usuario_cambiar_informacion_vehiculo(char []);*
+
+|       Datos empleados        |                    Descripción del error                     | resultado |
+| :--------------------------: | :----------------------------------------------------------: | :-------: |
+| ID con formato erróneo/vacía | Se repite el caso inical expuesto para *static void usuario_modificar_vehiculo(char [], char []);* |   Error   |
+
+
 
 ***Pruebas de Caja Blanca***
 
