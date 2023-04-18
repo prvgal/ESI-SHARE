@@ -219,6 +219,108 @@ Incluirá otros datos como la ID de usuario, nombre real, nombre de usuario, loc
 
 Este módulo podría definirse como un puente de unión entre Menu y los demás módulos del proyecto. Cede datos tales como IDs y nombres de usuario, y recibe otros como pueden ser vehículos y viajes asociados a una cuenta. Engloba todas las interfaces principales que se muestran al usuario promedio y al administrador por igual.
 
+***Macros***
+```C
+#define ID 5
+#define MAX_N 21
+#define MAX_L 21
+#define MAX_PU 14
+#define MAX_U 6
+#define MAX_C 9
+#define MAX_E 10
+#define MAX_LIN_FICH 70
+```
+
+***Estructuras de Datos***
+
+- Información de perfil asociado a un usuario.
+
+```C
+typedef struct {
+    char Id_usuario[ID];        // 4 dígitos.
+    char Nomb_usuario[MAX_N];   // 20 caracteres mas el \0. Nombre completo del usuario
+    char Localidad[MAX_L];      // 20 caracteres mas el \0. Ubicación de donde sale el usuario con su vehículo compartido.
+    char Perfil_usuario[MAX_PU];    // 13 caracteres (administrador) incluyendo el \0. Verifica si el usuario es administrador o de tipo usuario
+    char Usuario[MAX_U];        // 5 caracteres mas el \0. Nombre de usuario para acceder al sistema.
+    char Contrasena[MAX_C];     // 8 caracteres mas el \0. 
+    char estado;     // Dos posibles estados, activo (1) / bloqueado (0). 
+} tPerfil;
+```
+
+***Funciones Públicas***
+
+* int Inicio(tPerfil **);*
+
+```C
+// Precondición: Recibe la dirección de memoria donde se encuentra la primera posición del vector de estructuras de tipo tPerfil debe estar inicializada con antelación.
+// Poscondición: Devuelve la posición donde se encuentra el usuario en el vector de estructuras de tipo tPerfil
+
+int Inicio(tPerfil *infoper){
+    int op, posUsuario;     // posUsuario contendrá la posición en el vector de estructuras donde se encuentre el usuario que ha iniciado sesión/registrado correctamente
+    char usuario[MAX_U], contrasena[MAX_C];
+
+    system("cls");
+    ImprimirESISHARE();
+    printf("\nBienvenido.");
+
+    do{
+        printf("\n#            LOG-IN            #\n");
+
+        fflush(stdin);
+
+        // Recogemos el usuario y la contraseña
+        PreguntarUsuario(usuario);
+        fflush(stdin);
+        ObtenerContrasena(contrasena);
+
+        // Validamos si el usuario, la contraseña, o ambas son correctas.
+        if(!ValidarLogin(infoper, usuario, contrasena, &posUsuario)){
+            system("cls");
+            fprintf(stderr, "Error, el usuario o la contrasena son incorrectas\n"); // Mensaje de error si hay algo que no es correcto
+
+            // Permitimos la opcion de seguir con el Inicio de Sesión, Registrarse o cerrar la aplicación.
+            do{
+                printf("\nNo tienes una cuenta o ha olvidad su contrasena?\n");
+                printf("<1> Para seguir con el Inicio de Sesion.\n");
+                printf("<2> Para Registrarse.\n");
+                printf("<0> Para cerrar ESI-SHARE.\n");
+                
+                printf("\nIngrese el numero: ");
+
+                if(scanf("%i", &op) != 1){      // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+                    system("cls");
+                    fflush(stdin);
+                    fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+                } else{
+                    switch(op){
+                    case 0: exit(1); break;
+                    case 1: posUsuario = Inicio(infoper); break;
+                    case 2: posUsuario = SignUp(infoper); break;
+                    default: printf("\nIngrese un numero dentro del rango de opciones.\n"); break;
+                    }
+                }
+
+            } while(op != 1 && op != 2 && op != 3);
+        } 
+
+        // Verificamos si está activo (1) o bloqueado (0) el usuario que desea Iniciar sesión. En caso de que se haya registrado, estará activado por defecto.
+        if(infoper[posUsuario].estado == '0'){  
+            fprintf(stderr, "\nError, el usuario se encuentra bloqueado.");
+            exit(1);    // Si el usuario está bloqueado se cerrará la aplicación.
+        } else{
+            system("cls");
+            printf("\nBienvenido/a %s.\n", infoper[posUsuario].Nomb_usuario);
+        }
+
+    } while(!ValidarLogin(infoper, infoper[posUsuario].Usuario, infoper[posUsuario].Contrasena, &posUsuario));
+
+    return posUsuario;  // Devolvemos la posición del usuario en el vector para su uso en otras funciones y no perder qué usuario accedió iniciando sesión.
+}
+```
+
+*Pide al usuario introducir la información necesaria para ingresar ESI-SHARE. Este procedimiento se diseñó como el principal del programa.* 
+
+
 ###### III. **Vehículo **
 
 ***
@@ -262,50 +364,8 @@ typedef struct{
 
 ***Funciones Públicas***
 
-* Introducir_datos_veh(vehiculo_inf);
 
-```C
-//Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
-//Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
-
-static void introducir_datos_veh(vehiculo_inf vehiculo){
-		int i;
-		FILE *veh_txt;
-
-    	printf("\nRellene el formulario a continuación, por favor: \n");
-
-    	printf("		*) Matrícula: ");
-    	do{
-    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
-    		fflush(stdin);
-    		gets(vehiculo.id_mat);
-    		i=comprobar_validez_mat(vehiculo.id_mat);
-		}while(i!=1);
-
-    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
-    	scanf("%i", &vehiculo.num_plazas);
-    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
-    		printf("\n		Introduzca un número realista de plazas (2-9):");
-    		scanf("%i", &vehiculo.num_plazas);
-		}
-
-		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
-		fflush(stdin);
-    	gets(vehiculo.desc_veh);
-    	while(strlen(vehiculo.desc_veh)>50){
-    		printf("\n		Introduzca una descripción más corta (o ninguna)");
-    		fflush(stdin);
-    		gets(vehiculo.desc_veh);
-		}
-		acortar_cadena(vehiculo.desc_veh);
-		escribir_fichero(vehiculo, veh_txt);
-	}
-
-```
-
-*Pide al usuario introducir la información necesario para ingresar un nuevo vehículo en el fichero de vehículos. Este procedimiento se diseñó para ser llamado por otras funciones* 
-
-* *void escribir_fichero(vehiculo_inf, FILE *);*
+* void escribir_fichero(vehiculo_inf, FILE *);*
 
 ```C
 //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
@@ -528,6 +588,50 @@ int contar_vehiculos(char idusu[IDUSU]){
 *Como su nombre indica, cuenta el número de vehículos que un usuario tiene asociados a su cuenta. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
 
 ***Funciones Privadas***
+
+* Introducir_datos_veh(vehiculo_inf);
+
+```C
+//Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
+//Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
+
+static void introducir_datos_veh(vehiculo_inf vehiculo){
+		int i;
+		FILE *veh_txt;
+
+    	printf("\nRellene el formulario a continuación, por favor: \n");
+
+    	printf("		*) Matrícula: ");
+    	do{
+    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
+    		fflush(stdin);
+    		gets(vehiculo.id_mat);
+    		i=comprobar_validez_mat(vehiculo.id_mat);
+		}while(i!=1);
+
+    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
+    	scanf("%i", &vehiculo.num_plazas);
+    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
+    		printf("\n		Introduzca un número realista de plazas (2-9):");
+    		scanf("%i", &vehiculo.num_plazas);
+		}
+
+		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
+		fflush(stdin);
+    	gets(vehiculo.desc_veh);
+    	while(strlen(vehiculo.desc_veh)>50){
+    		printf("\n		Introduzca una descripción más corta (o ninguna)");
+    		fflush(stdin);
+    		gets(vehiculo.desc_veh);
+		}
+		acortar_cadena(vehiculo.desc_veh);
+		escribir_fichero(vehiculo, veh_txt);
+	}
+
+```
+
+*Pide al usuario introducir la información necesario para ingresar un nuevo vehículo en el fichero de vehículos. Este procedimiento se diseñó para ser llamado por otras funciones* 
+
 
 * *static void introducir_datos_veh(vehiculo_inf);*
 
