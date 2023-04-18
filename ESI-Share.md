@@ -838,6 +838,197 @@ static void ListarPerfiles(tPerfil *infoper){
 
 *Se ha desarrollado con el propósito de poder listar todos los usuarios del sistema con todos sus datos. Esta función solo podrá accederse siendo administrador, si el perfil es de tipo usuario, no podrá accederse a esta función* 
 
+* static void ModificarCamposUsuario(tPerfil **infoper, int pos);*
+
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper y la posición del usuario que incio sesión al principio del programa.
+// Poscondición: cambia tanto en el registro como en el fichero, los datos que puede cambiar un perfil de tipo usuario.
+
+static void ModificarCamposUsuario(tPerfil *infoper, int pos){
+    int i, op;
+    FILE *pf;
+
+    pf = fopen("Usuarios.txt", "r+");   // Abrimos Usuarios.txt para lectura/escritura
+
+    if(pf == NULL){     // Comprobamos si se ha abierto correctamente
+        fprintf(stderr, "Error al abrir el archivo.");
+        exit(1);
+    }
+
+    // Imprimimos todos los datos que el usuario puede cambiar
+    printf("\nDatos de su cuenta.\n");
+
+    printf("\nNombre de usuario: %s\n", infoper[pos].Nomb_usuario);
+    printf("\nNombre de la localidad: %s\n", infoper[pos].Localidad);
+    printf("\nUsuario: %s\n", infoper[pos].Usuario);
+    printf("\nContrasena: %s\n", infoper[pos].Contrasena);
+
+    // Preguntamos que cambiar y en caso de no estar entre las opciones aparecerá un mensaje de error y volverá a preguntar de nuevo.
+    do{
+        printf("\nQue desea cambiar?\n");
+        printf("<1> Para cambiar el nombre de usuario.\n");
+        printf("<2> Para cambiar el nombre de su localidad.\n");
+        printf("<3> Para cambiar el usuario.\n");
+        printf("<4> Para cambiar la contrasena.\n");
+        printf("<0> Para no realizar ningun cambio y volver a la configuracion del perfil.\n");
+        
+        printf("\nIngrese el numero: ");
+        
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+            system("cls");
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+        } else{
+            switch(op){
+                case 0: system("cls"); break;   
+                case 1: ObtenerNombreUsuario(infoper[pos].Nomb_usuario); break;
+                case 2: ObtenerLocalidad(infoper[pos].Localidad); break;
+                case 3: ObtenerUsuario(infoper, infoper[pos].Usuario); break;
+                case 4: ObtenerContrasena(infoper[pos].Contrasena); break;
+                default: printf("\nIngrese un numero dentro del rango de opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+
+    // Reescribimos el fichero
+    for(i = 0; i < LongitudVectorEstructuras(); i++){
+        if(i+1 == LongitudVectorEstructuras())
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+        else
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                  infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+
+    }
+
+    fclose(pf);     // Cerramos el fichero
+}
+```
+
+*Función desarrollada para que el usuario pueda modificar sus datos. Aparecerá un listado con los datos que el usuario puede cambiar ya sean el nombre de usuario, la localidad, el usuario y la contraseña.* 
+
+* static void ModificarCamposAdmin(tPerfil **infoper);*
+
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper.
+// Poscondición: tras elegir qué usuario cambiar datos, cambia tanto en el registro como en el fichero.
+
+static void ModificarCamposAdmin(tPerfil *infoper){
+    FILE *pf;
+    char id[ID];
+    int i, op, pos;
+    
+    pf = fopen("Usuarios.txt", "r+");   // Abrimos el fichero para lectura/escritura
+
+    if(pf == NULL){     // Comprobamos si se ha abierto correctamente
+        fprintf(stderr, "Error al abrir el archivo.");
+        exit(1);
+    }
+
+    ListarPerfiles(infoper);    // Listamos los perfiles
+
+    do{
+        ObtenerID(infoper, id, LongitudVectorEstructuras()); // Preguntamos/Obtenemos la ID del usuario a cambiar sus datos
+
+        pos = atoi(id) - 1;     // Pasamos la cadena a un numero.
+
+        system("cls");
+        printf("\nDatos del usuario con ID: %s\n", id);
+
+        printf("\nNombre de usuario: %s.\n", infoper[pos].Nomb_usuario);
+        printf("\nNombre de la localidad: %s.\n", infoper[pos].Localidad);
+        printf("\nTipo de perfil: %s.\n", infoper[pos].Perfil_usuario);
+        printf("\nUsuario: %s.\n", infoper[pos].Usuario);
+        printf("\nContrasena: %s.\n", infoper[pos].Contrasena);
+        printf("\nActivo (1) / bloqueado (0): %c.\n", infoper[pos].estado);
+
+        if(!ValidarID(infoper, id, &pos, LongitudVectorEstructuras()))  // Si no se encuentra la ID, mensaje de error.
+            fprintf(stderr, "La ID no se encuentra disponible.\n");
+        else{
+            // En el caso de encontrarse, preguntar� que es lo que desea cambiar, en caso de no estar en las opciones, tras un mensaje de error, vuelve a preguntar.
+            printf("\nQue desea cambiar?\n");
+            printf("\n<1> Para cambiar la ID.\n");
+            printf("<2> Para cambiar el nombre de usuario.\n");
+            printf("<3> Para cambiar el nombre de su localidad.\n");
+            printf("<4> Para cambiar el usuario.\n");
+            printf("<5> Para cambiar la contrasena.\n");
+            printf("<6> Para activar/bloquear el usuario.\n");
+            printf("<0> Para no realizar ningun cambio y volver a la configuracion del perfil.\n");
+        
+            printf("\nIngrese el numero: ");
+        
+            if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+                system("cls");
+                fflush(stdin);
+                fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+            } else{
+                // Llamada a funciones para realizar dichos cambios
+                switch(op){
+                    case 0: system("cls"); break;
+                    case 1: CambiarID(infoper[pos].Id_usuario); break;
+                    case 2: ObtenerNombreUsuario(infoper[pos].Nomb_usuario); break;
+                    case 3: ObtenerLocalidad(infoper[pos].Localidad); break;
+                    case 4: ObtenerUsuario(infoper, infoper[pos].Usuario); break;
+                    case 5: ObtenerContrasena(infoper[pos].Contrasena); break;
+                    case 6: infoper[pos].estado = ObtenerEstado(); break;
+                    default: printf("\nIngrese un numero dentro del rango de opciones.\n"); break;
+                }
+
+                system("cls");
+            }
+        }
+
+    } while(!ValidarID(infoper, id, &pos, LongitudVectorEstructuras()));
+
+    // Reescribimos el fichero para actualizar todos los cambios que han podido surgir.
+    for(i = 0; i < LongitudVectorEstructuras(); i++){
+        if(i+1 == LongitudVectorEstructuras())
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+        else
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                  infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+
+    }
+
+    fclose(pf);     // Cerramos el fichero.
+}
+```
+
+*Función desarrollada para que el administrador pueda modificar los datos y todos los campos de cualquier usuario. Aparecerá un listado con todos los usuarios y todos sus datos. Para elegir qué usuario, se deberá introducir la ID del usuario el cual se desean aplicar modificaciones.* 
+
+* static int LongitudVectorEstructuras(void);*
+
+```C
+// Precondición: Nada
+// Poscondición: devuelve el numero de líneas que tiene Usuarios.txt, que es a su vez el tamaño que corresponde al vector
+
+static int LongitudVectorEstructuras(void){
+    // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
+    char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
+    FILE *pf;
+    int i = 0;
+
+    pf = fopen("Usuarios.txt", "r");    // Abrimos el fichero en modo lectura.
+
+    if(pf == NULL){     // Comprobamos su apertura.
+        fprintf(stderr, "Error en la apertura del fichero.");
+        exit(1);
+    }
+
+    // Hasta qeu no se llegue al fin de fichero, contamos linea a linea
+    while(!feof(pf)){
+        fgets(aux, MAX_LIN_FICH, pf);
+        i++;
+    }
+
+    fclose(pf);     // Cerramos el fichero.
+
+    return i;       // Devolvemos i, que es el numero de iteracines del bucle while que es a su vez el numero de lineas que contiene Usuarios.txt
+}
+```
+
 ###### III. **Vehículo **
 
 ***
