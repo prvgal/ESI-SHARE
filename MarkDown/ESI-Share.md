@@ -1600,14 +1600,14 @@ int contar_vehiculos(char idusu[IDUSU]){
 
 ***Funciones Privadas***
 
-
-* static void escribir_fichero(vehiculo_inf, FILE *);*
+* *static void escribir_fichero(vehiculo_inf );*
 
 ```C
 //Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
 //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
 
-void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+static void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+    	FILE *veh_txt;
         char guion[2]={'-','\0'};
 		int i;
 
@@ -1638,7 +1638,7 @@ void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
 
 *Escribe la información asociada a un usuario (de ahí que reciba una variable tipo vehiculo_inf) en el fichero vehículo, donde se almacenan todos los vehículos registrados.*
 
-* Introducir_datos_veh(vehiculo_inf);
+* *static Introducir_datos_veh(vehiculo_inf);*
 
 ```C
 //Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
