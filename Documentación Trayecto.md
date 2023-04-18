@@ -27,14 +27,14 @@ static void borrar_trayecto(viajes viaje){
 ```
 
 
-##### **Precondición:** Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
-##### **postcondición:** Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
+##### **Precondición:** Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+##### **postcondición:** Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas, listar viajes comunes al usuario o Cancelar
 *void gestionar_trayecto(viajes);*
 
 
-##### **Precondición:** Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+##### **Precondición:** Debe haberse generado una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
 ##### **Postcondición:** Imprime por pantalla al usuario una lista con todos los viajes que pasen por su localidad con sus respectivas ID
-*void mostrar_paradas(viajes, tPerfil);*
+*mostrar_paradas(viajes, tPerfil);*
 
 
 #### *Nota*: Las siguientes funciones cuentan con la misma precondición y postcondición
@@ -43,7 +43,7 @@ static void borrar_trayecto(viajes viaje){
 # ***********************************************************************************************
 
 
-*static void inicio_trayecto(viajes);*
+*void inicio_trayecto(viajes);*
 
 *static void final_ESI(viajes);*
 
