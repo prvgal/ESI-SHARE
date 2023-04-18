@@ -65,7 +65,11 @@ La aplicación incluye herramientas capaces de facilitar la tarea de gestión y 
 
 ESI-Share puede ser descargado por cualquier persona con conexión a internet y acceso a un navegador convencionar (ej. Google Chrome, Opera y sus variantes, Brave, etc...), de manera que puede descargarse gratuitamente desde nuestro repositorio en [GitHub](https://github.com/prvgal/ESI-SHARE). 
 
-ESI-Share cuenta con exigencias mínimas de prestaciones de equipo, de manera que prácticamente cualquier equipo con los componentes básicos de un ordenador (todos ellos funcionales) será capaz de ejecutar la aplicación de forma fluida e ininterrumpida.
+ESI-Share cuenta con exigencias mínimas de prestaciones de equipo, de manera que prácticamente cualquier equipo con los componentes básicos de un ordenador (todos ellos funcionales) será capaz de ejecutar la aplicación de forma fluida e ininterrumpida. Requisitos básicos orientativos:
+
+* Sistema Operativo Windows XP.
+* 512mb de RAM libres.
+* 100MB de espacio libre en memoria.
 
 #### 2.4 **Acceso al Sistema**
 
@@ -96,7 +100,7 @@ Cuando este no es capaz de hacer log-in, cuenta con varias opciones:
 >
 > <0> Para cerrar ESI-SHARE.
 
-  Para salir del sistema no hace falta más que volver al menú de inicio y elegir la opción de salida.
+ Para salir del sistema no hace falta más que volver al menú de inicio y elegir la opción de salida.
 
 ​		*Menú de Inicio*
 
@@ -142,7 +146,7 @@ La estructura modular seguida en el desarrollo de ESI-Share queda representada p
 
 ---
 
-Diseño Modular
+*Diseño Modular*
 
 ---
 
@@ -160,6 +164,8 @@ D-->G[Tipos]
 
 *Nota: La flecha significa que el primero utiliza elementos del segundo*
 
+El proyecto se ha abarcado descomponiendo el problema principal en los módulos expuestos anteriormente. La función de todos ellos se expone más adelante en secciones dedicadas a cada uno de ellos.
+
 ##### 3.1.1 **Módulos**
 
 ###### I. **Menu**
@@ -176,9 +182,11 @@ A --> C[stdio.h]
 
 ***
 
+Posibilita el inicio de sesión y acceso a los demás módulos.  Recibe datos únicamente de perfiles, que a su vez recibe otros datos de los demás módulos. 
 
+Este módulo cuenta únicamente con un main a partir del cuál se utiliza la plataforma ESI-Share.
 
-###### II. **Perfiles**
+###### II. **Perfiles **
 
 ***
 
@@ -198,9 +206,20 @@ A --> G[Viajes.h] --> I[Trayecto.h]
 
 ***
 
+Toda la información referente al usuario estará almacenada en el fichero "Usuarios.txt". Incluye etiquetas para:
 
+* Indicar si el perfil es de administrador o de usuario.
+* Indicar si la cuenta se encuentra cerrada o abierta.
 
-###### III. **Vehiculo**
+Incluirá otros datos como la ID de usuario, nombre real, nombre de usuario, localidad y contraseña de la cuenta. Cada dato se guarda en el fichero separado por guiones.
+
+>0001-Juan Perez-San Fernando-administrador-admin-jp123456-1
+>
+>ID-Nombre Real-Localidad-Tipo de Perfil-Usuario-Contraseña-Estado
+
+Este módulo podría definirse como un puente de unión entre Menu y los demás módulos del proyecto. Cede datos tales como IDs y nombres de usuario, y recibe otros como pueden ser vehículos y viajes asociados a una cuenta. Engloba todas las interfaces principales que se muestran al usuario promedio y al administrador por igual.
+
+###### III. **Vehículo **
 
 ***
 
@@ -214,16 +233,910 @@ A --> D[stdio.h]
 A --> E[stdlib.h]
 A --> F[string.h]
 A --> G[locale.h]
-A --> H[tipos.h]
 ```
 
 *Nota: Recordamos que todos los módulos principales utilizan funciones multiusos de tipos.h*
 
 ***
 
+Toda la información referente a los vehículos estará almacenada en el fichero "vehiculo.txt". Contendrá datos como la matrícula de cada vehículo, ID de usuario asociada, número de plazas y una breve descripción del vehículo.
+
+>1799HSJ-0001-4-Opel Corsa Blanco Mod. 2007
+>
+>Matrícula-ID-Plazas-Descrpición del Vehículo
+
+El módulo Vehículo facilita un sistema de gestión de vehículos a nivel tanto de usuario como de administrador. Cuenta con herramientas necesarias para el funcionamiento de otros módulos como Viajes (matrícula, número de plazas...) y Perfiles(funciones de registro de vehículos,  gestión de vehículos de usuario y administrador). Incluye interfaces de registro, y búsqueda y elección de vehículos.
+
+***Estructuras de Datos***
+
+- Información de vehículo asociado a un usuario.
+
+```C
+typedef struct{
+        char id_mat[IDMAT];         //Matrícula del vehículo (7 caracteres). IDMAT=8
+        char id_usuario[IDUSU];     //ID de usuario asociado al vehículo (4 caracteres). IDUSU=5
+        char desc_veh[CARACTERES];  //Breve descripción del vehículo (máx 50 carateres). CARACTERES=51
+        int num_plazas;             //Número de plazas de las que dispone el vehículo.
+}vehiculo_inf;
+```
+
+***Funciones Públicas***
+
+* Introducir_datos_veh(vehiculo_inf);
+
+```C
+//Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
+//Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
+
+static void introducir_datos_veh(vehiculo_inf vehiculo){
+		int i;
+		FILE *veh_txt;
+
+    	printf("\nRellene el formulario a continuación, por favor: \n");
+
+    	printf("		*) Matrícula: ");
+    	do{
+    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
+    		fflush(stdin);
+    		gets(vehiculo.id_mat);
+    		i=comprobar_validez_mat(vehiculo.id_mat);
+		}while(i!=1);
+
+    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
+    	scanf("%i", &vehiculo.num_plazas);
+    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
+    		printf("\n		Introduzca un número realista de plazas (2-9):");
+    		scanf("%i", &vehiculo.num_plazas);
+		}
+
+		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
+		fflush(stdin);
+    	gets(vehiculo.desc_veh);
+    	while(strlen(vehiculo.desc_veh)>50){
+    		printf("\n		Introduzca una descripción más corta (o ninguna)");
+    		fflush(stdin);
+    		gets(vehiculo.desc_veh);
+		}
+		acortar_cadena(vehiculo.desc_veh);
+		escribir_fichero(vehiculo, veh_txt);
+	}
+
+```
+
+*Pide al usuario introducir la información necesario para ingresar un nuevo vehículo en el fichero de vehículos. Este procedimiento se diseñó para ser llamado por otras funciones* 
+
+* *void escribir_fichero(vehiculo_inf, FILE *);*
+
+```C
+//Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
+//Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
+
+void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+        char guion[2]={'-','\0'};
+		int i;
+
+        if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
+        	printf("Error al guardar la información");
+			}
+		else{
+				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
+           		fflush(veh_txt);
+           		fwrite(guion,sizeof(char),1,veh_txt);
+           		fflush(veh_txt);
+           		fwrite(vehiculo.id_usuario, sizeof(char), 4, veh_txt);
+           		fflush(veh_txt);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fflush(veh_txt);
+				fprintf(veh_txt,"%i",vehiculo.num_plazas);
+				fflush(veh_txt);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fflush(veh_txt);
+				fwrite(vehiculo.desc_veh, sizeof(char), strlen(vehiculo.desc_veh), veh_txt);
+				fflush(veh_txt);
+				fprintf(veh_txt,"\n");
+		}
+	   	fclose(veh_txt);
+	}
+
+```
+
+*Escribe la información asociada a un usuario (de ahí que reciba una variable tipo vehiculo_inf) en el fichero vehículo, donde se almacenan todos los vehículos registrados.*
+
+* *void admin_veh();*
+
+```C
+//Precondición: Ninguna.
+//Postcondición: El administrador habrá elegido alguna de las opciones expuestas en un switch que permite: <1> Dar un vehículo de alta <2> Dar un vehículo de baja <3> Listar todos los vehículos <4> Modificar la información de un vehículo <5> Volver al menú de administrador principal.
+
+void admin_veh(){
+		int op,i=0;
+
+		do{
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar un vehículo de baja.\n <3> Lista de vehículos\n <4> Modificar vehículo.\n <5> Ver la información de un vehículo.\n <0> Volver.\n Elija una opción: ");
+			if(scanf("%i",&op)!=1){
+				fflush(stdin);
+				printf("Error: introduzca una entrada válida.");
+				op=-1;
+			}
+			else{
+				switch(op){
+					case 1: admin_alta_vehiculo(); break;
+					case 2: admin_baja_vehiculo(); break;
+					case 3: printf("\n"); listar_vehiculos(); break;
+					case 4: admin_modif_veh(); break;
+					case 5: listar_viajes(); break;
+					case 0: break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
+				}
+			}
+		}while(op!=0);
+	}
+
+```
+
+*Constituye el menú que utilizará un administrador al acceder a la sección de vehículos. Este procedimiento está diseñado para llamar a otros procedimientos/funciones.*
+
+* *void usuario_veh();*
+
+```C
+
+//Precondición: Recibe una variable estructura tipo tPerfil.
+//Postcondición: El usuario habrá realizado alguna acción entre: <1> Dar un vehículo de alta <2> Dar uno de sus vehículos de baja <3> Ver información de sus vehículos <4> Modificar información de algún vehículo <0> Volver al menú principal
+
+void usuario_veh(tPerfil usuario){
+        int op, i;
+
+        system("cls");
+
+        do{
+			printf("\n¿Qué desea hacer?\n <1> Dar un vehículo de alta.\n <2> Dar uno de sus vehículos de baja.\n <3> Ver información de sus vehículos.\n <4> Modificar información de algún vehículo.\n <0> Volver.\n Elija una entrada: ");
+			if(scanf("%i",&op)!=1){
+				fflush(stdin);
+				printf("Error: introduzca una entrada válida - ");
+				op=-1;
+			}
+			else{
+				switch(op){
+					case 1:  usuario_alta_vehiculo(usuario.Id_usuario); break;
+					case 2:  usuario_baja_vehiculo(usuario.Id_usuario); break;
+					case 3:  usuario_listar_vehiculos(usuario.Id_usuario); break;
+					case 4:  usuario_cambiar_informacion_vehiculo(usuario.Id_usuario); break;
+					case 0:  break;
+					default: printf("Introduzca una entrada dentro de la lista dada."); i++; if(i>5) printf("\nVenga, que no es complicado: introduce 1, 2, 3 o 4 según lo que necesites.\n"); break;
+				}
+			}
+		}while(op!=0);
+
+	}
+
+```
+
+*Constituye el menú que utilizará un usuario al acceder a la sección de vehículos. Este procedimiento está diseñado para llamar a otros procedimientos/funciones.*
+
+* *menu_registro_vehiculo(tPerfil);*
+
+```C
+//Precondición: Recibe la ID del usuario que se esté registrando en el momento.
+//Postcondición: Se habrán registrado los vehículos que haya indicado el usuario al registrarse si es que tiene, se habrá continuado normalmente el registro en caso contrario.
+
+void menu_registro_vehiculo(tPerfil usuario){
+        int op, i, num_veh;
+        vehiculo_inf vehiculo[num_veh];
+
+        do{
+            printf("\n¿Tiene planeado llevar y/o traer otra gente de la ESI?\n\n");
+            printf("   <1> Sí.\n   <2> No\n\n");
+            if(scanf("%d",&op)!=1){
+                fflush(stdin);
+                printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+                op=-1;
+                i++;
+                if(i>5)
+                    printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, o 2 según lo que necesites.\n");
+            }
+            else{
+                switch(op){
+                    case 1: if(scanf("%d",&op)!=1){ fflush(stdin); printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+                            op=-1; i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");} else{ for(i=0;i<num_veh;i++){
+                            strcpy(vehiculo[i].id_usuario, usuario.Id_usuario); introducir_datos_veh(vehiculo[i]);}}
+                    case 2: break;
+                    default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1 o 2 según lo que necesites."); break;
+                }
+            }
+        }while(op!=1&&op!=2);
+    }
+
+```
+
+*Constituye el menú que utilizará un usuario al registrarse en la aplicación y ha indicado expresamente que desea traer y llevar otros usuarios de la ESI. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *usuario_listar_vehiculo(char []);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+//Postcondición: El procedimiento habrá impreso la información de los vehículos que el usuario tenga dados de alta.
+
+void usuario_listar_vehiculos(char usuario[IDUSU]){
+        FILE *file_original;
+        logico coincidencia=0;
+
+        // Abrimos el archivo original en modo lectura
+        if ((file_original=fopen("vehiculo.txt", "r"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos las cadenas
+            char matricula_actual[IDMAT];
+            strncpy(matricula_actual,linea,7);
+            char usuario_actual[IDUSU];
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+
+            // Comprobamos si hay coincidencia
+            if (strcmp(usuario_actual, usuario)==0){
+                coincidencia=1;
+                printf("%s",linea);
+            }
+        }
+        if(coincidencia==0)
+            printf("\nNo existe ningún vehículo asociado a su cuenta.\n");
+        fclose(file_original);
+    }
+    
+```
+
+*Se encarga de mostrar por pantalla todos los vehículos asociados al usuario en el sistema. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *int contar_vehiculos(char []);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+//Postcondición: Devuelve el número de vehículos asociados a la ID recibida.
+
+int contar_vehiculos(char idusu[IDUSU]){
+        FILE *file_original;
+        char usuario_actual[IDUSU];
+        int i;
+
+        // Abrimos el archivo original en modo lectura y escritura
+        if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        else{
+            char linea[MAX_LIN_FICHVEH];
+            i=0;
+            while (fgets(linea, sizeof(linea), file_original) != NULL){
+                strncpy(usuario_actual, linea+8, 4);
+                usuario_actual[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+                if(strcmp(usuario_actual, idusu)==0){
+                    i++;
+                }
+            }
+        }
+        fclose(file_original);
+        return i;
+    }
+    
+```
+
+*Como su nombre indica, cuenta el número de vehículos que un usuario tiene asociados a su cuenta. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+***Funciones Privadas***
+
+* *static void introducir_datos_veh(vehiculo_inf);*
+
+```C
+//Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
+//Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
+
+static void introducir_datos_veh(vehiculo_inf vehiculo){
+		int i;
+		FILE *veh_txt;
+
+    	printf("\nRellene el formulario a continuación, por favor: \n");
+
+    	printf("		*) Matrícula: ");
+    	do{
+    		printf("\n		- La matrícula debe ser española (formato 0000AAA) - ");
+    		fflush(stdin);
+    		gets(vehiculo.id_mat);
+    		i=comprobar_validez_mat(vehiculo.id_mat);
+		}while(i!=1);
+
+    	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
+    	scanf("%i", &vehiculo.num_plazas);
+    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
+    		printf("\n		Introduzca un número realista de plazas (2-9):");
+    		scanf("%i", &vehiculo.num_plazas);
+		}
+
+		printf("\n		*) Si deseas, incluye una breve descripción de tu coche (color, modelo y marca, etc... - máx. 50 caracteres): ");
+		fflush(stdin);
+    	gets(vehiculo.desc_veh);
+    	while(strlen(vehiculo.desc_veh)>50){
+    		printf("\n		Introduzca una descripción más corta (o ninguna)");
+    		fflush(stdin);
+    		gets(vehiculo.desc_veh);
+		}
+		acortar_cadena(vehiculo.desc_veh);
+		escribir_fichero(vehiculo, veh_txt);
+	}
+
+```
+
+*Constituye el formulario a rellenar a la hora de dar de alta un nuevo vehículo. Pide datos básicos como la matrícula, número de plazas y una breve descripción del vehículo en cuestión.  Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void acortar_cadena(char []);*
+
+```C
+//Precondición: Recibe una cadena de cualquier longitud, de manera que su contenido (que no espacio en memoria) se acortará según encuentre \n, es decir, queden espacios libres.
+//Postcondición: La cadena dada habrá sido acortada, sustituyendo \n por \0, pero no se habrá cambiado su espacio en memoria.
+
+static void acortar_cadena(char cadena[]){
+		int i;
+		for(i=0;i<strlen(cadena);i++){
+    			if(cadena[i]=='\n')
+    				cadena[i]='\0';
+			}
+	}
+
+```
+
+*Acorta una cadena en caso de que esta cuente con un salto de línea. Evita posibles errores de formato en las cadenas de caracteres con las que opera el sistema. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones*
+
+* *static int comprobar_validez_mat(char []);*
+
+```C
+//Precondición: Recibe una cadena (matrícula) de longitud IDMAT, de manera que comprueba si es acorde al formato de matriculación española (000AAA).
+//Postcondición: Devuelve 1 si la matrícula es válida, 0 en caso contrario.
+
+static int comprobar_validez_mat(char matricula[]){
+		int i;
+
+		if(strlen(matricula)!=IDMAT-1){
+			return 0;
+		}
+
+		for(i=0;i<IDMAT-1;i++){
+			if(i<4){
+				if(matricula[i]!='1'&&matricula[i]!='2'&&matricula[i]!='3'&&matricula[i]!='4'&&matricula[i]!='5'&&matricula[i]!='6'&&matricula[i]!='7'&&matricula[i]!='8'
+				&&matricula[i]!='9'&&matricula[i]!='0'){
+					return 0;
+				}
+			}
+			else{
+				if(matricula[i]!='A'&&matricula[i]!='B'&&matricula[i]!='C'&&matricula[i]!='D'&&matricula[i]!='E'&&matricula[i]!='F'&&matricula[i]!='G'&&matricula[i]!='H'&&matricula[i]!='I'&&matricula[i]!='J'
+				&&matricula[i]!='K'&&matricula[i]!='L'&&matricula[i]!='M'&&matricula[i]!='N'&&matricula[i]!='O'&&matricula[i]!='P'&&matricula[i]!='Q'&&matricula[i]!='R'&&matricula[i]!='S'&&matricula[i]!='T'
+				&&matricula[i]!='U'&&matricula[i]!='V'&&matricula[i]!='W'&&matricula[i]!='X'&&matricula[i]!='Y'&&matricula[i]!='Z'){
+					return 0;
+				}
+				return 1;
+			}
+		}
+
+	}
+
+```
+
+*Verifica si una matrícula presenta el formato de matriculación española adecuado (1234AAA). Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones*
+
+* *static int comprobar_validez_id(char []);*
+
+```C
+//Precondición: Recibe una cadena (ID de usuario) de longitud IDUSU, de manera que comprueba si es acorde al formato 0000.
+//Postcondición: Devuelve 1 si la ID es válida, 0 en caso contrario.
+
+static int comprobar_validez_id(char id_aux[]){
+		int i;
+		vehiculo_inf vehiculo;
+
+		if (strlen(id_aux)!=IDUSU-1)
+			return 0;
+
+        strcpy(vehiculo.id_usuario, id_aux);
+
+		for(i=0;i++;i<IDUSU-1){
+			if(vehiculo.id_usuario[i]!=1&&vehiculo.id_usuario[i]!=2&&vehiculo.id_usuario[i]!=3&&vehiculo.id_usuario[i]!=4&&
+				vehiculo.id_usuario[i]!=5&&vehiculo.id_usuario[i]!=6&&vehiculo.id_usuario[i]!=7&&vehiculo.id_usuario[i]!=8&&
+				vehiculo.id_usuario[i]!=9&&vehiculo.id_usuario[i]!=0)
+				return 0;
+		}
+		return 1;
+	}
+
+```
+
+*Verifica si una ID de usuario presenta el formato adecuado (0123). Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones*
+
+* *static void admin_borrar_usuario(char [], int);*
+
+```C
+//Precondición: Recibe la ID de un usuario (cadena) dada por un administrador para borrar su información de vehículo/s.
+//Postcondición: El vehículo/s asociado/s al usuario habrá/n sido borrado/s del listado en vehiculo.txt
+
+static void admin_borrar_vehiculos(char cadena_a_borrar[], int num_veh){
+        FILE *file_temp;
+        FILE *file_original;
+        int i=0;
+        logico encontrado=False;
+        char segunda_cadena[IDUSU];
+
+        // Abrimos el archivo original en modo lectura y escritura
+        if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo vehiculo.txt.\n");
+            exit(0);
+        }
+
+        // Ahora abrimos el archivo temporal en modo escritura
+        if ((file_temp=fopen("vehiculo_temp.txt", "w"))==NULL){
+            printf("Error al abrir vehiculo_temp.\n");
+            fclose(file_original);
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos la segunda cadena
+
+            strncpy(segunda_cadena, linea+8, 4);
+            segunda_cadena[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+            // Comprobamos si hay coincidencia
+            if (strcmp(segunda_cadena, cadena_a_borrar)!=0)
+                fputs(linea, file_temp);
+            else{
+                encontrado=True;
+                i++;
+                if(i>num_veh)
+                    fputs(linea,file_temp);
+            }
+        }
+        if(encontrado==False){
+            printf("\nEl usuario dado no figura en el registro.\n");
+            fclose(file_original);
+            fclose(file_temp);
+        }
+        else{
+            fclose(file_original);
+            fclose(file_temp);
+            remove("vehiculo.txt");
+            int v=rename("vehiculo_temp.txt", "vehiculo.txt");
+            printf("%d",v);
+        }
+    }
+
+```
+
+*Borra el número de vehículos deseado de un usuario del fichero vehículo. Funcionalidad de administrador. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void admin_baja_vehiculo();*
+
+```C
+//Precondición: Ninguna.
+//Postcondición: El administrador habrá introducido los datos necesarios para poder llamar a borrar_vehiculos y así borrar los vehículos deseados del listado.
+
+void admin_baja_vehiculo(){
+        int i=0, num_veh;
+        char id_aux[IDUSU];
+
+        printf("\nIntroduzca la ID a la que pertenece el vehículo: ");
+		do{
+            fflush(stdin);
+            gets(id_aux);
+            if(comprobar_validez_id(id_aux)==0)
+                printf("\nIntroduzca una ID válida, por favor - ");
+        }while(comprobar_validez_id(id_aux)!=1);
+
+        printf("¿Cuántos vehículos quiere borrar del usuario? - ");
+        if(scanf("%d",&num_veh)!=1){
+        		fflush(stdin);
+        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		num_veh=-1;
+        		i++;
+				if(i>5)
+					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a borrar.\n");
+			}
+			else
+                admin_borrar_vehiculos(id_aux, num_veh);
+    }
+    
+```
+
+*Funcionalidad de administrador. Diseñado para pedir los datos necesarios para dar de baja el vehículo de un usuario del sistema. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones*
+
+* *static void admin_alta_vehiculo();*
+
+```C
+//Precondición: Ninguna.
+//Postcondición: Se habrán introducido uno o más nuevos vehículos en el listado presente en el fichero vehiculo.txt, asociados a una ID dada por el administrador.
+
+static void admin_alta_vehiculo(){
+		vehiculo_inf veh;
+		char id_aux[IDUSU];
+		int i, num_veh;
+
+        printf("\nIntroduzca la ID a la que pertenecerá el vehículo: ");
+		do{
+            fflush(stdin);
+            gets(id_aux);
+            if(comprobar_validez_id(id_aux)==0)
+                printf("\nIntroduzca una ID válida, por favor - ");
+        }while(comprobar_validez_id(id_aux)!=1);
+
+        strcpy(veh.id_usuario,id_aux);
+
+        printf("¿Cuántos vehículos quiere añadir del usuario? - ");
+        if(scanf("%d",&num_veh)!=1){
+        		fflush(stdin);
+        		printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+        		num_veh=-1;
+        		i++;
+				if(i>5)
+					printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
+			}
+			else
+                for(i=0;i<num_veh;i++)
+                    introducir_datos_veh(veh);
+	}
+    
+```
+
+*Funcionalidad de administrador. Permite dar de alta un vehículo asociado a un usuario arbitrario, elegido por el administrador en el momento. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void listar_vehiculos();*
+
+```C
+//Precondición: Debe existir el fichero vehiculo.txt.
+//Postcondición: Imprime por pantalla el contenido del fichero vehiculo.txt
+
+ static void listar_vehiculos(){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+
+        if((veh=fopen("vehiculo.txt","r"))==NULL)
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+        else{
+            while(fgets(linea,sizeof(linea),veh)!=NULL)
+                printf("%s",linea);
+        }
+        fclose(veh);
+    }
+    
+```
+
+*Muestra un listado con la información de todos los vehículos que figuran el fichero vehículo. Funcionalidad de administrador. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void listar_vehiculos_mat(char []);*
+
+```C
+//Precondición: Recibe un matrícula con la que comparar los vehículos del fichero vehiculo.txt.
+//Postcondición: Imprime por pantalla el vehiculo del fichero vehiculo.txt que coincida con la matricula dada, si lo encuentra. Devuelve True en tal caso, y False en el contrario.
+
+static logico listar_vehiculos_mat(char mat[IDMAT]){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+        char matricula_actual[IDMAT];
+        logico encontrado=False;
+
+        if((veh=fopen("vehiculo.txt","r"))==NULL)
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+        else{
+            while(fgets(linea,sizeof(linea),veh)!=NULL&&encontrado==False){
+                strncpy(matricula_actual, linea+8, 4);
+                matricula_actual[4] = '\0';
+
+                if(strcmp(matricula_actual,mat)==0){
+                    encontrado=True;
+                    printf("%s",linea);
+                }
+            }
+        }
+        if(encontrado==False)
+            printf("\nNo se encontró el vehículo indicado.");
+        fclose(veh);
+        return encontrado;
+    }
+
+```
+
+*Muestra la información asociada a una matrícula del vehículo de un determinado usuario. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void admin_modif_veh();*
+
+```C
+//Precondición: Ninguna.
+//Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con una matrícula y un usuario pedidos en el procedimiento, modifica los datos de dicha línea a gusto del administrador.
+static void admin_modif_veh(){
+        char mat[IDMAT], usu[IDUSU];
+
+        do{
+            printf("\nIntroduzca una ID válida a buscar: ");
+            fflush(stdin);
+            gets(usu);
+        }while(comprobar_validez_id(usu)!=1);
+
+        do{
+            printf("\nAhora introduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(mat);
+        }while(comprobar_validez_mat(mat)!=1);
+
+        admin_buscar_modificar_vehiculo(mat, usu);
+    }
+
+```
+
+*Permite modificar los datos de un vehículo de algún usuario indicado por el administrador. Este procedimiento, en concreto, pide la matrícula e ID de usuario necesarios para la tarea anterior. Funcionalidad de administrador. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void admin_buscar_modifiar_vehiculo(char [], char[]);*
+
+```C
+//Precondición: Recibe una ID de usuario y una matrícula (ambos cadenas) que han sido verificados previamente.
+//Postcondición: Busca y, si encuentra una línea del fichero vehiculo.txt coincidente con la matrícula y el usuario, modifica los datos de dicha línea a gusto del administrador.
+
+static void admin_buscar_modificar_vehiculo(char matricula[IDMAT], char usuario[IDUSU]){
+        FILE *veh;
+        char linea[MAX_LIN_FICHVEH];
+        vehiculo_inf vehiculo;
+        int posicion;
+        logico encontrado=False;
+        char usuario_actual[IDUSU];
+        char matricula_actual[IDMAT];
+
+        strcpy(vehiculo.id_usuario, usuario );
+        strcpy(vehiculo.id_mat, matricula);
+
+        if((veh=fopen("vehiculo.txt","r+"))==NULL){
+            printf("\nError al abrir el fichero vehiculo.txt\n");
+            exit(1);
+        }
+        else{
+            while (fgets(linea, sizeof(linea), veh)!=NULL){
+                // Copiamos la matricula y el usuario de la línea a variables temporales
+
+                strncpy(matricula_actual, linea, 7);
+                matricula_actual[7] = '\0';
+                strncpy(usuario_actual, linea+8, 4);
+                usuario_actual[4] = '\0';
+
+                // Comparamos la primera y la segunda cadena de la línea con las cadenas dadas
+                if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual, matricula)==0){
+                    encontrado=True;
+                    // Calcular la posición de la línea en el archivo
+                    posicion=ftell(veh)-sizeof(linea);
+
+                    // Mover la posición del archivo para escribir la nueva línea
+                    fseek(veh, posicion,  SEEK_SET);
+                    printf("\n");
+                    introducir_datos_veh(vehiculo);
+                }
+            }
+        }
+        if(encontrado==False)
+            printf("\nNo se encontró el vehículo indicado. Compruebe que el usuario y su matrícula son correctos.\n");
+        fclose(veh);
+    }
+```
+
+*Permite modificar los datos de un vehículo de algún usuario indicado por el administrador. Funcionalidad de administrador. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void viajes_veh(char []);*
+
+```C
+//Precondición: Recibe una matrícula dada por el administrador.
+//Postcondición: Busca y, si encuentra una línea del fichero Viajes.txt coincidente con la matrícula dada y tenga la etiqueta de "finalizado", imprime los datos de dicha línea por pantalla hasta que termine el fichero.
+
+static void viajes_veh(char matricula[IDMAT]){
+        FILE *viaj;
+        int aux_id;
+        char linea[MAX_LIN_FICHVIAJE];
+        viajes viaje;
+
+        if((viaj=fopen("Viajes.txt","r+"))==NULL){
+            printf("\nError al abrir el fichero Viajes.txt\n");
+            exit(1);
+        }
+        else{
+            while(fgets(linea, sizeof(linea), viaj)!=NULL){
+                sscanf(linea, "%d-%[^-]-%[^-]-%[^-]-%[^-]-%d-%[^-]-%[^-]-%[^-]-%[^-]-%c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo,
+                                                                                            viaje.importe, viaje.estado, viaje.hoy, &viaje.anular);
+                if(strcmp(viaje.matricula,matricula)==0&&viaje.estado.finalizado==True){
+                    printf("%d - %s - %s - %s - %s - %d - %s - %s - %s - %c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
+                                                                                viaje.estado, viaje.anular);
+                }
+            }
+        }
+        fclose(viaj);
+    }
+    
+```
+
+*Lista los distintos viajes (finalizados) a los que el vehículo seleccionado está asociado.  Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void listar_viajes();*
+
+```C
+//Precondición: Ninguna.
+//Postcondición: El procedimiento habrá pedido al usuario una matrícula para buscar y, en caso afirmativo, habrá impreso por pantalla todos los viajes finalizados en los que figure el vehículo con esa matrícula.
+
+static void listar_viajes(){
+        char matricula[IDMAT];
+
+        do{
+            printf("\nIntroduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(matricula);
+        }while(comprobar_validez_mat(matricula)!=1);
+
+        listar_vehiculos_mat(matricula);
+        viajes_veh(matricula);
+    }
+    
+```
+
+*Lista los viajes (finalizados) a los que una determinada matrícula y usuario está asociado. Este procedimiento, en concreto, pide la matrícula necesario para buscar el vehículo en el sistema. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void usuario_alta_vehiculo(char []);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+//Postcondición: El procedimiento habrá realizado alguna de las tareas: <1> Dar un vehículo de alta <2> Dar uno de sus vehículo de baja <3> Modificar información de algún vehículo. <4> Ver información de sus vehículos. <0> Volver al menú anterior.
+
+ static void usuario_alta_vehiculo(char idusuario[IDUSU]){
+        vehiculo_inf vehiculo;
+        int num_veh,i=0;
+
+        strcpy(vehiculo.id_usuario,idusuario);
+
+        printf("\n¿Cuántos vehículos quiere añadir del usuario? - ");
+        if(scanf("%d",&num_veh)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra: ");
+            num_veh=-1;
+            i++;
+            if(i>5)
+                printf("\nVenga va, tú puedes, que no es tan complicado: introduce un número que indique los coches a añadir al registro.\n");
+        }
+        else
+            for(i=0;i<num_veh;i++)
+                introducir_datos_veh(vehiculo);
+    }
+
+```
+
+*Permite al usuario dar de alta un nuevo vehículo en el fichero vehículo, asociado a su cuenta. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void usuario_borrar_vehiculo(char [], char[]);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento, así como una matrícula dada por el usuario.
+//Postcondición: El procedimiento habrá borrado del registro el vehículo con la matrícula dada (sólo si es suyo), no hace nada en caso contrario.
+
+static void usuario_borrar_vehiculo(char usuario[IDUSU], char matricula[IDMAT]){
+        FILE *file_temp;
+        FILE *file_original;
+        int i;
+        logico coincidencia=0;
+
+        // Abrimos el archivo original en modo lectura y escritura
+        if ((file_original=fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo original.\n");
+            exit(0);
+        }
+
+        // Ahora abrimos el archivo temporal en modo escritura
+        if ((file_temp=fopen("vehiculo_temp.txt", "w"))==NULL){
+            printf("Error al abrir el archivo temporal.\n");
+            fclose(file_original);
+            exit(0);
+        }
+
+        // Leemos el fichero línea por línea
+        char linea[MAX_LIN_FICHVEH];
+        i=0;
+        while (fgets(linea, sizeof(linea), file_original) != NULL){
+            // Obtenemos las cadenas
+            char matricula_actual[IDMAT];
+            strncpy(matricula_actual,linea,7);
+            char usuario_actual[IDUSU];
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0'; //Nos aseguramos de que la segunda cadena termine con '\0'
+
+            // Comprobamos si hay coincidencia
+            if (strcmp(usuario_actual, usuario)==0&&strcmp(matricula_actual,matricula)==0){
+                coincidencia=1;
+            }
+            else
+                fputs(linea, file_temp);
+        }
+        if(coincidencia==0)
+            printf("\nEl vehículo no se encuentra en el registro.");
+        fclose(file_original);
+        fclose(file_temp);
+
+        remove("vehiculo_temp.txt");
+    }
+    
+```
+
+*Borra el vehículo deseado del usuario. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void usuario_baja_vehiculo(char []);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+//Postcondición: El procedimiento habrá borrado del registro el vehículo con la matrícula dada dentro del mismo (sólo si es suyo), no hace nada en caso contrario.
 
 
-###### IV. **Viajes**
+static void usuario_baja_vehiculo(char idusuario[IDUSU]){
+        char matricula[IDMAT];
+
+        do{
+            printf("\nIntroduzca una matrícula válida a buscar: ");
+            fflush(stdin);
+            gets(matricula);
+        }while(comprobar_validez_mat(matricula)!=1);
+
+        usuario_borrar_vehiculo(idusuario, matricula);
+    }
+    
+```
+
+*Permite al usuario dar de baja uno de sus vehículos del sistema. Este procedimiento, en concreto, también se encarga de pedir al usuario la matrícula del vehículo a borrar. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+* *static void usuario_cambiar_informacion_vehiculo(char []);*
+
+```C
+//Precondición: Recibe la ID del usuario que está en el perfil en el momento.
+//Postcondición: El procedimiento habrá recibido una matrícula y con ella habrá cambiado la información ligada a la a esta.
+
+static void usuario_modificar_vehiculo(char idusuario[IDUSU], char matricula[IDMAT]){
+       FILE* archivo;
+       int posicion;
+       vehiculo_inf veh;
+       logico coincidencia=False;
+       char matricula_actual[IDMAT];
+       char usuario_actual[IDUSU];
+
+        if ((archivo = fopen("vehiculo.txt", "r+"))==NULL){
+            printf("Error al abrir el archivo.\n");
+            exit(1);
+        }
+
+        char linea[MAX_LIN_FICHVEH];
+        while (fgets(linea, sizeof(linea), archivo)!=NULL){
+
+            strncpy(matricula_actual, linea, 7);
+            matricula_actual[7] = '\0';
+
+            strncpy(usuario_actual, linea+8, 4);
+            usuario_actual[4] = '\0';
+
+            if (strcmp(matricula_actual, matricula)==0&&strcmp(usuario_actual, idusuario)==0){
+                coincidencia=True;
+                posicion=ftell(archivo)-sizeof(linea);
+
+                // Movemos la posición del archivo para escribir la nueva línea
+                fseek(archivo, posicion, SEEK_SET);
+                introducir_datos_veh(veh);
+            }
+        }
+    if(coincidencia==False)
+        printf("\n El vehículo indicado no se encuentra asociado a su cuenta.\n");
+    fclose(archivo);
+    }
+    
+```
+
+*Permite modificar los datos de un vehículo del usuario. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
+
+###### IV. **Viajes **
 
 ***
 
@@ -242,9 +1155,15 @@ A --> E[Trayecto.h]
 
 ***
 
+Toda la información referente a los viajes estará guardada en el fichero "Viajes.txt". Incluye una ID de viaje única, matrícula del vehículo ofertado, fecha, hora de inicio y llegada, plazas libres en el vehículo, tipo de viaje (ida o vuelta), importe y estado del viaje.
 
+> 113730-8291JDK-10/03/2023-10:20-15:20-3-ida-5.00€-finalizado-usu01
+>
+> ID de viaje-Matrícula-Fecha-Horas de ida y llegada-Importe-Estado- ID
 
-###### V. **Trayecto**
+El módulo en cuestión facilita toda la información mencionada en el párrafo anterior. También facilita todo lo necesario para planear un viaje de ida o vuelta a la ESI - importes, fechas y demás, así como para mantener un registro ordenado con todos los viajes realizados en la plataforma.
+
+###### V. **Trayecto **
 
 ***
 
@@ -264,9 +1183,1042 @@ A --> F[string.h]
 
 ***
 
+Toda la información relativa al trayecto de un viaje estará almacenada en el fichero "Pasos.txt". Incluye la ID del viaje y las poblaciones de paso.
 
+El módulo en cuestión se encarga de facilitar el trazado de viajes tanto de ida como de vuelta de la ESI, asociando cada trayecto a un determinado viaje. Cuenta con interfaces de usuario consistentes en recibir un determinado número para elegir las distintas paradas de un viaje.
 
-###### VI. **Tipos**
+***Funciones Privadas***
+
+* *static void borrar_trayecto(viajes);*
+
+```C
+//Precondición: Recibe una variable de tipo viajes.
+//Postcondición: Borra el trayecto de un viaje del sistema de viajes.
+
+static void borrar_trayecto(viajes viaje){
+
+    FILE *pasos, *pasosaux;
+    char linea_borrar[100], linea[100];
+    int ID;
+    pasos = fopen("Pasos.txt", "r");                    //(1)
+    pasosaux = fopen("PasosAux.txt", "w");              //(2)
+
+    while ((fscanf(pasos, "%[^-]", &ID))!=EOF) {        //(3)
+        if (ID == viaje.ID) {                           //(4)
+            fgets(linea, 100, pasos);                   //(5)
+            strcpy(linea_borrar, linea);                //(6)
+        } else {                                        //(7)
+            fputs(linea, pasosaux);                     //(8)
+        }                                               //(9)
+    }                                                   //(10)
+
+    fclose(pasos);                                      //(11)
+    fclose(pasosaux);                                   //(12)
+
+    remove("Pasos.txt");                                //(13)
+    rename("PasosAux.txt", "Pasos.txt");                //(14)
+    setlocale(LC_ALL, "");                              //(15)
+    printf("Paradas borradas correctamene \n");         //(16)
+}                 
+
+```
+
+*Permite borrar el trayecto asociado a un viaje. Este procedimiento está diseñado para ser utilizado por otros procedimientos/funciones.*
+
+*Nota: Los siguientes procedimientos cuentan con la misma precondición y postcondición.*
+
+>##### Precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero).
+>
+>##### Postcondición: Despliega un menú sin funcionalidad, meramente visual e ilustrativo.
+
+* *static void inicio_trayecto(viajes);*
+
+```C
+void inicio_trayecto(viajes viaje){
+     int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es el punto de partida de su viaje? \n\n");
+        printf(" 1. El viaje inicia en la ESI\n 2. El viaje finaliza en la ESI\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: inicio_ESI(viaje); op=0; break;
+                case 2: final_ESI(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+      }while(op!=0);
+}
+
+```
+
+* *static void final_ESI(viajes);*
+
+```C
+static void final_ESI(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es el punto de partida de su viaje? \n\n");
+        printf(" 1. Cádiz\n 2. San Fernando\n 3. Jerez\n 4. Puerto de Santa María\n 5. Puerto Real\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_cadiz(viaje); op=0; break;
+                case 2: ida_ESI_sanfer(viaje); op=0; break;
+                case 3: ida_ESI_jerez(viaje); op=0; break;
+                case 4: ida_ESI_puerto(viaje); op=0; break;
+                case 5: ida_ESI_puertor(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_cadiz(viajes);*
+
+```C
+static void ida_ESI_cadiz(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_cadiz_puertor(viaje); op=0; break;
+                case 2: ida_ESI_cadiz_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_sanfer(viajes);*
+
+```C
+static void ida_ESI_sanfer(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Cádiz\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+        switch(op){
+                case 1: ida_ESI_sanfer_cadiz(viaje); op=0; break;
+                case 2: ida_ESI_sanfer_puertor(viaje); op=0; break;
+                case 3: ida_ESI_sanfer_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_sanfer_cadiz(viajes);*
+
+```C
+static void ida_ESI_sanfer_cadiz(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_sanfer_cadiz_puertor(viaje); op=0; break;
+                case 2: ida_ESI_sanfer_cadiz_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_sanfer_cadiz_fin(viajes);*
+
+```C
+static void ida_ESI_sanfer_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("
+   Su ruta es: San Fernando - Cádiz - ESI\n");
+}
+```
+
+* *static void ida_ESI_jerez(viajes);*
+
+```C
+static void ida_ESI_jerez(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Puerto de Santa María\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_jerez_puerto(viaje); op=0; break;
+                case 2: ida_ESI_jerez_puertor(viaje); op=0; break;
+                case 3: ida_ESI_jerez_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_jerez_puerto(viajes);*
+
+```C
+static void ida_ESI_jerez_puerto(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_jerez_puerto_puertor_fin(viaje); op=0; break;
+                case 2: ida_ESI_jerez_puertor_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_puerto(viajes);*
+
+```C
+static void ida_ESI_puerto(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ida_ESI_puerto_puertor_fin(viaje); op=0; break;
+                case 2: ida_ESI_puerto_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void inicio_ESI(viajes);*
+
+```C
+static void inicio_ESI(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es su destino final? \n\n");
+        printf(" 1. Cádiz\n 2. Puerto Real\n 3. San Fernando\n 4. Jerez de la Frontera\n 5. Puerto de Santa María\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_cadiz(viaje); op=0; break;
+                case 2: ESI_puertoreal(viaje); op=0; break;
+                case 3: ESI_sanfernando(viaje); op=0; break;
+                case 4: ESI_jerez(viaje); op=0; break;
+                case 5: ESI_puertostamaria(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_cadiz(viajes);*
+
+```C
+static void ESI_cadiz(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto Real\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+        switch(op){
+                case 1: ESI_cadiz_puertor(viaje); op=0; break;
+                case 2: ESI_cadiz_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_sanfernando(viajes);*
+
+```C
+static void ESI_sanfernando(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto Real\n 2. Cádiz\n 3. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_sanfer_puertor(viaje); op=0; break;
+                case 2: ESI_sanfer_cadiz(viaje); op=0; break;
+                case 3: ESI_sanfer_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_sanfer_puertor(viajes);*
+
+```C
+static void ESI_sanfer_puertor(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Cádiz\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_sanfer_cadiz_puerto(viaje); op=0; break;
+                case 2: ESI_sanfer_puertor_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_jerez(viajes);*
+
+```C
+static void ESI_jerez(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto Real\n 2. Puerto de Santa María\n 3. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_jerez_puertor(viaje); op=0; break;
+                case 2: ESI_jerez_puerto(viaje); op=0; break;
+                case 3: ESI_jerez_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_jerez_puertor(viajes);*
+
+```C
+static void ESI_jerez_puertor(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto de Santa María\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_jerez_puertor_puerto_fin(viaje); op=0; break;
+                case 2: ESI_jerez_puertor_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+static void ESI_jerez_puertor(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto de Santa María\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_jerez_puertor_puerto_fin(viaje); op=0; break;
+                case 2: ESI_jerez_puertor_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ESI_puertostamaria(viajes);*
+
+```c
+static void ESI_puertostamaria(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál será su siguiente parada? \n\n");
+        printf(" 1. Puerto de Santa María\n 2. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: ESI_puerto_puertor_fin(viaje); op=0; break;
+                case 2: ESI_puerto_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+*Nota: Los siguientes procedimientos cuentan con la misma precondición y postcondición.
+
+>**Precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero).**
+>
+>##### Postcondición: Imprime en el fichero Pasos.txt la ID del viaje y las paradas a las que el mismo está asociado e imprime la ruta paso a paso por pantalla al usuario.
+
+* *static void ida_ESI_cadiz_puertor(viajes);*
+
+```C
+static void ida_ESI_cadiz_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Cádiz - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_cadiz_fin(viajes);*
+
+```C
+static void ida_ESI_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Cádiz\n");
+}
+
+```
+
+* static void ida_ESI_sanfer_cadiz_puertor(viajes);
+
+```C
+static void ida_ESI_sanfer_cadiz_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: San Fernando - Cádiz - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_sanfer_cadiz_fin(viajes);*
+
+```C
+static void ida_ESI_sanfer_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: San Fernando - Cádiz - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_sanfer_puertor(viajes);*
+
+```C
+static void ida_ESI_sanfer_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: San Fernando - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_sanfer_fin(viajes);*
+
+```C
+static void ida_ESI_sanfer(viajes viaje){
+    int op;
+    do{
+        system("cls");
+        printf("\n ¿Cuál es la siguiente parada de su viaje? \n\n");
+        printf(" 1. Cádiz\n 2. Puerto Real\n 3. Fin\n 0. Cancelar\n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+        switch(op){
+                case 1: ida_ESI_sanfer_cadiz(viaje); op=0; break;
+                case 2: ida_ESI_sanfer_puertor(viaje); op=0; break;
+                case 3: ida_ESI_sanfer_fin(viaje); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *static void ida_ESI_jerez_puerto_puertor_fin(viajes);*
+
+```C
+static void ida_ESI_jerez_puerto_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Jerez - Puerto de Santa María - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_jerez_puertor_fin(viajes);*
+
+```C
+static void ida_ESI_jerez_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fclose(pasos);
+   }
+   
+```
+
+* *static void ida_ESI_jerez_puertor(viajes);*
+
+```C
+static void ida_ESI_jerez_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Jerez - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_jerez_fin(viajes);*
+
+```C
+static void ida_ESI_jerez_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Jerez - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_puerto_puertor_fin(viajes);*
+
+```C
+static void ida_ESI_puerto_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Puerto de Santa María - Puerto Real - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_puerto_fin(viajes);*
+
+```C
+static void ida_ESI_puerto_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Puerto de Santa María - ESI\n");
+}
+
+```
+
+* *static void ida_ESI_puertor(viajes);*
+
+```C
+static void ida_ESI_puerto_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: Puerto de Santa María - ESI\n");
+}
+
+```
+
+* *static void ESI_cadiz_puertor(viajes);*
+
+```C
+static void ESI_cadiz_puertor(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - Cádiz\n");
+}
+
+```
+
+* *static void ESI_cadiz_fin(viajes);*
+
+```C
+static void ESI_cadiz_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Cádiz\n");
+}
+
+```
+
+* *static void ESI_puertoreal(viajes);*
+
+```C
+static void ESI_puertoreal(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real\n");
+}
+
+```
+
+* *static void ESI_sanfer_cadiz(viajes);*
+
+```C
+static void ESI_sanfer_cadiz(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Cádiz - San Fernando\n");
+}
+
+```
+
+* *static void ESI_sanfer_cadiz_puerto(viajes);*
+
+```C
+static void ESI_sanfer_cadiz_puerto(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - Cádiz - San Fernando\n");
+}
+
+```
+
+* *static void ESI_sanfer_puertor_fin(viajes);*
+
+```C
+static void ESI_sanfer_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - San Fernando\n");
+}
+
+```
+
+* *static void ESI_sanfer_fin(viajes);*
+
+```C
+static void ESI_sanfer_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - San Fernando\n");
+}
+
+```
+
+* *static void ESI_jerez_puertor_puerto_fin(viajes);* 
+
+```C
+static void ESI_jerez_puertor_puerto_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - Puerto de Santa María - Jerez\n");
+}
+
+```
+
+* *static void ESI_jerez_puertor_fin(viajes);* 
+
+```C
+static void ESI_jerez_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - Jerez\n");
+}
+
+```
+
+* *static void ESI_jerez_puerto(viajes);* 
+
+```C
+static void ESI_jerez_puerto(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto de Santa María - Jerez\n");
+}
+
+```
+
+* *static void ESI_jerez_fin(viajes);* 
+
+```C
+static void ESI_jerez_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Jerez\n");
+}
+
+```
+
+* *static void ESI_puerto_puertor_fin(viajes);* 
+
+```C
+static void ESI_puerto_puertor_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto Real - Puerto de Santa María\n");
+}
+
+```
+
+* *static void ESI_puerto_fin(viajes);*
+
+```C
+static void ESI_puerto_fin(viajes viaje){
+    FILE* pasos;
+    pasos = fopen("Pasos.txt", "w");
+    if (pasos != NULL) {
+            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fclose(pasos);
+   }
+   printf("Su ruta es: ESI - Puerto de Santa María\n");
+}
+
+```
+
+* *static void modificar_trayecto(viajes);*
+
+```C
+//Precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
+//Postcondición: Permite al usuario modificar las paradas de su trayecto en caso de equivocación
+static void modificar_trayecto(viajes);
+
+static void modificar_trayecto(viajes viaje){
+    borrar_trayecto(viaje);
+    inicio_trayecto(viaje);
+}
+
+```
+
+* *static void borrar_trayecto(viajes);*
+
+```C
+//Precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
+//Postcondición: Permite al usuario borrar su registro de trayecto del fichero Pasos.txt
+
+static void borrar_trayecto(viajes viaje){
+
+    FILE *pasos, *pasosaux;
+    char linea_borrar[100], linea[100];
+    int idaux;
+    pasos = fopen("Pasos.txt", "r");
+    pasosaux = fopen("PasosAux.txt", "w");
+
+    while ((fscanf(pasos, "%[^-]", &idaux))!=EOF) {
+        if (idaux == viaje.i_d) {
+            fgets(linea, 100, pasos);
+            strcpy(linea_borrar, linea);
+        } else {
+            fputs(linea, pasosaux);
+        }
+}
+
+```
+
+***Funciones Públicas***
+
+* *void gestionar_trayecto(viajes, tPerfil);*
+
+```C
+//Precondición: Debe haberse generado una ID (entero) para un viaje. Recibe una variable tipo viajes y otra tipo tPerfil.
+//Postcondición: El usuario habrá elegido entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar.
+
+void gestionar_trayecto(viajes viaje, tPerfil usuario){
+    int op;
+    do{
+        system("cls");
+        printf("\n Elija una opción: \n \n   1. Agregar paradas \n   2. Modificar paradas \n   3. Borrar paradas \n   4. Mostrar viajes con paradas en su localidad   0. Cancelar \n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: inicio_trayecto(viaje); op=0; break;
+                case 2: modificar_trayecto(viaje); op=0; break;
+                case 3: borrar_trayecto(viaje); op=0; break;
+                case 4: mostrar_paradas(usuario); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+* *void mostrar_paradas(viajes, tPerfil);*
+
+```C
+//Precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+//Postcondición: Imprime por pantalla al usuario una lista con todos los viajes que pasen por su localidad con sus respectivas ID.
+
+void mostrar_paradas(tPerfil usuario){
+
+    FILE *pasos;
+    int id_viaje;
+    char linea[30], parada[21];
+    pasos = fopen("Pasos.txt", "r");
+
+    printf("Los viajes que pasan por su localidad son:\n\n")
+    while (fgets(linea, sizeof(linea), pasos)!=NULL){
+        sscanf(linea,"%d-%[^\n]", &id_viaje, parada);
+        if(strcmp(usuario.Localidad, parada)==0)
+            printf("  %d-%s\n", &id_viaje, parada);
+    }
+
+    fclose(pasos);
+}
+```
+
+* *void gestionar_trayecto(viajes);*
+
+```C
+//precondición: Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+//postcondición: Permite la elección entre: Agregar paradas, Modificar paradas, Borrar paradas o Cancelar
+
+void gestionar_trayecto(viajes viaje, tPerfil usuario){
+    int op;
+    do{
+        system("cls");
+        printf("\n Elija una opción: \n \n   1. Agregar paradas \n   2. Modificar paradas \n   3. Borrar paradas \n   4. Mostrar viajes con paradas en su localidad   0. Cancelar \n");
+        if(scanf("%d",&op)!=1){
+            fflush(stdin);
+            printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
+            op=-1;
+        }
+        else{
+            switch(op){
+                case 1: inicio_trayecto(viaje); op=0; break;
+                case 2: modificar_trayecto(viaje); op=0; break;
+                case 3: borrar_trayecto(viaje); op=0; break;
+                case 4: mostrar_paradas(usuario); op=0; break;
+                case 0: break;
+            }
+        }
+    }while(op!=0);
+}
+
+```
+
+###### VI. **Tipos** 
 
 ***
 
@@ -282,16 +2234,117 @@ A --> C[string.h]
 
 ***
 
+El propósito de Tipos es el de ofrecer algunas funciones de uso general, polivalentes, al resto de módulos para facilitar diversas tareas. No cuenta con interfaces de ningún tipo, podría definirse como una "caja de herramientas" para los demás módulos.
 
+***Estructuras de Datos***
 
+```C
+typedef enum {
+    False = 0,
+    True = 1
+} logico;
+```
 
+***Funciones Públicas***
 
-  
+* void  eliminarsaltolinea(char *);
 
+```C
+//Precondición: Recibe una cadena de caracteres.
+//Poscondición: Cambia el \n por el \0 para que no haya ningún salto de linea al ser la cadena introducida por el buffer.
 
+void EliminarSaltoLinea(char *cad){
+    int longCad = strlen(cad);
 
-  
+    if(cad[longCad - 1] == '\n')
+        cad[longCad - 1] = '\0';    
 
+}
+
+```
+
+*Sustituye el primer salto de línea de una cadena , si lo hay, por un \0. Permite evitar posibles errores de formato en el sistema. Este procedimiento está diseñado para ser utilizado por otros procedimientos/funciones.*
+
+* *logico vectores_iguales(int , int , int [],int []);*
+
+```C
+// Precondición: Recibe dos vectores, así como la longitud de cada uno de ellos.
+// Postcondición: Devuelve el valor lógico True si el contenido de los vectores es el mismo, False en caso contrario.
+
+logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
+		int i, valor_vec1, valor_vec2;
+		
+		if (longitud1!=longitud2){
+			return False;
+	  	}
+  		for (i=0;i<longitud1;i++){
+  			
+			if (vec1[i]!=vec2[i]) {
+				return False;  
+  			}
+  		}
+ 	 return True;
+	}
+```
+
+*Comprueba si dos vectores tienen el mismo contenido. Este procedimiento está diseñado para ser utilizado por otros procedimientos/funciones.
+
+#### 3.2 **Plan de Prueba**
+
+##### 3.2.1. **Prueba de los Módulos**
+
+###### I. **Menu**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+###### II. **Perfiles**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+###### III. **Vehículo**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+###### IV. **Viajes**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+###### V. **Trayecto**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+###### VI. **Tipos**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
+##### 3.2.2. **Pruebas de Integración**
+
+##### 3.2.3. **Plan de Pruebas de Aceptación**
+
+### 4. **Créditos**
+
+***
+
+El desarrollo de la plataforma ESI-Share ha sido posible gracias al trabajo de los siguientes integrantes del grupo, tanto en el desarrollo de sus módulos correspondientes como en la ayuda a los demás integrantes:
+
+* Rivero Galvín, Pablo - Módulos Perfiles.
+* Caucelo Rodríguez, Juan Manuel - Módulo Trayecto.
+* Bello González, Jose - Módulo Viaje.
+* Sánchez Loureiro, Santiago - Módulo Vehículo.
+
+*San Fernando, a 18 de Abril de 2023* 
 
 ## SmartyPants
 
@@ -315,30 +2368,3 @@ $$
 $$
 
 > You can find more information about **LaTeX** mathematical expressions [here](http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference).
-
-
-## UML diagrams
-
-You can render UML diagrams using [Mermaid](https://mermaidjs.github.io/). For example, this will produce a sequence diagram:
-
-```mermaid
-sequenceDiagram
-Alice ->> Bob: Hello Bob, how are you?
-Bob-->>John: How about you John?
-Bob--x Alice: I am good thanks!
-Bob-x John: I am good thanks!
-Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
-
-Bob-->Alice: Checking with John...
-Alice->John: Yes... John, how are you?
-```
-
-And this will produce a flow chart:
-
-```mermaid
-graph LR
-A[Square Rect] -- Link text --> B((Circle))
-A --> C(Round Rect)
-B --> D{Rhombus}
-C --> D
-```
