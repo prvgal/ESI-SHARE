@@ -105,8 +105,8 @@ static void ida_ESI_cadiz_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Cádiz - Puerto Real - ESI\n");
@@ -118,7 +118,7 @@ static void ida_ESI_cadiz_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Cádiz\n");
@@ -176,9 +176,9 @@ static void ida_ESI_sanfer_cadiz_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: San Fernando - Cádiz - Puerto Real - ESI\n");
@@ -190,8 +190,8 @@ static void ida_ESI_sanfer_cadiz_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: San Fernando - Cádiz - ESI\n");
@@ -203,8 +203,8 @@ static void ida_ESI_sanfer_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: San Fernando - Puerto Real - ESI\n");
@@ -216,7 +216,7 @@ static void ida_ESI_sanfer_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: San Fernando - ESI\n");
@@ -275,9 +275,9 @@ static void ida_ESI_jerez_puerto_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Jerez - Puerto de Santa María - Puerto Real - ESI\n");
@@ -290,8 +290,8 @@ static void ida_ESI_jerez_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Jerez - Puerto de Santa María - ESI\n");
@@ -303,8 +303,8 @@ static void ida_ESI_jerez_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Jerez - Puerto Real - ESI\n");
@@ -316,7 +316,7 @@ static void ida_ESI_jerez_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Jerez - ESI\n");
@@ -351,8 +351,8 @@ static void ida_ESI_puerto_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Puerto de Santa María - Puerto Real - ESI\n");
@@ -364,7 +364,7 @@ static void ida_ESI_puerto_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Puerto de Santa María - ESI\n");
@@ -376,7 +376,7 @@ static void ida_ESI_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: Puerto Real - ESI\n");
@@ -433,8 +433,8 @@ static void ESI_cadiz_puertor(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - Cádiz\n");
@@ -446,7 +446,7 @@ static void ESI_cadiz_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Cádiz\n");
@@ -458,7 +458,7 @@ static void ESI_puertoreal(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real\n");
@@ -494,8 +494,8 @@ static void ESI_sanfer_cadiz(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Cádiz - San Fernando\n");
@@ -530,9 +530,9 @@ static void ESI_sanfer_cadiz_puerto(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Cádiz\n",viaje.i_d);
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Cádiz\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - Cádiz - San Fernando\n");
@@ -543,8 +543,8 @@ static void ESI_sanfer_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - San Fernando\n");
@@ -556,7 +556,7 @@ static void ESI_sanfer_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-San Fernando\n",viaje.i_d);
+            fprintf(pasos,"%s-San Fernando\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - San Fernando\n");
@@ -614,9 +614,9 @@ static void ESI_jerez_puertor_puerto_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - Puerto de Santa María - Jerez\n");
@@ -628,8 +628,8 @@ static void ESI_jerez_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - Jerez\n");
@@ -642,8 +642,8 @@ static void ESI_jerez_puerto(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto de Santa María - Jerez\n");
@@ -655,7 +655,7 @@ static void ESI_jerez_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Jerez\n",viaje.i_d);
+            fprintf(pasos,"%s-Jerez\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Jerez\n");
@@ -690,8 +690,8 @@ static void ESI_puerto_puertor_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
-            fprintf(pasos,"%i-Puerto Real\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto Real\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto Real - Puerto de Santa María\n");
@@ -703,7 +703,7 @@ static void ESI_puerto_fin(viajes viaje){
     FILE* pasos;
     pasos = fopen("Pasos.txt", "w");
     if (pasos != NULL) {
-            fprintf(pasos,"%i-Puerto de Santa María\n",viaje.i_d);
+            fprintf(pasos,"%s-Puerto de Santa María\n",viaje.i_d);
             fclose(pasos);
    }
    printf("Su ruta es: ESI - Puerto de Santa María\n");
@@ -751,11 +751,11 @@ void mostrar_paradas(tPerfil usuario){
     char linea[30], parada[21];
     pasos = fopen("Pasos.txt", "r");
 
-    printf("Los viajes que pasan por su localidad son:\n\n")
+    printf("Los viajes que pasan por su localidad son:\n\n");
     while (fgets(linea, sizeof(linea), pasos)!=NULL){
-        sscanf(linea,"%d-%[^\n]", &id_viaje, parada);
+        sscanf(linea,"%s-%[^\n]", id_viaje, parada);
         if(strcmp(usuario.Localidad, parada)==0)
-            printf("  %d-%s\n", &id_viaje, parada);
+            printf("  %s-%s\n", id_viaje, parada);
     }
 
     fclose(pasos);
