@@ -633,8 +633,210 @@ static void ReservarNuevoPerfil(tPerfil *infoper){
 
 *La función tiene como objetivo verificar si existe algún usuario en el archivo llamado "Usuarios.txt". En caso de que no se encuentre ningún usuario registrado en dicho archivo, la función creará espacio de memoria para añadir un nuevo usuario. En cambio, si ya existen n usuarios registrados en el archivo, entonces la función creará espacio de memoria suficiente para agregar un nuevo usuario, es decir, reservará memoria para n+1 usuarios en total.* 
 
+* static int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int **pos);*
 
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper, dos cadenas de caracteres y la dirección de memoria de la variable que almacenará la posición del usuario
+//               del cual queremos ver si existe o no.
+// Poscondición: Devuelve 1 si se ha encontrado en el registro y 0 si no se ha encontrado
 
+static int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos){
+    int i = 0, fin = 0, boole = 0;
+
+    // Comprobemos primero los usuarios
+    while(i < LongitudVectorEstructuras() && !fin){
+        if(strncmp(infoper[i].Usuario, usuario, MAX_U-1) == 0 && strlen(usuario) == strlen(infoper[i].Usuario))
+            fin = 1;
+
+        i++;
+    }
+
+    i -= 1;
+
+    // Luego, comprobamos la contraseña de ese usuario.
+    if(strncmp(infoper[i].Contrasena, contrasena, MAX_C-1) == 0 && strlen(contrasena) == strlen(infoper[i].Contrasena))
+        boole = 1;
+
+    *pos = i;   // El contenido de pos ahora valdrá i, es decir, donde encontramos el usuario.
+
+    return boole;   // Devolvemos 1 o 0
+}
+```
+
+*Se ha desarrollado con el propósito de retornar un valor de 1 en caso de que los datos después de iniciar sesión sean correctos, es decir, que se encuentre registrado en el archivo de Usuarios.txt. En caso contrario, la función devolverá un valor de 0. Es importante destacar que este desarrollo se realizó con el objetivo de proporcionar un control adecuado sobre el Inicio de Sesión ingresadas por parte del usuario durante la ejecución de ESI-SHARE, permitiendo así una verificación previa de dicha información.* 
+
+* static int SignUp(tPerfil **infoper);*
+
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper.
+// Poscondición: añade en el vector de estructuras tPerfil un nuevo usuario e imprime en Usuarios.txt los datos de ese nuevo usuario.
+
+static int SignUp(tPerfil *infoper){
+    FILE *pf;
+    int numPerfiles = LongitudVectorEstructuras();
+
+    pf = fopen("Usuarios.txt", "a");
+
+    if(pf == NULL){
+        fprintf(stderr, "Error en la apertura de ficheros.");
+        exit(1);
+    }
+
+    ReservarNuevoPerfil(infoper);   // Reservamos un nuevo espacio de memoria
+
+    GenerarID(infoper[numPerfiles].Id_usuario, numPerfiles+1, ID-1);    // Generamos la ID para un nuevo usuario
+
+    ObtenerNombreUsuario(infoper[numPerfiles].Nomb_usuario);            // Preguntamos/Obtenemos el nombre de usuario
+
+    ObtenerLocalidad(infoper[numPerfiles].Localidad);                   // Preguntamos/Obtenemos la localidad.
+
+    // El inicio de sesión será por defecto de tipo usuario, este campo solo lo podrá cambiar el administrador.
+    strcpy(infoper[numPerfiles].Perfil_usuario, "usuario"); 
+
+    ObtenerUsuario(infoper, infoper[numPerfiles].Usuario);              // Preguntamos/Obtenemos el usuario
+
+    ObtenerContrasena(infoper[numPerfiles].Contrasena);                 // Preguntamos/Obtenemos la localidad.
+
+    // Por defecto el usuario estará activo.
+    infoper[numPerfiles].estado = '1';
+
+    //mod reg veh
+
+    // Imprimimos al final del fichero los nuevos datos.
+    if(LongitudVectorEstructuras() == 0)
+        fprintf(pf, "\n%s-%s-%s-%s-%s-%s-%c", infoper[numPerfiles].Id_usuario, infoper[numPerfiles].Nomb_usuario,
+                                          infoper[numPerfiles].Localidad, infoper[numPerfiles].Perfil_usuario,
+                                          infoper[numPerfiles].Usuario, infoper[numPerfiles].Contrasena, 
+                                          infoper[numPerfiles].estado);
+    else
+        fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", infoper[numPerfiles].Id_usuario, infoper[numPerfiles].Nomb_usuario,
+                                          infoper[numPerfiles].Localidad, infoper[numPerfiles].Perfil_usuario,
+                                          infoper[numPerfiles].Usuario, infoper[numPerfiles].Contrasena, 
+                                          infoper[numPerfiles].estado);
+
+    printf("\nBienvenido/a %s.\n", infoper[numPerfiles].Nomb_usuario);
+
+    fclose(pf); // Cerramos el fichero
+
+    return numPerfiles; // Devuelve la posición del vector donde deberá encontrarse el usuario.
+}
+```
+
+*Se ha desarrollado con el propósito de poder crear un nuevo usuario, por lo que si el usuario que accede a la aplicación no tiene una cuenta creada/registrada, pueda crearse una.* 
+
+* static void BajaUsuario(tPerfil **infoper);*
+
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper.
+// Poscondición: elimina tanto en el registro tPerfil tanto como en el fichero Usuarios.txt el usuario seleccionado.
+
+static void BajaUsuario(tPerfil *infoper){
+    FILE *pf; 
+    char id[ID];
+    int i, j, pos, tamOriginal = LongitudVectorEstructuras(); 
+
+    printf("\n####################################################################\n");
+    printf("#               Configuracion del Sistema de Bajas                 #\n");
+    printf("####################################################################\n\n");
+    
+    ListarPerfiles(infoper);    // Listamos los perfiles con todos sus datos.
+
+    pf = fopen("Usuarios.txt", "w");
+
+    fclose(pf);  // Elminamos el contenido de Usuarios.txt para despu�s sobreescribirlo y no tener ningún problema.
+
+    pf = fopen("Usuarios.txt", "a");    // Lo abrimos nuevamente, esta vez en modo append
+
+    if(pf == NULL){     // Comprobamos si su apertura es correcta
+        fprintf(stderr, "Error en la apertura de archivos.");
+        exit(1);
+    }
+    
+    do{
+        ObtenerID(infoper, id, tamOriginal); // Obtenemos la ID
+        
+        for(i = 0; i < tamOriginal; i++){
+            // En caso de que la ID sea la de un admin, no se podrá dar de baja.
+            if(!strcmp(infoper[i].Perfil_usuario, "administrador") && !strcmp(infoper[i].Id_usuario, id)){
+                fprintf(stderr, "No se puede dar de baja a un admin.");     
+
+                // Reescribimos en el fichero los datos.
+                for(j = 0; j < tamOriginal; j++){
+                    if(j+1 == tamOriginal)
+                        fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", infoper[j].Id_usuario, infoper[j].Nomb_usuario,
+                                                            infoper[j].Localidad, infoper[j].Perfil_usuario,
+                                                            infoper[j].Usuario, infoper[j].Contrasena, infoper[j].estado);
+                    else
+                        fprintf(pf, "%s-%s-%s-%s-%s-%s-%c\n", infoper[j].Id_usuario, infoper[j].Nomb_usuario,
+                                                              infoper[j].Localidad, infoper[j].Perfil_usuario,
+                                                              infoper[j].Usuario, infoper[j].Contrasena, infoper[j].estado);
+
+                    }
+
+                exit(1);
+            }
+        }
+
+    } while(!ValidarID(infoper, id, &pos, tamOriginal));
+
+    system("cls");
+
+    // Algoritmo para eliminar el usuario, se trata en sobreescribir de izquierda a derecha todos los datos.
+    for(; pos < tamOriginal-1; pos++)
+        infoper[pos]= infoper[pos+1];
+
+    infoper = (tPerfil *)realloc(infoper, (tamOriginal-1)*sizeof(tPerfil)); // Realizamos un realloc a para una posición menos.
+
+    if(infoper == NULL){    // Comprobamos si se reserva bien la memoria
+        printf("Error en asignacion de memoria");
+        exit(1);
+    }
+
+    // Regeneramos las IDs
+    for(i = 0; i < tamOriginal-1; i++)
+        GenerarID(infoper[i].Id_usuario, i+1, ID-1);
+    
+    // Reescribimos el archivo.
+    for(i = 0; i < tamOriginal-1; i++){
+        if(i+1 == tamOriginal-1)
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c", infoper[i].Id_usuario, infoper[i].Nomb_usuario,
+                                                infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+        else
+            fprintf(pf, "%s-%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario,
+                                                  infoper[i].Localidad, infoper[i].Perfil_usuario,
+                                                  infoper[i].Usuario, infoper[i].Contrasena, infoper[i].estado);
+
+    }
+
+    fclose(pf);    // Cerramos el fichero
+}
+```
+
+*Se ha desarrollado con el propósito de poder eliminar un usuario. Esta función solo podrá accederse siendo administrador, si el perfil es de tipo usuario, no podrá accederse a esta función* 
+
+* static void ListarPerfiles(tPerfil **infoper);*
+
+```C
+// Precondición: recibe una dirección de memoria a la primera posición del vector infoper.
+// Poscondición: Imprime por pantalla todos los usuarios con sus respectivos datos, y también el numero de usuarios registrados en el sistema.
+
+static void ListarPerfiles(tPerfil *infoper){
+    int i;
+
+    printf("\nUsuarios registrados: \n");
+
+    // Recorremos el vector e imprimimos todos sus datos
+    for(i = 0; i < LongitudVectorEstructuras(); i++)
+        printf("%s-%s-%s-%s-%s-%s-%c\n", infoper[i].Id_usuario, infoper[i].Nomb_usuario, 
+                                         infoper[i].Localidad, infoper[i].Perfil_usuario,   
+                                         infoper[i].Usuario, infoper[i].Contrasena ,infoper[i].estado);
+    
+    printf("\nNumero de usuarios registrados en el sistema: %i.", i);
+}
+```
+
+*Se ha desarrollado con el propósito de poder listar todos los usuarios del sistema con todos sus datos. Esta función solo podrá accederse siendo administrador, si el perfil es de tipo usuario, no podrá accederse a esta función* 
 
 ###### III. **Vehículo **
 
