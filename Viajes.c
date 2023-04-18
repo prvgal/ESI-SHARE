@@ -1,5 +1,5 @@
 
-            /*Módulo de viaje: se guarda la ID única del viaje, la matrícula del vehículo, fecha y hora de inicio y llegada,
+            /*M�dulo de viaje: se guarda la ID �nica del viaje, la matr�cula del veh�culo, fecha y hora de inicio y llegada,
                         plazas libres, tipo de viaje, el importe y estado del viaje en el fichero Viajes.txt*/
 
 #include "Viajes.h"
@@ -9,7 +9,7 @@
 
 int posViaje;
 int Iplazas = 3;
-
+/*
 int main(){     //Main temporal para probar que funciona correctamente
     char viajeusu [5];
 
@@ -23,21 +23,11 @@ int main(){     //Main temporal para probar que funciona correctamente
     free(viaje);
     return 0;
 }
+*/
 
-static void generar_ID_viaje(viajes *viaje, int posViaje){
-    int aux;
-
-    srand(time(NULL));   //Inicializa la semilla del generador de números aleatorios
-    aux = (rand() % (999999 - 100000 + 1)) + 100000;   //Genera un número aleatorio entre 0 y 999999
-
-    sprintf((viaje[posViaje].i_d), "%d", aux);
-
-    printf("ID del viaje generada correctamente.\n");
-    printf("ID del viaje = %s\n", viaje[posViaje].i_d);
-}
 
 static void introducir_fecha(viajes *viaje, int posViaje){
-    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es válida
+    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es v�lida
 
     time_t tiempo_actual;
     struct tm *fecha_actual;
@@ -45,7 +35,7 @@ static void introducir_fecha(viajes *viaje, int posViaje){
     do {
         printf("Introduzca una fecha en el formato Dia/Mes/Ano: ");
 
-        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 números esperados con "/" separándolos
+        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 n�meros esperados con "/" separ�ndolos
 
             while (getchar() != '\n');                  //se limpia el buffer de entrada
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
@@ -76,15 +66,15 @@ static void introducir_fecha(viajes *viaje, int posViaje){
             continue;
         }
 
-        if (ano > fecha_actual->tm_year + 1901 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el día, mes y año sean válidos
+        if (ano > fecha_actual->tm_year + 1901 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el d�a, mes y a�o sean v�lidos
             printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
 
             continue;
         }
 
-        dias_en_mes = 31;   //Se establece el valor por defecto de días en el mes
+        dias_en_mes = 31;   //Se establece el valor por defecto de d�as en el mes
 
-        //Se calcula el número de días del mes introducido
+        //Se calcula el n�mero de d�as del mes introducido
         if (mes == 2){
             dias_en_mes = (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28;
 
@@ -126,7 +116,7 @@ static void horas(viajes *viaje, int posViaje){
 
         minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;
 
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posViaje].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posViaje].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es v�lida
             sprintf(viaje[posViaje].hora_inicio, "%02d:%02d", horas, minutos);
 
             estado = 1;
@@ -147,7 +137,7 @@ static void horas(viajes *viaje, int posViaje){
 
         minutos_llegada = atoi(entrada+3) + atoi(entrada) * 60;
 
-        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es válida
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es v�lida
             sprintf(viaje[posViaje].hora_llegada, "%02d:%02d", horas, minutos);
 
             if (minutos_llegada >= minutos_inicio + 5){
@@ -199,7 +189,7 @@ static void importe(viajes *viaje, int posViaje){
         scanf("%f", &aux);
     } while (aux < 0 || aux > 15);
 
-    sprintf(viaje[posViaje].importe, "%.2f€", aux);
+    sprintf(viaje[posViaje].importe, "%.2f�", aux);
 
     printf("El importe introducido es de %.2f euros\n", aux);
 }
@@ -790,9 +780,12 @@ viajes *reservarviajes(viajes *viaje){
     return viaje;
 }
 
-viajes *menuviajesUsu(viajes *viaje, char viajeusu [5]){
+void menuviajesUsu(char viajeusu [5]){
     int op;
-
+	viajes *viaje;
+	
+	viaje = CrearListaViajes();
+	
     system("cls");
 
     viaje = reservarviajes(viaje);
@@ -829,12 +822,15 @@ viajes *menuviajesUsu(viajes *viaje, char viajeusu [5]){
 
     } while(op != 0);
 
-    return viaje;
+    free(viaje);
 }
 
-viajes *menuviajesAdmin(viajes *viaje, char viajeusu [5]){
+void menuviajesAdmin(char viajeusu [5]){
     int op;
-
+	viajes *viaje;
+	
+	viaje = CrearListaViajes();
+	
     system("cls");
 
     viaje = reservarviajes(viaje);
@@ -872,7 +868,7 @@ viajes *menuviajesAdmin(viajes *viaje, char viajeusu [5]){
 
     } while(op != 0);
 
-    return viaje;
+    free(viaje);
 }
 
 viajes *eliminarviaje(viajes *viaje){
@@ -892,30 +888,16 @@ viajes *eliminarviaje(viajes *viaje){
             if(op < 1 || op > numeroviajes()){
                 return viaje;
             }
-            for(i = op-1; i+1 <= numeroviajes(); i++){
-                strcpy(viaje[i].i_d, viaje[i+1].i_d);
-                strcpy(viaje[i].matricula, viaje[i+1].matricula);
-                strcpy(viaje[i].fecha, viaje[i+1].fecha);
-                strcpy(viaje[i].hora_inicio, viaje[i+1].hora_inicio);
-                strcpy(viaje[i].hora_llegada, viaje[i+1].hora_llegada);
-                viaje[i].Nplazas = viaje[i+1].Nplazas;
-                strcpy(viaje[i].tipo, viaje[i+1].tipo);
-                strcpy(viaje[i].importe, viaje[i+1].importe);
-                viaje[i].estado.abierto = viaje[i+1].estado.abierto;
-                viaje[i].estado.cerrado = viaje[i+1].estado.cerrado;
-                viaje[i].estado.iniciado = viaje[i+1].estado.iniciado;
-                viaje[i].estado.finalizado = viaje[i+1].estado.finalizado;
-                viaje[i].estado.anulado = viaje[i+1].estado.anulado;
-                viaje[i].hoy = viaje[i+1].hoy;
-                viaje[i].anular = viaje[i+1].anular;
-                strcpy(viaje[i].usuviaje, viaje[i+1].usuviaje);
-            }
+
+            for(i = op-1; i < numeroviajes(); i++)
+                viaje[i] = viaje[i+1];
 
             viaje = (viajes *)realloc(viaje, (numeroviajes() - 1)*sizeof(viajes));
             imprimirviajesborrado(viaje);
             printf("\nViaje borrado.\n");
         }
     }
+
     return viaje;
 }
 
@@ -925,7 +907,7 @@ viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
 
         int posViaje = numeroviajes();
 
-        printf("Seleccione el vehículo con el que se va a realizar el viaje:\n\n");
+        printf("Seleccione el veh�culo con el que se va a realizar el viaje:\n\n");
 
         //obtener_datos_vehiculo(viajeusu, viaje[posViaje]);
 
@@ -937,7 +919,7 @@ viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
 
         leerviajes(viaje);
 
-        generar_ID_viaje(viaje, posViaje);
+        GenerarID(viaje[posViaje].i_d, numeroviajes()+1, 6);
 
         introducir_fecha(viaje, posViaje);
 
@@ -958,21 +940,14 @@ viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
         listarviajes(viaje);
     /*}
     else
-        printf("No puedes publicar un viaje porque no tienes ningún vehículo registrado.\n");*/
+        printf("No puedes publicar un viaje porque no tienes ning�n veh�culo registrado.\n");*/
     return viaje;
 }
-/*
-void menuviajes(char viajeusu [5], char tipousuario[MAX_PU], viajes *viaje){
-    static int auxi = 0;
 
-    if(auxi == 0){
-        viaje = CrearListaViajes();
-        auxi = 1;
-    }
-
-    if(tipousuario == 'usuario')
-        viaje = menuviajesUsu(viaje, viajeusu);
+void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
+    if(!strcmp(tipousuario, "usuario"))
+        menuviajesUsu(viajeusu);
     else
-        viaje = menuviajesAdmin(viaje, viajeusu);
+        menuviajesAdmin(viajeusu);
 }
-*/
+
