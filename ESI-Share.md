@@ -59,7 +59,9 @@ La aplicación incluye herramientas capaces de facilitar la tarea de gestión y 
 
 1. [CodeBlocks](https://sourceforge.net/projects/codeblocks/), para la generación de código.
 2. [Dev C++](https://sourceforge.net/projects/orwelldevcpp/), para la generación de código.
-3. [Typora](https://typora.io), para la generación de documentación.
+3. [Visual Studio Code](https://code.visualstudio.com/), para la generación de código.
+4. [Typora](https://typora.io), para la generación de documentación.
+
 
 #### 2.3 **Manual de Instalación**
 
@@ -68,7 +70,7 @@ ESI-Share puede ser descargado por cualquier persona con conexión a internet y 
 ESI-Share cuenta con exigencias mínimas de prestaciones de equipo, de manera que prácticamente cualquier equipo con los componentes básicos de un ordenador (todos ellos funcionales) será capaz de ejecutar la aplicación de forma fluida e ininterrumpida. Requisitos básicos orientativos:
 
 * Sistema Operativo Windows XP.
-* 512mb de RAM libres.
+* 512MB de RAM libres.
 * 100MB de espacio libre en memoria.
 
 #### 2.4 **Acceso al Sistema**
@@ -319,6 +321,319 @@ int Inicio(tPerfil *infoper){
 ```
 
 *Pide al usuario introducir la información necesaria para ingresar ESI-SHARE. Este procedimiento se diseñó como el principal del programa.* 
+
+* void Menu(tPerfil *infoper, int posUsua);*
+
+```C
+// Precondición: Debe haberse iniciado sesión o registrado con antelación. Recibe la dirección de memoria del primer elemento del vector de estructuras tipo tPerfil
+//               y un entero que se corresponde con la posición del usuario que inicio sesión o se registró con antelación
+// Poscondición: Dependiendo del tipo de perfil que tenga el usuario, desembocará a un menú u otro, en caso de ser administrador, se llama a MenuAdmin, en caso de no serlo, se llama a MenuUser
+
+void Menu(tPerfil *infoper, int posUsua){
+    // Según el inicio de sesión o registro, se verifica si el usuario con posición posUsua es admin o usuario corriente.
+    // Esto es debido a que el usuario corriente no tiene el mismo menú que el administrador y viceversa.
+    if(!strcmp(infoper[posUsua].Perfil_usuario, "administrador"))
+        MenuAdmin(infoper, posUsua);
+    else
+        MenuUser(infoper, posUsua);
+}
+```
+*Comprueba si la etiqueta que identifica si un perfil es de tipo administrador o usuario. Este procedimiento se diseñó para redirigir a dos versiones del menú según el tipo de perfil del usuario.* 
+
+* void tPerfil **CrearListaDePerfiles(void);*
+
+```C
+// Precondición: Nada
+// Poscondición: Devuelve un vector de tipo tPerfil del tamaño equivalente al numero de usuarios guardados en Usuarios.txt
+
+tPerfil *CrearListaDePerfiles(void){
+    tPerfil *perfiles;
+    // Reservamos la memoria necesaria gracias a la función LongitudVectorEstructuras()
+    if(LongitudVectorEstructuras() == 0)
+        perfiles = (tPerfil *)calloc(LongitudVectorEstructuras()+1, sizeof(tPerfil)); 
+    else
+        perfiles = (tPerfil *)calloc(LongitudVectorEstructuras(), sizeof(tPerfil));
+
+    if(perfiles == NULL){   // Comprobamos si surge algún error en la asignación
+        fprintf(stderr, "Error en la asignacion de memoria.");
+        exit(1);
+    }
+
+    return perfiles;    // Devolvemos dicho vector.
+}
+```
+
+*Crea un vector de estructuras de tipo tPerfil con el tamaño del total de usuarios registrados en Usuarios.txt y después, lo devuelve.* 
+
+* void GenerarID(char **id, int num, int numDigitos);*
+
+```C
+// Precondición: recibe una cadena de caraacteres y dos enteros, uno para el numero que queremos realizar la ID y el numero de dígitos de esa ID.
+// Poscondición: guarda en id una cadena de caracteres, por ejemplo, si num = 12 y numDigitos = 4, en id se encontrará 0012
+
+void GenerarID(char *id, int num, int numDigitos){
+    sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de dígitos almacenados en numDigitos
+}
+```
+
+*Genera una ID, según el numero y los dígitos que le pasemos por parámetros. Este procedimiento se ha creado debido a la necesidad en diferentes parte del desarrollo para generar ID's.* 
+
+***Funciones Privadas***
+
+* static int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam);*
+
+```C
+// Precondición: recibe un vector de estructuras tPerfil, una cadena de caracteres (ID), una dirección de memoria a la variable que contenga la posición del usuario
+//               y una variable que contenga el tamaño del vector de estructuras tPerfil.
+// Poscondición: Devuelve 1 si la ID es válida, es decir, si la ID se encuentra en el registro y 0 en caso contrario.
+
+static int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
+    int i, boole = 0;
+
+    for(i = 0; i < tam && !boole; i++){     // Recorremos el vector
+        if(!strcmp(infoper[i].Id_usuario, id))  
+            boole = 1;                      // 1 si lo hemos encontrado
+    }
+
+    *posUsua = i-1;     // Acutalizamos el contenido de posUsua, ya que la posición será donde ha encontrado la ID menos 1.
+
+    return boole;       // Devolvemos
+}
+```
+
+*Se ha desarrollado con el propósito de retornar un valor de 1 en caso de que la identificación ingresada sea considerada válida, es decir, se encuentre registrada en el archivo de Usuarios.txt. En caso contrario, la función devolverá un valor de 0. Es importante destacar que este desarrollo se realizó con el objetivo de proporcionar un control adecuado sobre las identificaciones ingresadas por parte del usuario durante la ejecución de ESI-SHARE, permitiendo así una verificación previa de dicha información.* 
+
+
+* static void MenuAdmin(tPerfil **infoper, int posUsua);*
+
+```C
+// Precondición: Debe haberse iniciado sesión o registrado con antelación. Recibe la dirección de memoria del primer elemento del vector de estructuras tipo tPerfil
+//               y un entero que se corresponde con la posición del usuario que inicio sesión o se registró con antelación.
+// Poscondición: Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el administrador.
+
+static void MenuAdmin(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n###################################\n");
+    printf("#               MENU              #\n");
+    printf("###################################\n\n");
+
+    printf("%s", infoper[posUsua].Perfil_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES            #\n");
+       
+        printf("\n<1> Usuarios.\n");
+        printf("<2> Vehiculos.\n");
+        printf("<3> Viajes.\n");
+        printf("<0> Para cerrar ESI-SHARE\n");
+
+        printf("\nIngrese la opcion que desee: ");
+        
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+            system("cls");
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+        } else{
+            system("cls");
+            ImprimirESISHARE();
+
+            switch(op){
+                case 0: exit(1); break;
+                case 1: Usuarios(infoper); break;
+                // case 2: Vehiculos(); break;
+                case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+}
+```
+
+*Esta función ha sido diseñada con el propósito de servir como un medio para acceder a las funciones generales del programa si el usuario que Inicio Sesión fue el administrador.* 
+
+* static void MenuUser(tPerfil **infoper, int posUsua);*
+
+```C
+// Precondición: Debe haberse iniciado sesión o registrado con antelación. Recibe la dirección de memoria del primer elemento del vector de estructuras tipo tPerfil
+//               y un entero que se corresponde con la posición del usuario que inicio sesión o se registró con antelación.
+// Poscondición: Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el usuario.
+
+static void MenuUser(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n###################################\n");
+    printf("#               MENU              #\n");
+    printf("###################################\n");
+
+    printf("Usuario: %s", infoper[posUsua].Nomb_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES            #\n");
+       
+        printf("\n<1> Perfil.\n");
+        printf("<2> Vehiculos.\n");
+        printf("<3> Viajes.\n");
+        printf("<0> Para cerrar ESI-SHARE\n");
+
+        printf("\nIngrese la opcion que desee: ");
+
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+            system("cls");
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+        } else{
+            system("cls");
+            ImprimirESISHARE();
+
+            switch(op){
+                case 0: exit(1); break;
+                case 1: Perfil(infoper, posUsua); break;
+                // case 2: Vehiculos(); break;
+                case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+}
+```
+
+*Esta función ha sido diseñada con el propósito de servir como un medio para acceder a las funciones generales del programa si el usuario que Inicio Sesión fue el usuario.* 
+
+* static void Perfil(tPerfil **infoper, int posUsua);*
+
+```C
+// Precondición: Debe haberse iniciado sesión o registrado y haber pasado por MenuUser anteriormente. Recibe la dirección de memoria del primer elemento del vector de estructuras tipo tPerfil
+//               y un entero que se corresponde con la posición del usuario que inicio sesión o se registró con antelación..
+// Poscondición: Menu de opcinoes que desembocaró en diferentes opciones de configuración.
+
+static void Perfil(tPerfil *infoper, int posUsua){
+    int op;
+
+    printf("\n#######################################################\n");
+    printf("#               Configuracion del Perfil              #\n");
+    printf("#######################################################\n\n");
+
+    printf("Usuario: %s.", infoper[posUsua].Nomb_usuario);
+
+    do{
+        printf("\n\n#            OPCIONES de Configuracion            #\n");
+       
+        printf("\n<1> Cambiar algun dato de la cuenta.\n");
+        printf("<0> Para volver al menu.\n");
+
+        printf("\nIngrese la opcion que desee: ");
+        
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
+            system("cls");
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+        } else{
+            system("cls");
+            ImprimirESISHARE();
+
+            switch(op){
+                case 0: break;
+                case 1: ModificarCamposUsuario(infoper, posUsua); break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+}
+```
+
+*Función que revisa si el usuario desea cambiar algun dato de la cuenta o desea regresar al menú. Este procedimiento está pensado para ser un intermediario entre funciones* 
+
+* static void Usuarios(tPerfil **infoper);*
+
+```C
+// Precondición: Debe haberse iniciado sesión o registrado y haber pasado por MenuAdmin anteriormente. Recibe la dirección de memoria del primer elemento del vector de estructuras tipo tPerfil
+//               y un entero que se corresponde con la posición del usuario que inicio sesión o se registró con antelación..
+// Poscondición: Menu de opcinoes que desembocará en diferentes opciones de configuración.
+
+static void Usuarios(tPerfil *infoper){
+    int op;
+
+    printf("\n##################################################################\n");
+    printf("#               Configuracion del Sistema de Usuarios              #\n");
+    printf("####################################################################\n\n");
+
+    do{
+        printf("\n\n#            OPCIONES de Configuracion            #\n");
+       
+        printf("\n<1> Listar usuarios del sistema.\n");
+        printf("<2> Para dar de alta a un usuario.\n");
+        printf("<3> Para dar de baja a un usuario.\n");
+        printf("<4> Para modificar datos de algun usuario.\n");
+        printf("<0> Para volver al menu.\n");
+
+        printf("\nIngrese la opcion que desee: ");
+
+        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+            system("cls");
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
+        } else{
+            system("cls");
+            ImprimirESISHARE();
+
+            switch(op){
+                case 0: break;
+                case 1: ListarPerfiles(infoper); break;
+                case 2: SignUp(infoper); break;
+                case 3: BajaUsuario(infoper); break;
+                case 4: ModificarCamposAdmin(infoper); break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);
+}
+```
+
+*La función en cuestión se encarga de verificar si el administrador desea listar los perfiles de ESI-SHARE, dar de alta o baja a algún usuario o modificar los campos de algún usuario; o bien, desea regresar al menú principal. Este proceso actúa como un intermediario entre las diversas funciones del programa. En caso de que se mencione alguna de las opciones anteriores, se procede a redirigir al usuario al menú correspondiente.* 
+
+* static void ImprimirESISHARE(void);*
+
+```C
+// Precondición: Nada
+// Poscondición: Imprime ESI-SHARE por pantalla.
+
+static void ImprimirESISHARE(void){
+    printf("###################################\n");
+    printf("#            ESI-SHARE            #\n");
+    printf("###################################\n");
+}
+```
+
+*La función en cuestión tiene como objetivo presentar en pantalla el nombre del programa con la finalidad de mejorar estéticamente los menús* 
+
+* static void ReservarNuevoPerfil(tPerfil **infoper);*
+
+```C
+// Precondición: Recibe un vector de estructuras tipo tPerfil, el cual, debe estar inicializado o no.
+// Poscondición: En caso de que en Usuarios.txt no se encuentre ningun usuario, esta función reserva memoria para uno nuevo, en caso contrario, si se encuentran n usuarios,
+//               reservará memoria para n+1.
+
+static void ReservarNuevoPerfil(tPerfil *infoper){
+    if(LongitudVectorEstructuras() == 0)    // Comprobación del numero de usuarios para después proceder con la reserva.
+        infoper = (tPerfil *)calloc(LongitudVectorEstructuras() + 1, sizeof(tPerfil));
+    else
+        infoper = (tPerfil *)realloc(infoper, (LongitudVectorEstructuras() + 1)*sizeof(tPerfil));
+
+    if(infoper == NULL){    // Comprobamos si surge algún error en la asignación
+        fprintf(stderr, "Error en la asignacion de memoria.");
+        exit(1);
+    }
+}
+```
+
+*La función tiene como objetivo verificar si existe algún usuario en el archivo llamado "Usuarios.txt". En caso de que no se encuentre ningún usuario registrado en dicho archivo, la función creará espacio de memoria para añadir un nuevo usuario. En cambio, si ya existen n usuarios registrados en el archivo, entonces la función creará espacio de memoria suficiente para agregar un nuevo usuario, es decir, reservará memoria para n+1 usuarios en total.* 
+
+
 
 
 ###### III. **Vehículo **
