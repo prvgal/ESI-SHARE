@@ -6,6 +6,7 @@ _1º Grado en Ingeniería Informática_
 
 ![ImagenUCA](https://logos-world.net/wp-content/uploads/2020/04/UCA-emblem-700x394.png)
 
+
 *Juan Manuel Caucelo Rodríguez*
 
 *Jose Bello González*
@@ -378,6 +379,44 @@ void GenerarID(char *id, int num, int numDigitos){
 ```
 
 *Genera una ID, según el numero y los dígitos que le pasemos por parámetros. Este procedimiento se ha creado debido a la necesidad en diferentes parte del desarrollo para generar ID's.* 
+
+* void CargarPerfiles(tPerfil **infoper);*
+
+```C
+// Precondición: Recibe un vector de estructuras tipo tPerfil, el cual, deberá tener un tamaño mínimo, en caso de no tenerlo, llama a SignUp para crear un nuevo usuario.
+// Poscondición: carga toda la información de Usuarios.txt en el vector de estructuras de tipo tPefil.
+
+void CargarPerfiles(tPerfil *infoper){
+    int i;
+    char buffer[MAX_LIN_FICH];
+
+    if(LongitudVectorEstructuras() != 0){    // Comprobamos si existe algún usuario en Usuarios.txt
+        FILE *pf;
+
+        pf = fopen("Usuarios.txt", "r");    // Abrimos el fichero en tipo lectura.
+
+        if(pf == NULL){     // Comprobamos si su apertura es correcta.
+            fprintf(pf, "Error en la apertura de archivos.\n");
+            exit(1);
+        }
+
+        for(i = 0; i < LongitudVectorEstructuras(); i++){   // Recorremos el vector
+        // Cogemos línea por línea, ya que sabemos que MAX_LIN_FICH es el máximo que ocupara cada línea de Usuarios.txt
+        // Tras recoger una línea completa, eliminamos el \n y lo transformamos por un \0, y dicha cadena la metemos en los campos de infoper gracias a sscanf.
+        if(fgets(buffer, MAX_LIN_FICH, pf) != NULL){
+            buffer[strcspn(buffer, "\n")] = '\0';
+            sscanf(buffer, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%c", infoper[i].Id_usuario, infoper[i].Nomb_usuario, 
+                                                                     infoper[i].Localidad, infoper[i].Perfil_usuario, 
+                                                                     infoper[i].Usuario, infoper[i].Contrasena, &infoper[i].estado);
+            }
+        }
+
+        fclose(pf); // Cerramos fichero.
+    }
+}
+```
+
+*Carga del archivo "Usuarios.txt" y almacena su contenido en el vector de estructuras de tipo tPerfil.* 
 
 ***Funciones Privadas***
 
