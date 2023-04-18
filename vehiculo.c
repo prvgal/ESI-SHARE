@@ -71,19 +71,6 @@
 	   	fclose(veh_txt);
 	}
 
-	static void inserta_descripcion(char descripcion[CARACTERES]){
-
-        printf("Escribe una pequeña descripción de tu vehículo (recuerda, 50 caracteres máximo) - marca, modelo, color, etc...");
-        fflush(stdin);
-        gets(descripcion);
-        while(strlen(descripcion)>50){
-    		printf("Introduzca una descripción más corta (o ninguna)");
-    		fflush(stdin);
-    		gets(descripcion);
-		}
-		acortar_cadena(descripcion);
-    }
-
 	static void acortar_cadena(char cadena[]){
 		int i;
 		for(i=0;i<strlen(cadena);i++){
@@ -92,13 +79,6 @@
 			}
 	}
 
-	static void pedir_plazas_veh(int plazas){
-    	plazas=-1;
-		while(plazas<1||plazas>9){
-			printf("Indica el número total de plazas de las que dispone el vehículo sin el conductor (introduzca un número realista): ");
-        	scanf("%i",&plazas);
-		}
-    }
 
 	static int comprobar_validez_mat(char matricula[]){
         int i;
@@ -144,19 +124,6 @@
 		}
 		return 1;
 	}
-	static void pedir_matricula(char *matricula){
-        int i;
-
-        printf("Indica la matrícula de tu vehículo: ");
-        fflush(stdin);
-        gets(matricula);
-        do{
-    		printf("Por favor, introduce una matrícula española válida (sin espacios): ");
-            fflush(stdin);
-            gets(matricula);
-            i=comprobar_validez_mat(matricula);
-		}while(i!=1);
-    }
 
 	void admin_veh(){
 		int op,i=0;
