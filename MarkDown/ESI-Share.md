@@ -1413,44 +1413,6 @@ typedef struct{
 
 ***Funciones Públicas***
 
-
-* void escribir_fichero(vehiculo_inf, FILE *);*
-
-```C
-//Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
-//Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
-
-void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
-        char guion[2]={'-','\0'};
-		int i;
-
-        if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
-        	printf("Error al guardar la información");
-			}
-		else{
-				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
-           		fflush(veh_txt);
-           		fwrite(guion,sizeof(char),1,veh_txt);
-           		fflush(veh_txt);
-           		fwrite(vehiculo.id_usuario, sizeof(char), 4, veh_txt);
-           		fflush(veh_txt);
-				fwrite(guion, sizeof(char),1,veh_txt);
-				fflush(veh_txt);
-				fprintf(veh_txt,"%i",vehiculo.num_plazas);
-				fflush(veh_txt);
-				fwrite(guion, sizeof(char),1,veh_txt);
-				fflush(veh_txt);
-				fwrite(vehiculo.desc_veh, sizeof(char), strlen(vehiculo.desc_veh), veh_txt);
-				fflush(veh_txt);
-				fprintf(veh_txt,"\n");
-		}
-	   	fclose(veh_txt);
-	}
-
-```
-
-*Escribe la información asociada a un usuario (de ahí que reciba una variable tipo vehiculo_inf) en el fichero vehículo, donde se almacenan todos los vehículos registrados.*
-
 * *void admin_veh();*
 
 ```C
@@ -1637,6 +1599,44 @@ int contar_vehiculos(char idusu[IDUSU]){
 *Como su nombre indica, cuenta el número de vehículos que un usuario tiene asociados a su cuenta. Este procedimiento está diseñado para ser llamado por otros procedimientos/funciones.*
 
 ***Funciones Privadas***
+
+
+* static void escribir_fichero(vehiculo_inf, FILE *);*
+
+```C
+//Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
+//Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
+
+void escribir_fichero(vehiculo_inf vehiculo, FILE *veh_txt){
+        char guion[2]={'-','\0'};
+		int i;
+
+        if((veh_txt=fopen("vehiculo.txt","a+"))==NULL){
+        	printf("Error al guardar la información");
+			}
+		else{
+				fwrite(vehiculo.id_mat, sizeof(char), 7, veh_txt);
+           		fflush(veh_txt);
+           		fwrite(guion,sizeof(char),1,veh_txt);
+           		fflush(veh_txt);
+           		fwrite(vehiculo.id_usuario, sizeof(char), 4, veh_txt);
+           		fflush(veh_txt);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fflush(veh_txt);
+				fprintf(veh_txt,"%i",vehiculo.num_plazas);
+				fflush(veh_txt);
+				fwrite(guion, sizeof(char),1,veh_txt);
+				fflush(veh_txt);
+				fwrite(vehiculo.desc_veh, sizeof(char), strlen(vehiculo.desc_veh), veh_txt);
+				fflush(veh_txt);
+				fprintf(veh_txt,"\n");
+		}
+	   	fclose(veh_txt);
+	}
+
+```
+
+*Escribe la información asociada a un usuario (de ahí que reciba una variable tipo vehiculo_inf) en el fichero vehículo, donde se almacenan todos los vehículos registrados.*
 
 * Introducir_datos_veh(vehiculo_inf);
 
