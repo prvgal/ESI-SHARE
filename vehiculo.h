@@ -111,8 +111,7 @@
     static void listar_viajes();
 
     //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
-    //Postcondición: El procedimiento habrá realizado alguna de las tareas: <1> Dar un vehículo de alta <2> Dar uno de sus vehículo de baja <3> Modificar información de algún vehículo. <4> Ver información de sus vehículos.
-    //<0> Volver al menú anterior.
+    //Postcondición: El procedimiento habrá dado de alta un nuevo vehículo en vehiculo.txt asociado a la ID recibida.
     static void usuario_alta_vehiculo(char []);
 
     //Precondición: Recibe la ID del usuario que está en el perfil en el momento, así como una matrícula dada por el usuario.
