@@ -61,20 +61,6 @@
     //Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
     static void introducir_datos_veh(vehiculo_inf);
 
-
-    //Precondición: Recoge un vector de caracter o cadena de caracteres del campo id_mat del registro vehiculo, con lo que
-    //debe estar habilitada la información del vehículo.
-    //Postcondición: La cadena vehiculo.matricula tendrá una matrícula guardada.
-    static void pedir_matricula(char []);
-
-    //Precondición: Recibe la variable entera num_plazas, con lo que debe estar habilitada la información del vehículo.
-    //Postcondicion: El entero vehiculo.num_plazas será un número entre 0 y 10.
-    static void pedir_plazas_veh(int);
-
-    //Precondición: Debe estar habilitada la información del vehículo, concretamente el campo "desc_veh".
-    //Postcondición: El usuario habrá introducido una breve descripción acerca de su vehículo.
-    static void inserta_descripcion(char []);
-
     //Precondición: Recibe una cadena de cualquier longitud, de manera que su contenido (que no espacio en memoria) se acortará según encuentre \n, es decir, queden espacios
 	//libres.
 	//Postcondición: La cadena dada habrá sido acortada, sustituyendo \n por \0.
