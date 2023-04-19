@@ -2559,14 +2559,29 @@ static void horas(viajes *viaje, int posViaje){
 //Precondición: Recibe un vector de estructuras de tipo viajes y la localidad del usuario
 //Postcondición: Permite elegir un viaje que pasa por la localidad indicada 
 
-static void plazas(viajes *viaje, char localidad[20]){
-    if(viaje[posViaje].Nplazas != 0){   //Si el número de plazas no es 0, se actualizará a una menos
-        viaje[posViaje].Nplazas -= 1;
+static void uniraviaje(viajes *viaje, char localidad[20]){
+    int i, valido = 0;
+    char aux[7];
+    mostrar_paradas(localidad);
 
-        printf("Quedan %i plazas libres en el viaje %s\n", viaje[posViaje].Nplazas, viaje[posViaje].i_d);
+    printf("\nIntroduce la ID del viaje al que quieres unirte: ");
+    fflush(stdin);
+    fgets(aux, 7, stdin);
+    
+    for(i = 0; i < numeroviajes() && valido == 0; i++){
+        if(strcmp(aux, viaje[i].i_d) == 0){
+            if(viaje[i].estado.abierto == 1){
+                valido = 1;
+            }
+        }
+    }
+
+    if(valido == 1 && viaje[i-1].Nplazas > 0){
+        printf("\nTe has unido al viaje %s\n\n", aux);
+        viaje[i-1].Nplazas = viaje[i-1].Nplazas - 1;
     }
     else
-    printf("No quedan plazas en el viaje %s\n", viaje[posViaje].i_d);
+        printf("\nLa matricula introducida no es valida o el viaje no tiene plazas disponibles.\n\n");
 }
 ```
 
