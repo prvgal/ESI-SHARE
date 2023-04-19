@@ -11,8 +11,6 @@
 #include "tipos.h"
 #include "vehiculo.h"
 
-int Iplazas = 3;
-
 static void introducir_fecha(viajes *viaje, int posViaje){
     int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es válida
 
@@ -323,7 +321,7 @@ static viajes *modviaje(viajes *viaje, char viajeusu [5]){
             }
         } while (k == 0);
 
-        if(viaje[i-1].Nplazas == Iplazas){  //Si hay alguna plaza ocupada no se puede modificar el viaje
+        if(viaje[i-1].Nplazas == viaje[i-1].Iplazas){  //Si hay alguna plaza ocupada no se puede modificar el viaje
         if(viaje[i-1].anular == 'S'){   //Si el viaje ha sido anulado no se puede modificar
             printf("\nEste viaje ha sido anulado.\n");
         } else{
@@ -895,7 +893,11 @@ static viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
 
         int posViaje = numeroviajes();  //Se calcula la posición en la estructura del nuevo viaje
 
-        obtener_datos_vehiculo(viajeusu, viaje[posViaje]);  //Obtiene la matrícula y plazas del vehículo
+        viaje[posViaje].Iplazas = 4;
+
+        viaje = obtener_matricula_vehiculo(viajeusu, viaje, posViaje);  //Obtiene la matrícula y plazas del vehículo
+
+        viaje = obtener_plazas_vehiculo(viaje, posViaje, viaje[posViaje].matricula);
 
         strcpy(viaje[posViaje].usuviaje, viajeusu); //Copia la ID del usuario actual a la estructura
 
@@ -907,9 +909,7 @@ static viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
 
         horas(viaje, posViaje);
 
-        viaje[posViaje].Nplazas = Iplazas;
-
-        plazas(viaje, posViaje);
+        viaje[posViaje].Nplazas = viaje[posViaje].Iplazas;
 
         tipo(viaje, posViaje);
 
