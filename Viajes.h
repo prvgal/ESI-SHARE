@@ -23,6 +23,7 @@ typedef struct{
     char hora_inicio [HORA];        //Formato 24h - Minimo 06:00
     char hora_llegada [HORA];       //Formato 24h - Maximo 22:30
     int Nplazas;                    //Número de plazas disponibles
+    int Iplazas;                    //Número de plazas del vehículo
     char tipo [TIPO];               //Ida o Vuelta
     char importe [IMPORTE];         //Entre 0 y 15 € por persona
     estado_viajes estado;           //Solo un estado activo al mismo tiempo
