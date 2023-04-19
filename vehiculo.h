@@ -37,9 +37,12 @@
     void menu_registro_vehiculo(tPerfil);
 
     //Precondición: Recibe la ID del usuario que esté  registrado en el momento, así como una estructura de tipo viajes con algún dato básico.
-    //Postcondición: Guarda en la estructura el número de plazas y la matrícula de alguno de los vehículos del usuario, si tiene. Indica que el usuario no tiene vehículos registrados en su cuenta en caso contrario.
-    //Devuelve 1 si el usuario no tiene vehículo, 0 en caso contrario.
-    void obtener_datos_vehiculo(char [], viajes);
+    //Postcondición: Devuelve la estructura con la matricula del vehiculo que el usuario haya elegido
+    viajes *obtener_matricula_vehiculo(char [], viajes *viaje, int posViaje);
+
+    //Precondición: Recibe la ID del usuario que esté  registrado en el momento, así como una estructura de tipo viajes con algún dato básico.
+    //Postcondición: Devuelve la estructura con el numero de plazas del vehiculo que el usuario haya elegido
+    viajes *obtener_plazas_vehiculo(viajes *viaje, int posViaje, char mat_actual[IDMAT]);
 
     //Precondición: Recibe la ID del usuario que está en el perfil en el momento.
     //Postcondición: El procedimiento habrá impreso la información de los vehículos que el usuario tenga dados de alta.
@@ -55,6 +58,8 @@
 	//Precondición: El procedimiento recibe una estructura ya rellena de tipo vehiculo_inf, y un puntero a fichero en el que escribir.
     //Postcondición:  La información contenida en la estructura se habrá almacenado en el fichero.
     static void escribir_fichero(vehiculo_inf);
+
+    static int numerovehiculos(void);
 
     //Precondición: El procedimiento recibe una estructura de tipo vehiculo_inf.
     //Postcondición: El procedimiento habrá sido rellenada para a continuación guardar la información en el fichero vehiculo.txt.
