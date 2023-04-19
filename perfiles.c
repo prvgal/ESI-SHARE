@@ -8,7 +8,7 @@
 #include "vehiculo.h"
 
 int Inicio(tPerfil *infoper){
-    int op, posUsuario;     // posUsuario contendr� la posici�n en el vector de estructuras donde se encuentre el usuario que ha iniciado sesi�n/registrado correctamente
+    int op, posUsuario;     // posUsuario contendrá la posición en el vector de estructuras donde se encuentre el usuario que ha iniciado sesión/registrado correctamente
     char usuario[MAX_U], contrasena[MAX_C];
 
     system("cls");
@@ -20,17 +20,17 @@ int Inicio(tPerfil *infoper){
 
         fflush(stdin);
 
-        // Recogemos el usuario y la contrase�a
+        // Recogemos el usuario y la contraseña
         PreguntarUsuario(usuario);
         fflush(stdin);
         ObtenerContrasena(contrasena);
 
-        // Validamos si el usuario, la contrase�a, o ambas son correctas.
+        // Validamos si el usuario, la contraseña, o ambas son correctas.
         if(!ValidarLogin(infoper, usuario, contrasena, &posUsuario)){
             system("cls");
             fprintf(stderr, "Error, el usuario o la contrasena son incorrectas\n"); // Mensjae de error si hay algo que no es correcto
 
-            // Permitimos la opcion de seguir con el Inicio de Sesi�n, Registrarse o cerrar la aplicaci�n.
+            // Permitimos la opcion de seguir con el Inicio de Sesión, Registrarse o cerrar la aplicación.
             do{
                 printf("\nNo tienes una cuenta o ha olvidad su contrasena?\n");
                 printf("<1> Para seguir con el Inicio de Sesion.\n");
@@ -39,7 +39,7 @@ int Inicio(tPerfil *infoper){
                 
                 printf("\nIngrese el numero: ");
 
-                if(scanf("%i", &op) != 1){      // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+                if(scanf("%i", &op) != 1){      // Con esta condición podemos evitar que el usuario haga una entrada errónea.
                     system("cls");
                     fflush(stdin);
                     fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -55,10 +55,10 @@ int Inicio(tPerfil *infoper){
             } while(op != 1 && op != 2 && op != 3);
         } 
 
-        // Verificamos si est� activo (1) o bloqueado (0) el usuario que desea Iniciar sesi�n. En caso de que se haya registrado, estar� activado por defecto.
+        // Verificamos si está activo (1) o bloqueado (0) el usuario que desea Iniciar sesión. En caso de que se haya registrado, estará activado por defecto.
         if(infoper[posUsuario].estado == '0'){  
             fprintf(stderr, "\nError, el usuario se encuentra bloqueado.");
-            exit(1);    // Si el usuario est� bloqueado se cerrar� la aplicaci�n.
+            exit(1);    // Si el usuario está bloqueado se cerrará la aplicación.
         } else{
             system("cls");
             printf("\nBienvenido/a %s.\n", infoper[posUsuario].Nomb_usuario);
@@ -66,12 +66,12 @@ int Inicio(tPerfil *infoper){
 
     } while(!ValidarLogin(infoper, infoper[posUsuario].Usuario, infoper[posUsuario].Contrasena, &posUsuario));
 
-    return posUsuario;  // Devolvemos la posici�n del usuario en el vector para su uso en otras funciones y no perder qu� usuario accedi� iniciando sesi�n.
+    return posUsuario;  // Devolvemos la posición del usuario en el vector para su uso en otras funciones y no perder qué usuario accedió iniciando sesión.
 }
 
 void Menu(tPerfil *infoper, int posUsua){
-    // Seg�n el inicio de sesi�n o registro, se verifica si el usuario con posici�n posUsua es admin o usuario corriente.
-    // Esto es debido a que el usuario corriente no tiene el mismo men� que el administrador y viceversa.
+    // Según el inicio de sesión o registro, se verifica si el usuario con posición posUsua es admin o usuario corriente.
+    // Esto es debido a que el usuario corriente no tiene el mismo menú que el administrador y viceversa.
     if(!strcmp(infoper[posUsua].Perfil_usuario, "administrador"))
         MenuAdmin(infoper, posUsua);
     else
@@ -97,7 +97,7 @@ static void MenuAdmin(tPerfil *infoper, int posUsua){
 
         printf("\nIngrese la opcion que desee: ");
         
-        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
             system("cls");
             fflush(stdin);
             fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -136,7 +136,7 @@ static void MenuUser(tPerfil *infoper, int posUsua){
 
         printf("\nIngrese la opcion que desee: ");
 
-        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
             system("cls");
             fflush(stdin);
             fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -173,7 +173,7 @@ static void Perfil(tPerfil *infoper, int posUsua){
 
         printf("\nIngrese la opcion que desee: ");
         
-        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
             system("cls");
             fflush(stdin);
             fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -209,7 +209,7 @@ static void Usuarios(tPerfil *infoper){
 
         printf("\nIngrese la opcion que desee: ");
 
-        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
             system("cls");
             fflush(stdin);
             fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -238,13 +238,13 @@ static void ImprimirESISHARE(void){
 
 tPerfil *CrearListaDePerfiles(void){
     tPerfil *perfiles;
-    // Reservamos la memoria necesaria gracias a la funci�n LongitudVectorEstructuras()
+    // Reservamos la memoria necesaria gracias a la función LongitudVectorEstructuras()
     if(LongitudVectorEstructuras() == 0)
         perfiles = (tPerfil *)calloc(LongitudVectorEstructuras()+1, sizeof(tPerfil)); 
     else
         perfiles = (tPerfil *)calloc(LongitudVectorEstructuras(), sizeof(tPerfil));
 
-    if(perfiles == NULL){   // Comprobamos si surge alg�n error en la asignaci�n
+    if(perfiles == NULL){   // Comprobamos si surge algún error en la asignación
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
@@ -253,12 +253,12 @@ tPerfil *CrearListaDePerfiles(void){
 }
 
 static void ReservarNuevoPerfil(tPerfil *infoper){
-    if(LongitudVectorEstructuras() == 0)    // Comprobaci�n del numero de usuarios para despu�s proceder con la reserva.
+    if(LongitudVectorEstructuras() == 0)    // Comprobación del numero de usuarios para después proceder con la reserva.
         infoper = (tPerfil *)calloc(LongitudVectorEstructuras() + 1, sizeof(tPerfil));
     else
         infoper = (tPerfil *)realloc(infoper, (LongitudVectorEstructuras() + 1)*sizeof(tPerfil));
 
-    if(infoper == NULL){    // Comprobamos si surge alg�n error en la asignaci�n
+    if(infoper == NULL){    // Comprobamos si surge algún error en la asignación
         fprintf(stderr, "Error en la asignacion de memoria.");
         exit(1);
     }
@@ -268,7 +268,7 @@ void CargarPerfiles(tPerfil *infoper){
     int i;
     char buffer[MAX_LIN_FICH];
 
-    if(LongitudVectorEstructuras() != 0){    // Comprobamos si existe alg�n usuario en Usuarios.txt
+    if(LongitudVectorEstructuras() != 0){    // Comprobamos si existe algún usuario en Usuarios.txt
         FILE *pf;
 
         pf = fopen("Usuarios.txt", "r");    // Abrimos el fichero en tipo lectura.
@@ -279,8 +279,8 @@ void CargarPerfiles(tPerfil *infoper){
         }
 
         for(i = 0; i < LongitudVectorEstructuras(); i++){   // Recorremos el vector
-        // Cogemos l�nea por l�nea, ya que sabemos que MAX_LIN_FICH es el m�ximo que ocupara cada l�nea de Usuarios.txt
-        // Tras recoger una l�nea completa, eliminamos el \n y lo transformamos por un \0, y dicha cadena la metemos en los campos de infoper gracias a sscanf.
+        // Cogemos línea por línea, ya que sabemos que MAX_LIN_FICH es el máximo que ocupara cada línea de Usuarios.txt
+        // Tras recoger una línea completa, eliminamos el \n y lo transformamos por un \0, y dicha cadena la metemos en los campos de infoper gracias a sscanf.
         if(fgets(buffer, MAX_LIN_FICH, pf) != NULL){
             buffer[strcspn(buffer, "\n")] = '\0';
             sscanf(buffer, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%c", infoper[i].Id_usuario, infoper[i].Nomb_usuario, 
@@ -292,10 +292,6 @@ void CargarPerfiles(tPerfil *infoper){
         fclose(pf); // Cerramos fichero.
     }
 }
-
-// Precondici�n: recibe una direcci�n de memoria a la primera posici�n del vector infoper, dos cadenas de caracteres y la direcci�n de memoria de la variable que almacenar� la posici�n del usuario
-//               del cual queremos ver si existe o no.
-// Poscondici�n: Devuelve 1 si se ha encontrado en el registro y 0 si no se ha encontrado
 
 static int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[MAX_C], int *pos){
     int i = 0, fin = 0, boole = 0;
@@ -310,11 +306,11 @@ static int ValidarLogin(tPerfil *infoper, char usuario[MAX_U], char contrasena[M
 
     i -= 1;
 
-    // Luego, comprobamos la contrase�a de ese usuario.
+    // Luego, comprobamos la contraseña de ese usuario.
     if(strncmp(infoper[i].Contrasena, contrasena, MAX_C-1) == 0 && strlen(contrasena) == strlen(infoper[i].Contrasena))
         boole = 1;
 
-    *pos = i;   // El contenido de pos ahora valdr� i, es decir, donde encontramos el usuario.
+    *pos = i;   // El contenido de pos ahora valdrá i, es decir, donde encontramos el usuario.
 
     return boole;   // Devolvemos 1 o 0
 }
@@ -338,17 +334,17 @@ static int SignUp(tPerfil *infoper){
 
     ObtenerLocalidad(infoper[numPerfiles].Localidad);                   // Preguntamos/Obtenemos la localidad.
 
-    // El inicio de sesi�n ser� por defecto de tipo usuario, este campo solo lo podr� cambiar el administrador.
+    // El inicio de sesión será por defecto de tipo usuario, este campo solo lo podrá cambiar el administrador.
     strcpy(infoper[numPerfiles].Perfil_usuario, "usuario"); 
 
     ObtenerUsuario(infoper, infoper[numPerfiles].Usuario);              // Preguntamos/Obtenemos el usuario
 
     ObtenerContrasena(infoper[numPerfiles].Contrasena);                 // Preguntamos/Obtenemos la localidad.
 
-    // Por defecto el usuario estar� activo.
+    // Por defecto el usuario estará activo.
     infoper[numPerfiles].estado = '1';
 
-    // usuario_veh(infoper[numPerfiles]);
+    menu_registro_vehiculo(infoper[numPerfiles].Id_usuario);
 
     // Imprimimos al final del fichero los nuevos datos.
     if(LongitudVectorEstructuras() == 0)
@@ -366,7 +362,7 @@ static int SignUp(tPerfil *infoper){
 
     fclose(pf); // Cerramos el fichero
 
-    return numPerfiles; // Devuelve la posici�n del vector donde deber�a encontrarse el usuario.
+    return numPerfiles; // Devuelve la posición del vector donde deberá encontrarse el usuario.
 }
 
 static void BajaUsuario(tPerfil *infoper){
@@ -382,7 +378,7 @@ static void BajaUsuario(tPerfil *infoper){
 
     pf = fopen("Usuarios.txt", "w");
 
-    fclose(pf);  // Elminamos el contenido de Usuarios.txt para despu�s sobreescribirlo y no tener ning�n problema.
+    fclose(pf);  // Elminamos el contenido de Usuarios.txt para después sobreescribirlo y no tener ningún problema.
 
     pf = fopen("Usuarios.txt", "a");    // Lo abrimos nuevamente, esta vez en modo append
 
@@ -395,7 +391,7 @@ static void BajaUsuario(tPerfil *infoper){
         ObtenerID(infoper, id, tamOriginal); // Obtenemos la ID
         
         for(i = 0; i < tamOriginal; i++){
-            // En caso de que la ID sea la de un admin, no se podr� dar de baja.
+            // En caso de que la ID sea la de un admin, no se podrá dar de baja.
             if(!strcmp(infoper[i].Perfil_usuario, "administrador") && !strcmp(infoper[i].Id_usuario, id)){
                 fprintf(stderr, "No se puede dar de baja a un admin.");     
 
@@ -424,9 +420,9 @@ static void BajaUsuario(tPerfil *infoper){
     for(; pos < tamOriginal-1; pos++)
         infoper[pos]= infoper[pos+1];
 
-    infoper = (tPerfil *)realloc(infoper, (tamOriginal-1)*sizeof(tPerfil)); // Realizamos un realloc a para una posici�n menos.
+    infoper = (tPerfil *)realloc(infoper, (tamOriginal-1)*sizeof(tPerfil)); // Realizamos un realloc a para una posición menos.
 
-    if(infoper == NULL){    // Comprobamos si se reserv� bien la memoria
+    if(infoper == NULL){    // Comprobamos si se reservó bien la memoria
         printf("Error en asignacion de memoria");
         exit(1);
     }
@@ -485,7 +481,7 @@ static void ModificarCamposUsuario(tPerfil *infoper, int pos){
     printf("\nUsuario: %s\n", infoper[pos].Usuario);
     printf("\nContrasena: %s\n", infoper[pos].Contrasena);
 
-    // Preguntamos qu� cambiar y en caso de no estar entre las opciones aparecer� un mensaje de error y volver� a preguntar de nuevo.
+    // Preguntamos qué cambiar y en caso de no estar entre las opciones aparecerá un mensaje de error y volverá a preguntar de nuevo.
     do{
         printf("\nQue desea cambiar?\n");
         printf("<1> Para cambiar el nombre de usuario.\n");
@@ -496,7 +492,7 @@ static void ModificarCamposUsuario(tPerfil *infoper, int pos){
         
         printf("\nIngrese el numero: ");
         
-        if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+        if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
             system("cls");
             fflush(stdin);
             fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -560,7 +556,7 @@ static void ModificarCamposAdmin(tPerfil *infoper){
         if(!ValidarID(infoper, id, &pos, LongitudVectorEstructuras()))  // Si no se encuentra la ID, mensaje de error.
             fprintf(stderr, "La ID no se encuentra disponible.\n");
         else{
-            // En el caso de encontrarse, preguntar� que es lo que desea cambiar, en caso de no estar en las opciones, tras un mensaje de error, vuelve a preguntar.
+            // En el caso de encontrarse, preguntará que es lo que desea cambiar, en caso de no estar en las opciones, tras un mensaje de error, vuelve a preguntar.
             printf("\nQue desea cambiar?\n");
             printf("\n<1> Para cambiar la ID.\n");
             printf("<2> Para cambiar el nombre de usuario.\n");
@@ -572,7 +568,7 @@ static void ModificarCamposAdmin(tPerfil *infoper){
         
             printf("\nIngrese el numero: ");
         
-            if(scanf("%i", &op) != 1){  // Con esta condici�n podemos evitar que el usuario haga una entrada err�nea.
+            if(scanf("%i", &op) != 1){  // Con esta condición podemos evitar que el usuario haga una entrada errónea.
                 system("cls");
                 fflush(stdin);
                 fprintf(stderr, "\nEntrada no valida. Debe ser un numero.");
@@ -610,8 +606,8 @@ static void ModificarCamposAdmin(tPerfil *infoper){
 }
 
 static int LongitudVectorEstructuras(void){
-    // Sabemos que el fichero Usuarios.txt tendr� tantas l�neas como la longitud del vector de estructuras infoper.
-    char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tama�o m�ximo que habr� en cada linea, incluyendo los guiones
+    // Sabemos que el fichero Usuarios.txt tendrá tantas líneas como la longitud del vector de estructuras infoper.
+    char aux[MAX_LIN_FICH];   // MAX_LIN_FICH es el tamaño máximo que habrá en cada linea, incluyendo los guiones
     FILE *pf;
     int i = 0;
 
@@ -635,7 +631,7 @@ static int LongitudVectorEstructuras(void){
 
 void GenerarID(char *id, int num, int numDigitos){
     if(num >= 0 && numDigitos > 0)
-        sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de d�gitos almacenados en numDigitos
+        sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de dígitos almacenados en numDigitos
     else
         fprintf(stderr, "La ID no puede ser negativa.");
 }
@@ -648,7 +644,7 @@ static int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
             boole = 1;                      // 1 si lo hemos encontrado
     }
 
-    *posUsua = i-1;     // Acutalizamos el contenido de posUsua, ya que la posici�n ser� donde ha encontrado la ID menos 1.
+    *posUsua = i-1;     // Acutalizamos el contenido de posUsua, ya que la posición será donde ha encontrado la ID menos 1.
 
     return boole;       // Devolvemos
 }
@@ -660,14 +656,14 @@ static void ObtenerNombreUsuario(char *nomUsuario){
     printf("\nEscribe el nombre de usuario (maximo 20 caracteres): ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < MAX_N){    // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < MAX_N){    // Recogemos caracter a caracter para controlar el tamaño de entrada
         nomUsuario[i] = c;
         i++;
     }
 
-    nomUsuario[i] = '\0';           // A�adimos el \0 final
+    nomUsuario[i] = '\0';           // Añadimos el \0 final
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(nomUsuario) > MAX_N-1){
         printf("El nombre de usuario excede los 20 caracteres.");
         LimpiarCadena(nomUsuario, MAX_N);
@@ -688,14 +684,14 @@ static void ObtenerLocalidad(char *nomLocalidad){
     printf("\nEscribe el nombre de su localidad (maximo 20 caracteres): ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < MAX_L){        // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < MAX_L){        // Recogemos caracter a caracter para controlar el tamaño de entrada
         nomLocalidad[i] = c;
         i++;
     }
 
-    nomLocalidad[i] = '\0';         // A�adimos el \0 final
+    nomLocalidad[i] = '\0';         // Añadimos el \0 final
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(nomLocalidad) > MAX_L-1){
         printf("El nombre de la localidad excede los 20 caracteres.");
         LimpiarCadena(nomLocalidad, MAX_L);
@@ -716,14 +712,14 @@ static void ObtenerUsuario(tPerfil *infoper, char *usuario){
     printf("\nEscribe el usuario (maximo 5 caracteres): ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < MAX_U){        // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < MAX_U){        // Recogemos caracter a caracter para controlar el tamaño de entrada
         aux[i] = c;
         i++;
     }
 
-    aux[i] = '\0';         // A�adimos el \0 final
+    aux[i] = '\0';         // Añadimos el \0 final
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(aux) > MAX_U-1){
         printf("El usuario excede los 5 caracteres.");
         LimpiarCadena(aux, MAX_U);
@@ -734,8 +730,8 @@ static void ObtenerUsuario(tPerfil *infoper, char *usuario){
         ObtenerUsuario(infoper, aux);
     } else {    
         if(LongitudVectorEstructuras() != 0){
-            // Si se han pasado las anteriores comprobaciones, hacemos una comprobaci�n final para verificar si el usuario se encuentra en el registro o no
-            // en caso de encontrarse, entonces limpia la cadena y vuelve a llamar a la funci�n.
+            // Si se han pasado las anteriores comprobaciones, hacemos una comprobación final para verificar si el usuario se encuentra en el registro o no
+            // en caso de encontrarse, entonces limpia la cadena y vuelve a llamar a la función.
             for(i = 0; i < LongitudVectorEstructuras() && !fin; i++){
                 if(!strcmp(infoper[i].Usuario, aux)){
                     fin = 1;
@@ -748,7 +744,7 @@ static void ObtenerUsuario(tPerfil *infoper, char *usuario){
         
     }
 
-    strcpy(usuario, aux);       // Lo copiamos en user, para que ese valor est� almacenado donde el usuario lo haya puesto como parametro
+    strcpy(usuario, aux);       // Lo copiamos en user, para que ese valor está almacenado donde el usuario lo haya puesto como parametro
 }
 
 
@@ -759,14 +755,14 @@ static void ObtenerContrasena(char *contrasena){
     printf("\nEscribe la contrasena (maximo 8 caracteres): ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < MAX_C){        // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < MAX_C){        // Recogemos caracter a caracter para controlar el tamaño de entrada
         contrasena[i] = c;
         i++;
     }
 
-    contrasena[i] = '\0';       // A�adimos el \0 final
+    contrasena[i] = '\0';       // Añadimos el \0 final
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(contrasena) > MAX_C-1){
         printf("La contrasena excede los 8 caracteres.");
         LimpiarCadena(contrasena, MAX_C);
@@ -783,7 +779,7 @@ static void ObtenerContrasena(char *contrasena){
 static void LimpiarCadena(char *cad, int tam){
     int i;
 
-    for(i = 0; i < tam; i++)    // Recorremos la cadena e introducimos el \0 en cada posici�n.
+    for(i = 0; i < tam; i++)    // Recorremos la cadena e introducimos el \0 en cada posición.
         cad[i] = '\0';
 
 }
@@ -795,21 +791,21 @@ static void PreguntarUsuario(char *user){
     printf("\nUsuario (maximo 5 caracteres): ");
     fflush(stdin);
         
-    while((c = getchar()) != '\n' && i < MAX_U){        // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < MAX_U){        // Recogemos caracter a caracter para controlar el tamaño de entrada
         usuario[i] = c;
         i++;
     }
 
-    usuario[i] = '\0';      // A�adimos el \0 final
+    usuario[i] = '\0';      // Añadimos el \0 final
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(usuario) > MAX_U-1){
         printf("\nEl usuario tiene de maximo 5 caracteres.\n");
         LimpiarCadena(usuario, MAX_U);
         PreguntarUsuario(usuario);
     }
 
-    strcpy(user, usuario);  // Lo copiamos en user, para que ese valor est� almacenado donde el usuario lo haya puesto como parametro
+    strcpy(user, usuario);  // Lo copiamos en user, para que ese valor está almacenado donde el usuario lo haya puesto como parametro
 }
 
 
@@ -820,12 +816,12 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
     printf("\nIndique la ID (primer campo de usuario) del usuario desea modificar: ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < ID){       // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < ID){       // Recogemos caracter a caracter para controlar el tamaño de entrada
         id[i] = c;
         i++;
     }
 
-    id[i] = '\0';       // A�adimos el \0 final
+    id[i] = '\0';       // Añadimos el \0 final
 
     for(i = 0; i < tam && !encontrado; i++){    // Recorremos el vector y buscamos si se encuentra o no
         if(!strcmp(id, infoper[i].Id_usuario))
@@ -841,7 +837,7 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
         }
     }
 
-    // Si no se ha encontrado, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Si no se ha encontrado, limpiamos la cadena y volvemos a llamar a la función
     if(!encontrado){
         printf("\nLa ID no se encuentra en el registro o no tiene 4 caracteres o el formato introducido es incorrecto.");
         LimpiarCadena(id, ID);
@@ -856,12 +852,12 @@ static void CambiarID(char *id){
     printf("\nIntroduzca la nueva ID: ");
     fflush(stdin);
 
-    while((c = getchar()) != '\n' && i < ID){       // Recogemos caracter a caracter para controlar el tama�o de entrada
+    while((c = getchar()) != '\n' && i < ID){       // Recogemos caracter a caracter para controlar el tamaño de entrada
         id[i] = c;
         i++;
     }
 
-    id[i] = '\0';   // A�adimos el \0 final
+    id[i] = '\0';   // Añadimos el \0 final
 
     for(i = 0; id[i] != '\0' && !fin; i++){
         if(isdigit((int) id[i]))
@@ -872,7 +868,7 @@ static void CambiarID(char *id){
         }
     }
 
-    // Comprobamos si el tama�o es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la funci�n
+    // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
     if(strlen(id) != ID-1 || !encontrado){
         printf("\nLa ID tiene 4 caracteres o el formato no es correcto.");
         LimpiarCadena(id, ID);
@@ -889,7 +885,7 @@ static char ObtenerEstado(void){
         fflush(stdin);
         scanf("%i", &aux);
 
-        if(aux != 1 && aux != 0)    // Comprobaci�n, no pueden haber datos distintos de 1 y 0
+        if(aux != 1 && aux != 0)    // Comprobación, no pueden haber datos distintos de 1 y 0
         fprintf(stderr, "\nEl estado debe ser activo (1) / bloqueado (0).");
     
     } while(aux != 1 && aux != 0);
