@@ -2553,13 +2553,13 @@ static void horas(viajes *viaje, int posViaje){
 
 *Esta función permite introducir la hora de inicio y de llegada del viaje que se está creando dentro de ciertas restricciones, como que debe estar entre las 06:00 y las 22:30 y que debe estar en formato 24 horas hh:mm. Esta función es llamada a la hora de crear un viaje.*
 
-* *static void plazas(viajes \**viaje, int posViaje);
+* *static void uniraviaje(viajes \**viaje, char []);
 
 ```C
-//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
-//Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posViaje
+//Precondición: Recibe un vector de estructuras de tipo viajes y la localidad del usuario
+//Postcondición: Permite elegir un viaje que pasa por la localidad indicada 
 
-static void plazas(viajes *viaje, int posViaje){
+static void plazas(viajes *viaje, char localidad[20]){
     if(viaje[posViaje].Nplazas != 0){   //Si el número de plazas no es 0, se actualizará a una menos
         viaje[posViaje].Nplazas -= 1;
 
