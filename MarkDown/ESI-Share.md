@@ -484,7 +484,7 @@ static void MenuAdmin(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Usuarios(infoper); break;
-                // case 2: Vehiculos(); break;
+                case 2: admin_veh(); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -533,7 +533,7 @@ static void MenuUser(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Perfil(infoper, posUsua); break;
-                // case 2: Vehiculos(); break;
+                case 2: usuario_veh(infoper[posUsua]); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
