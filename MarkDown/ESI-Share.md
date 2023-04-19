@@ -5122,7 +5122,7 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 * Cálculo de Complejidad ciclomática 
 
-$V(G) = NA \;–\; NN + 2 = 10 – 7 + 2 = 3+ 2 = 5$ 
+$V(G) = NA – NN + 2 = 10 – 7 + 2 = 3+ 2 = 5$ 
 
 $V(G) = NNP + 1 = 4 + 1 = 5 $
 
@@ -5304,7 +5304,7 @@ void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
 ![Diagrama de Control de Flujo - Jose Bello González](C:\Users\Propietario\Desktop\MarkDown\Diagrama de flujo - Jose.png)
 * Cálculo de Complejidad ciclomática 
 
-$V(G) = NA \;–\; NN + 2 = 5 – 5 + 2 = 0 + 2 = 2$
+$V(G) = NA – NN + 2 = 5 – 5 + 2 = 0 + 2 = 2$
 
 $V(G) = NNP + 1 = 1 + 1 = 2$
 
