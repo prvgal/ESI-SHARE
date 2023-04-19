@@ -374,7 +374,10 @@ tPerfil *CrearListaDePerfiles(void){
 // Poscondición: guarda en id una cadena de caracteres, por ejemplo, si num = 12 y numDigitos = 4, en id se encontrará 0012
 
 void GenerarID(char *id, int num, int numDigitos){
-    sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de dígitos almacenados en numDigitos
+    if(num >= 0 && numDigitos > 0)
+        sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de d�gitos almacenados en numDigitos
+    else
+        fprintf(stderr, "La ID no puede ser negativa.");
 }
 ```
 
@@ -481,7 +484,7 @@ static void MenuAdmin(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Usuarios(infoper); break;
-                // case 2: Vehiculos(); break;
+                case 2: admin_veh(); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -530,7 +533,7 @@ static void MenuUser(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Perfil(infoper, posUsua); break;
-                // case 2: Vehiculos(); break;
+                case 2: usuario_veh(infoper[posUsua]); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -1285,7 +1288,7 @@ static void PreguntarUsuario(char *user){
 // Poscondición: pregunta y la ID, con mensajes de error en caso que no sea valido
 
 static void ObtenerID(tPerfil *infoper, char *id, int tam){
-    int i = 0, encontrado = 0;
+    int i = 0, encontrado = 0, fin = 0;
     char c;
 
     printf("\nIndique la ID (primer campo de usuario) del usuario desea modificar: ");
@@ -1303,9 +1306,18 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
             encontrado = 1;
     }
 
+    for(i = 0; id[i] != '\0' && !fin; i++){
+        if(isdigit((int) id[i])) // Comprobamos si el formato es correcto
+            encontrado = 1;
+        else{
+            encontrado = 0;  
+            fin = 1; 
+        }
+    }
+
     // Si no se ha encontrado, limpiamos la cadena y volvemos a llamar a la función
     if(!encontrado){
-        printf("\nLa ID no se encuentra en el registro o no tiene 4 caracteres.");
+        printf("\nLa ID no se encuentra en el registro o no tiene 4 caracteres o el formato introducido es incorrecto.");
         LimpiarCadena(id, ID);
         ObtenerID(infoper, id, tam);
     }
@@ -1321,7 +1333,7 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
 // Poscondición: pregunta y la ID, con mensajes de error en caso que no sea valido
 
 static void CambiarID(char *id){
-    int i = 0;
+    int i = 0, encontrado = 0, fin = 0;
     char c;
 
     printf("\nIntroduzca la nueva ID: ");
@@ -1334,9 +1346,18 @@ static void CambiarID(char *id){
 
     id[i] = '\0';   // Añadimos el \0 final
 
+    for(i = 0; id[i] != '\0' && !fin; i++){
+        if(isdigit((int) id[i])) // Comprobamos si el formato es correcto
+            encontrado = 1;
+        else{
+            encontrado = 0;  
+            fin = 1; 
+        }
+    }
+
     // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
-    if(strlen(id) != ID-1){
-        printf("\nLa ID tiene 4 caracteres.");
+    if(strlen(id) != ID-1 || !encontrado){
+        printf("\nLa ID tiene 4 caracteres o el formato no es correcto.");
         LimpiarCadena(id, ID);
         CambiarID(id);
     }
@@ -2310,11 +2331,1192 @@ A --> E[Trayecto.h]
 
 Toda la información referente a los viajes estará guardada en el fichero "Viajes.txt". Incluye una ID de viaje única, matrícula del vehículo ofertado, fecha, hora de inicio y llegada, plazas libres en el vehículo, tipo de viaje (ida o vuelta), importe y estado del viaje.
 
-> 113730-8291JDK-10/03/2023-10:20-15:20-3-ida-5.00€-finalizado-usu01
+> 113730-8291JDK-10/03/2023-10:20-15:20-3-ida-5.00€-finalizado-0001
 >
 > ID de viaje-Matrícula-Fecha-Horas de ida y llegada-Importe-Estado- ID
 
 El módulo en cuestión facilita toda la información mencionada en el párrafo anterior. También facilita todo lo necesario para planear un viaje de ida o vuelta a la ESI - importes, fechas y demás, así como para mantener un registro ordenado con todos los viajes realizados en la plataforma.
+
+***Macros***
+```C
+#define MAX_VIAJES 90
+#define FECHA 11
+#define MATRICULA 8
+#define IMPORTE 7
+#define TIPO 7
+#define HORA 6
+```
+
+***Estructuras de Datos***
+
+- Información del estado asociado a un viaje.
+
+```C
+typedef struct{
+    logico abierto;                 //Si Nplazas > 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no esta anulado
+    logico cerrado;                 //Si Nplazas = 0 y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior, y no esta anulado
+    logico iniciado;                //Si el viaje ha iniciado (la hora actual esta entre la hora de inicio y hora de llegada) y no se anula
+    logico finalizado;              //Si el viaje ha finalizado (la hora actual es  mayor que la hora de llegada) y no ha sido anulado
+    logico anulado;                 //Si el viaje ha sido anulado
+} estado_viajes;
+```
+
+- Información del viaje asociado a un usuario.
+
+```C
+typedef struct{
+    char i_d [7];                   //6 digitos
+    char matricula [MATRICULA];     //Matricula de vehicula usado para el viaje
+    char fecha[FECHA];              //Formato dd/mm/aa
+    char hora_inicio [HORA];        //Formato 24h - Minimo 06:00
+    char hora_llegada [HORA];       //Formato 24h - Maximo 22:30
+    int Iplazas;                    //Número de plazas del vehículo
+    int Nplazas;                    //Número de plazas disponibles
+    char tipo [TIPO];               //Ida o Vuelta
+    char importe [IMPORTE];         //Entre 0 y 15 € por persona
+    estado_viajes estado;           //Solo un estado activo al mismo tiempo
+    logico hoy;                     //Indica si la fecha introducida es hoy
+    char anular;                    //Indica si quiere anular un viaje (S) o no (N)
+    char usuviaje[ID];              //Indica la ID del usuario que ha creado el viaje
+} viajes;
+```
+
+***Funciones Públicas***
+
+* *void menuviajes(char viajeusu [5], char []);*
+
+```C
+/*Precondición: Recibe una cadena de caracteres que indica la ID del usuario que accede al programa y
+una cadena de la estructura tPerfil que indicara si esta accediendo un usuario o un administrador*/
+//Postcondición: Lleva a la función menuviajesUsu o menuviajesAdmin
+
+void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
+    if(!strcmp(tipousuario, "usuario"))
+        menuviajesUsu(viajeusu);
+    else
+        menuviajesAdmin(viajeusu);
+}
+```
+
+*Esta función está diseñada para ser llamada por el menú principal. Si la sesión ha sido abierta por un usuario llamará a la función menuviajeUsu, si ha sido abierta por un administrador, llamará a la función menuviajesAdmin.*
+
+***Funciones Privadas***
+
+* *static void introducir_fecha(viajes *viaje, int posViaje);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
+//Postcondición: Habrá introducido fecha en la estructura viaje de la posición posViaje
+
+static void introducir_fecha(viajes *viaje, int posViaje){
+    int dia, mes, ano, dias_en_mes, hora_actual, fecha_valida = 0;   //Indica si la fecha introducida es válida
+
+    time_t tiempo_actual;
+    struct tm *fecha_actual;
+
+    do {
+        printf("Introduzca una fecha en el formato Dia/Mes/Ano: ");
+
+        if (scanf("%d/%d/%d", &dia, &mes, &ano) != 3){ //Si no se introducen los 3 numeros esperados con "/" separándolos*
+
+            while (getchar() != '\n');                  //*se limpia el buffer de entrada y se vuelve a iniciar el bucle
+            printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
+
+            continue;
+        }
+
+        tiempo_actual = time(NULL);     //Para comprobar que la fecha introducida no es anterior a la actual
+        fecha_actual = localtime(&tiempo_actual);
+
+        hora_actual = fecha_actual->tm_hour * 60 + fecha_actual->tm_min;    //Se pasa la hora actual a minutos
+
+        if(dia == fecha_actual->tm_mday && mes == fecha_actual->tm_mon + 1 && ano == fecha_actual->tm_year + 1900){ //Si la fecha introducida es hoy, se activará a 1 en la estructra
+            viaje[posViaje].hoy = True;
+        }
+        else
+            viaje[posViaje].hoy = False;
+
+        if(viaje[posViaje].hoy == True && hora_actual >= (22*60 + 25)){ //Si se crea un viaje para hoy a más de las 22:25 se reinicia el bucle
+            printf("No es posible crear un viaje para hoy. Por favor, introduzca otra fecha.\n");
+
+            continue;
+        }
+
+        //Se comprueba que la fecha introducida no sea anterior a la actual, y si lo es se reinicia el bucle
+        if (ano < fecha_actual->tm_year + 1900 || (ano == fecha_actual->tm_year + 1900 && mes < fecha_actual->tm_mon + 1) || (ano == fecha_actual->tm_year + 1900 && mes == fecha_actual->tm_mon + 1 && dia < fecha_actual->tm_mday)){
+            printf("La fecha introducida no puede ser anterior a la fecha actual. Por favor, intentelo de nuevo.\n");
+
+            continue;
+        }
+
+        if (ano > fecha_actual->tm_year + 1901 || mes < 1 || mes > 12 || dia < 1){ //Se comprueba que el dia, mes y año sean válidos, sino se reinicia el bucle
+            printf("La fecha introducida no es valida. Por favor, intentelo de nuevo.\n");
+
+            continue;
+        }
+
+        dias_en_mes = 31;   //Se establece el valor por defecto de dias en el mes
+
+        //Se calcula el número de dias del mes introducido
+        if (mes == 2){
+            dias_en_mes = (ano % 4 == 0 && (ano % 100 != 0 || ano % 400 == 0)) ? 29 : 28;
+
+        } else if (mes == 4 || mes == 6 || mes == 9 || mes == 11){
+
+            dias_en_mes = 30;
+        }
+
+        if (dia > dias_en_mes){ //Si el el número de dias introducido supera a los dias del mes introducido se reinicia el bucle
+            printf("La fecha introducida no es valida, el mes %d tiene %d dias. Por favor, intentelo de nuevo.\n", mes, dias_en_mes);
+
+            continue;
+        }
+
+        sprintf(viaje[posViaje].fecha, "%02d/%02d/%04d", dia, mes, ano);  //Convierte la fecha a una cadena
+
+        fecha_valida = 1;   //Indica que la fecha introducida es válida y permite salir del bucle
+
+    } while (!fecha_valida);
+
+    printf("\nLa fecha introducida es: %s\n", viaje[posViaje].fecha);
+}
+```
+
+*Permite introducir la fecha en la que será el viaje con ciertas restricciones en el formato "dd/mm/aa. Esta función es llamada a la hora de crear un viaje.*
+
+* *static void horas(viajes \**viaje, int posViaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
+//Postcondición: Habra introducido hora_inicio y hora_llegada en la estructura viaje de la posición posViaje
+
+static void horas(viajes *viaje, int posViaje){
+    char entrada[6];
+    int estado = 0, minutos_llegada, minutos_inicio, minutos_actual;    //El estado permanecerá a 0 hasta que se introduzca una hora válida
+
+    time_t hora_actual = time(NULL);                    //Obtiene la hora actual
+    struct tm* hora_local = localtime(&hora_actual);    //Convierte a hora local
+
+    minutos_actual = hora_local->tm_hour * 60 + hora_local->tm_min; //Convierte la hora local a minutos
+
+    //Pide la hora de inicio
+    while (estado == 0){
+        printf("Introduzca la hora de inicio en formato hh:mm (24 horas): ");
+        scanf("%5s", entrada);  //Pide un string de 5 caracteres
+
+        int horas, minutos;
+
+        minutos_inicio = atoi(entrada+3) + atoi(entrada) * 60;  //Convierte la hora introducida a minutos
+
+        //Si la hora introducida y su formato son correctos la variable estado se activará a 1, permitiendo salir del bucle
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_inicio >= (6 * 60) && minutos_inicio <= (22 * 60 + 25) && minutos >= 0 && minutos < 60 && (viaje[posViaje].hoy!=True || minutos_inicio > minutos_actual)){ //Comprueba que la hora de inicio introducida es válida
+            sprintf(viaje[posViaje].hora_inicio, "%02d:%02d", horas, minutos);
+
+            estado = 1;
+
+        } else{
+            printf("La hora de inicio debe estar entre las 06:00 y las 22:25 y debe ser anterior a la actual si el viaje es hoy. Introduzca la hora de nuevo.\n");
+        }
+    }
+
+    estado = 0; //Se establece a 0 para pedir la hora de llegada
+
+    //Pide la hora de llegada
+    while (estado == 0){
+        printf("Introduzca la hora de llegada en formato hh:mm (24 horas): ");
+        scanf("%5s", entrada);  //Pide un string de 5 caracteres
+
+        int horas, minutos;
+
+        minutos_llegada = atoi(entrada+3) + atoi(entrada) * 60; //Convierte la hora introducida a minutos
+
+        //Se comprueba que la hora introducida y su formato son correctos
+        if (sscanf(entrada, "%d:%d", &horas, &minutos) == 2 && minutos_llegada >= (6 * 60) && minutos >= 0 && minutos < 60 && minutos_llegada <= (22 * 60 + 30)){   //Comprueba que la hora de llegada introducida es válida
+            sprintf(viaje[posViaje].hora_llegada, "%02d:%02d", horas, minutos);
+
+            if (minutos_llegada >= minutos_inicio + 5){ //La hora de llegada debe de ser mínimo 5 minutos más tarde que la de inicio
+                estado = 1;
+
+            } else{
+                printf("La hora de llegada debe ser al menos 5 minutos mas tarde que la hora de inicio. Introduzca la hora de nuevo.\n");
+            }
+
+        } else{
+            printf("La hora de llegada debe estar entre las 06:05 y las 22:30. Introduzca la hora de nuevo.\n");
+        }
+    }
+
+    printf("\nLa hora de inicio introducida es %s\n", viaje[posViaje].hora_inicio);
+    printf("La hora de llegada introducida es %s\n\n", viaje[posViaje].hora_llegada);
+}
+```
+
+*Esta función permite introducir la hora de inicio y de llegada del viaje que se está creando dentro de ciertas restricciones, como que debe estar entre las 06:00 y las 22:30 y que debe estar en formato 24 horas hh:mm. Esta función es llamada a la hora de crear un viaje.*
+
+* *static void plazas(viajes \**viaje, int posViaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
+//Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posViaje
+
+static void plazas(viajes *viaje, int posViaje){
+    if(viaje[posViaje].Nplazas != 0){   //Si el número de plazas no es 0, se actualizará a una menos
+        viaje[posViaje].Nplazas -= 1;
+
+        printf("Quedan %i plazas libres en el viaje %s\n", viaje[posViaje].Nplazas, viaje[posViaje].i_d);
+    }
+    else
+    printf("No quedan plazas en el viaje %s\n", viaje[posViaje].i_d);
+}
+```
+
+*La función actualiza el número de plazas del viaje restándole 1 si el número de plazas no es 0, en caso de que sea 0 no se podrá ya que no quedarán plazas en el viaje. Esta función es llamada a la hora de crear un viaje.*
+
+* *static void tipo(viajes \**viaje, int posViaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
+//Postcondición: Habra introducido el tipo de viaje en la estructura viaje de la posición posViaje: ida o vuelta
+
+static void tipo(viajes *viaje, int posViaje){
+
+    do {
+        printf("Introduce 'ida' o 'vuelta': ");
+        fflush(stdin);
+        fgets(viaje[posViaje].tipo, sizeof(viaje[posViaje].tipo), stdin);   //Obtiene la string tipo para la estructura viaje de la posición posViaje
+
+        viaje[posViaje].tipo[strcspn(viaje[posViaje].tipo, "\n")] = '\0';   //Sustituye el \n final por \0
+
+    } while (strcmp(viaje[posViaje].tipo, "ida") != 0 && strcmp(viaje[posViaje].tipo, "vuelta") != 0);  //Comprueba si la string introducida es "ida" o "vuelta"
+
+    printf("Seleccionaste viaje tipo %s\n", viaje[posViaje].tipo);
+}
+```
+
+*Permite introducir si quiere que el viaje que va a publicar sea de ida o vuelta. Esta función es llamada a la hora de crear un viaje.*
+
+* *static void importe(viajes \**viaje, int posViaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
+//Postcondicion: Habra introducido el importe del viaje en la estructura viaje de la posición posViaje
+
+static void importe(viajes *viaje, int posViaje){
+    float aux;
+
+    do
+    {
+        printf("Introduce el importe del viaje (0-15 euros): ");
+        scanf("%f", &aux);
+    } while (aux < 0 || aux > 15);  //Si el importe es menor que 0 o mayor que 15 es inválido
+
+    sprintf(viaje[posViaje].importe, "%.2f€", aux); //Convierte el número introducido a un string que dice la cantidad de euros con 2 decimales
+
+    printf("\nEl importe introducido es de %.2f euros\n\n", aux);
+}
+```
+
+*La función permite introducir el importe en euros del viaje, que será transformado a un string. Tiene un importe mínimo de 0 euros y máximo de 15. Esta función es llamada a la hora de crear un viaje.*
+
+* *static void estado(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Se actualizara el estado de todos los viajes de la estructura activando (True) el estado en el que se encuentre el viaje y se desactivarando (False) el anterior si era diferente
+
+static void estado(viajes *viaje){
+    int minutos_llegada, minutos_inicio, minutos_actual, dia, mes, ano, hora, minuto, i;
+
+    time_t fecha_actual = time(NULL);
+    struct tm* fecha_local = localtime(&fecha_actual);  //Obtiene los datos locales
+
+    minutos_actual = fecha_local->tm_hour * 60 + fecha_local->tm_min; //Convierte la hora local a minutos
+
+    for(i = 0; i < numeroviajes(); i++){    //Se actualiza el estado de cada viaje
+
+    sscanf(viaje[i].fecha, "%d/%d/%d", &dia, &mes, &ano);   //Convierte la cadena de caracteres "fecha" a dia, mes y año
+
+    if(dia == fecha_local->tm_mday && mes == fecha_local->tm_mon + 1 && ano == fecha_local->tm_year + 1900){    //Comprueba si el dia de la fecha es hoy
+        viaje[i].hoy = True;
+    }
+    else
+        viaje[i].hoy = False;
+
+    sscanf(viaje[i].hora_inicio, "%d:%d", &hora, &minuto);  //Convierte la cadena de caracteres "hora_inicio" a hora y minutos
+
+    minutos_inicio = hora*60 + minuto;  //Convierte la hora de inicio a minutos
+
+    sscanf(viaje[i].hora_llegada, "%d:%d", &hora, &minuto); //Convierte la cadena de caracteres "hora_llegada" a hora y minutos
+
+    minutos_llegada = hora*60 + minuto; //Convierte la hora de llegada a minutos
+
+    if(viaje[i].Nplazas > 0 &&
+    ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
+    (viaje[i].hoy == True && minutos_actual < minutos_inicio))){    //Si hay plazas disponibles y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior,
+                                                                    //el estado del viaje quedará abierto
+        viaje[i].estado.abierto = True;            //Abierto
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
+    }
+
+    if(viaje[i].Nplazas == 0 &&
+    ((ano > fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes > fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia > fecha_local->tm_mday)) ||
+    (viaje[i].hoy == True && minutos_actual < minutos_inicio))){    //Si no hay plazas disponibles y la fecha del viaje es posterior que la actual o igual que la actual pero con hora posterior,
+                                                                    //el estado del viaje quedará cerrado
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = True;            //Cerrado
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
+    }
+
+    //Si la hora actual esta entre la hora de inicio y hora de llegada el estado del viaje quedará iniciado
+    if(viaje[i].hoy == True && minutos_actual >= minutos_inicio && minutos_actual < minutos_llegada + 60){
+
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = True;           //Iniciado
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = False;
+    }
+
+    if(((ano < fecha_local->tm_year + 1900 || (ano == fecha_local->tm_year + 1900 && mes < fecha_local->tm_mon + 1) || (ano == fecha_local->tm_year + 1900 && mes == fecha_local->tm_mon + 1 && dia < fecha_local->tm_mday)) ||
+    (viaje[i].hoy == True && minutos_actual >= minutos_llegada + 60))){ //Si la hora actual es mayor que la hora de llegada, el estado del viaje quedará iniciado
+
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = True;        //Finalizado
+        viaje[i].estado.anulado = False;
+    }
+
+    if(viaje[i].anular == 'S'){ //El viaje se anulará si el usuario lo decide
+        viaje[i].estado.abierto = False;
+        viaje[i].estado.cerrado = False;
+        viaje[i].estado.iniciado = False;
+        viaje[i].estado.finalizado = False;
+        viaje[i].estado.anulado = True;            //Anulado
+    }
+    }
+}
+```
+
+*Actualiza el estado de todos los viajes de la estructura. El estado de un viaje puede ser abierto, cerrado, iniciado, finalizado o anulado.*
+
+* *static viajes *modviaje(viajes *viaje, char viajeusu [5]);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Se habrá podido modificar algún viaje del usuario
+
+static viajes *modviaje(viajes *viaje, char viajeusu [5]){
+    int op, i, j, k = 0;
+    char aux [7];
+
+    if(numeroviajes() == 0) //Comprueba que haya algún viaje
+        printf("No hay ningun viaje.\n");
+    else{
+        do{
+            j = listartusviajes(viaje, viajeusu);   //Si el usuario ha creado algún viaje, estos se imprimirán por pantalla
+
+            if(j == 0){
+                printf("\nNo has publicado ningun viaje aun.\n");
+                return viaje;
+            }
+
+            printf("\nIntroduzca la ID del viaje que quieres modificar: ");
+            
+            fflush(stdin);
+            fgets(aux, 7, stdin);   //Obtiene la ID del viaje que quiere modificar
+            aux[strcspn(aux, "\n")] = '\0'; //Sustituye \n por \0
+
+            for(i = 0; i < numeroviajes() && k == 0; i++){  //Llega a la posición de la estructura perteneciente a la ID del viaje introducido
+                if(strcmp(viajeusu, viaje[i].usuviaje) == 0){
+                    if(strcmp(viaje[i].i_d, aux) == 0){
+                        k = 1;
+                    }
+                }
+            }
+        } while (k == 0);
+
+        if(viaje[i-1].Nplazas == viaje[i-1].Iplazas){  //Si hay alguna plaza ocupada no se puede modificar el viaje
+        if(viaje[i-1].anular == 'S'){   //Si el viaje ha sido anulado no se puede modificar
+            printf("\nEste viaje ha sido anulado.\n");
+        } else{
+
+        do{
+        printf("\nSeleccione que desea modificar del viaje con ID %s:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[i-1].i_d);
+
+        if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+        switch (op) //Según el número introducido, podrá modificar los diferentes campos del viaje
+        {
+        case 1: {
+            introducir_fecha(viaje, i-1);
+            break;
+        }
+        case 2: {
+            horas(viaje, i-1);
+            break;
+        }
+        case 3: {
+            tipo(viaje, i-1);
+            break;
+        }
+        case 4: {
+            importe(viaje, i-1);
+            break;
+        }
+        case 5: {
+            estado(viaje);
+            if(viaje[i-1].estado.finalizado == 1)   //Si el viaje ha finalizado no se puede anular
+                printf("El viaje no se puede anular porque ya ha finalizado.\n");
+            else{
+                viaje[i-1].anular = 'S';
+                printf("\nViaje anulado\n");
+            }
+        }
+        case 0: break;  //Si introduce 0 cancela la acción de modificar el viaje seleccionado
+        default: printf("Elige una de las opciones.\n"); break;
+        }
+    }
+    } while (op != 0);  //Mientras que el número introducido no sea 0, podrá seguir modificando viajes
+
+        }
+    } else{
+        printf("\nPara modificar un viaje no debe haber ninguna plaza ocupada.\n");
+    }
+
+    estado(viaje);  //Actualiza los estados
+    }
+
+    return viaje;
+}
+```
+
+*Esta función permite al usuario la opción de modificar los viajes que ha publicado aunque con ciertas restricciones: No se puede modificar si hay alguna plaza ocupada o si el viaje ha sido anulado. Además, el viaje no se puede anular si ha finalizado. La función devuelve la estructura modificada o sin modificar si así lo ha elegido el usuario.*
+
+* *static viajes *modviajeAdmin(viajes *viaje);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Se habra podido modificar cualquier viaje de la estructura
+
+static viajes *modviajeAdmin(viajes *viaje){
+    int op, i;
+
+    if(numeroviajes() == 0)
+        printf("No hay ningun viaje.\n");
+    else{
+        do
+    {
+        do
+        {
+            listarviajes(viaje);    //Imprime todos los viajes por pantalla
+            printf("\nSelecciona cual viaje quieres modificar o si quiere salir (0): ");
+
+            if(scanf("%i", &i) != 1){
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        }
+        } while (i < 0 || i > numeroviajes());  //Si el número no está en el rango de viajes ni es 0 se repite el bucle
+
+        if(i == 0){ //Si se introduce 0 sale de la función
+            return viaje;
+        }
+
+        printf("\nSeleccione que desea modificar del viaje con ID %s:\n (1) Fecha\n (2) Hora\n (3) Tipo\n (4) Importe\n (5) Anular viaje\n (0) Salir\n\n", viaje[i-1].i_d);
+
+        if(scanf("%i", &op) != 1){  //Da a elegir cual campo del viaje seleccionado modificar
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+        switch (op)
+        {
+        case 1: {
+            introducir_fecha(viaje, i-1);
+            break;
+        }
+        case 2: {
+            horas(viaje, i-1);
+            break;
+        }
+        case 3: {
+            tipo(viaje, i-1);
+            break;
+        }
+        case 4: {
+            importe(viaje, i-1);
+            break;
+        }
+        case 5: {
+            viaje[i-1].anular = 'S';
+            printf("\nViaje anulado.\n");
+        }
+        case 0: break;  //Si introduce 0 cancela la acción de modificar el viaje seleccionado
+        default: printf("Elige una de las opciones.\n"); break;
+        }
+    }
+    } while (op != 0);  //Mientras que el número introducido no sea 0 no saldrá de la función
+
+    estado(viaje);
+    }
+
+    return viaje;
+}
+```
+
+*Permite al administrador modificar cualquier viaje. Devuelve la estructura modificada o sin modificar si así lo ha querido el administrador.*
+
+* *static int listartusviajes(viajes \**viaje, char viajeusu [5]);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Habra imprimido por pantalla la lista de viajes que ha creado el usuario
+
+static int listartusviajes(viajes *viaje, char viajeusu [5]){
+    int i, j = 0;
+    char aux [11];
+
+    for(i = 0; i < numeroviajes(); i++){    //Recorre todos los viajes de la estructura
+        if(strcmp(viajeusu, viaje[i].usuviaje) == 0){   //Si el usuario con el que se accede es el dueño de un viaje, este se imprimirá por pantalla
+            if(viaje[i].estado.abierto == 1){   //Se imprime por pantalla el nombre del estado que esté activo
+                strcpy(aux, "abierto");
+            }
+            if(viaje[i].estado.cerrado == 1){
+                        strcpy(aux, "cerrado");
+            }
+            if(viaje[i].estado.iniciado == 1){
+                        strcpy(aux, "iniciado");
+            }
+            if(viaje[i].estado.finalizado == 1){
+                        strcpy(aux, "finalizado");
+            }
+            if(viaje[i].estado.anulado == 1){
+                        strcpy(aux, "anulado");
+            }
+            printf("<%i> %s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", j+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+            j++;
+        }
+    }
+
+    return j;   //Devuelve j que será el número de viajes que tiene un usuario
+}
+```
+
+*Imprime por pantalla la lista de los viajes que ha publicado el usuario que está accediendo. Devuelve el número de viajes que ha publicado.*
+
+* *static viajes *eliminarviaje(viajes *viaje);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habra dado la posibilidad a eliminar algún viaje a elección del administrador
+
+static viajes *eliminarviaje(viajes *viaje){
+    int op, i;
+    system("cls");  //Limpia la pantalla
+    if(numeroviajes() == 0) //Si el número de viajes del fichero Viajes.txt es 0 no se puede eliminar ningún viaje
+        printf("\nNo hay ningun viaje.\n\n");
+    else{
+        listarviajes(viaje);    //Imprime todos los viajes de la estructura por pantalla
+
+    printf("\n\nIntroduce cual viaje quiere eliminar o cualquier otro numero para salir: ");
+
+    if(scanf("%i", &op) != 1){
+            fflush(stdin);
+            fprintf(stderr, "\nEntrada no valida. Debe ser un numero.\n");
+        } else{
+            if(op < 1 || op > numeroviajes()){  //Si introduce cualquiera otro número que no sea uno de los viajes, vuelve al menú
+                return viaje;
+            }
+
+            for(i = op-1; i < numeroviajes(); i++)  //Desplaza una posición superior del viaje elegido a uno inferior, quedando el último libre*
+                viaje[i] = viaje[i+1];
+
+            viaje = (viajes *)realloc(viaje, (numeroviajes() - 1)*sizeof(viajes));  //*El cual se eliminará redimensionando la estructura a un viaje menos
+            imprimirviajesborrado(viaje);   //Imprime la estructura en el fichero con un viaje menos
+            printf("\nViaje borrado.\n");
+        }
+    }
+
+    return viaje;
+}
+```
+
+*Permite al administrador borrar cualquier viaje publicado. Actualiza el fichero con el viaje borrado y devuelve la estructura viaje actualizada.*
+
+* *static static void imprimirnuevoviaje(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habra imprimido en un fichero un nuevo viaje de la estructura viajes
+
+static void imprimirnuevoviaje(viajes *viaje){
+    int i, tamoriginal = numeroviajes();    //Guarda cuántas lineas hay en Viajes.txt
+    char aux [11];
+
+    FILE *vf;
+
+    vf = fopen("Viajes.txt", "w");  //Borra el contenido del fichero
+
+    fclose(vf);
+
+    vf = fopen("Viajes.txt", "a");  //Lo abre para escribirlo de nuevo
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < tamoriginal + 1; i++){   //Se prepara para escribir los viajes que había más uno adicional
+        if(viaje[i].estado.abierto == 1){   //Se transforma el valor numérico de los estados a la cadena de caracteres que se imprimirá en el fichero
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        if(tamoriginal + 1 == i + 1){   //El último viaje en imprimir irá sin salto de linea
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+        }
+        else
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+    }
+    fclose(vf);
+}
+```
+
+*Imprime los viajes de la estructura viajes en el fichero Viajes.txt mas uno adicional que se ha creado. Esta función es llamada para publicar un nuevo viaje.*
+
+* *static void imprimirviajesborrado(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habra imprimido en un fichero la estructura viajes actualizada tras haber borrado uno
+
+static void imprimirviajesborrado(viajes *viaje){
+    int i, tamoriginal = numeroviajes() - 1;    //Guarda un número menos de lineas del fichero Viajes.txt
+    char aux [11];
+
+    FILE *vf;
+
+    vf = fopen("Viajes.txt", "w");  //Borra el contenido del fichero
+
+    fclose(vf);
+
+    vf = fopen("Viajes.txt", "a");  //Se prepara para escribir de nuevo el contenido
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < tamoriginal; i++){   //Se prepara para escribir los viajes que había a excepción del borrado
+        if(viaje[i].estado.abierto == 1){   //Convierte el valor numérico de los estados a una cadena de caracteres que se imprimirá en el fichero Viajes.txt
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        if(tamoriginal == i + 1){   //El último viaje en imprimir no tendrá salto de linea
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+        }
+        else
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+    }
+    fclose(vf);
+}
+```
+
+*Imprime los viajes de la estructura viajes en el fichero Viajes.txt pero habiendo borrado uno. Esta función se llama cuando un administrador quiere borrar un viaje.*
+
+* *static void leerviajes(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Rellena la estructura viajes con el contenido del fichero Viajes.txt
+
+static void leerviajes(viajes *viaje){
+    int i;
+    char aux[11];
+
+    FILE *vf;
+    char buff[MAX_VIAJES];  //Se crea un buffer de tamaño mayor que una posición de la estructura para que recorra la linea entera del fichero Viajes.txt
+
+    vf = fopen("Viajes.txt", "r");  //Se abre en modo lectura
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < numeroviajes(); i++){    //Recorre el número de lineas que haya en el fichero
+        if(fgets(buff, MAX_VIAJES, vf) != NULL){    //Guarda en la estructura el contenido del fichero hasta que llega al final
+            buff[strcspn(buff, "\n")] = '\0';   //Convierte los \n en \0
+            sscanf(buff, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%i-%i-%[^-]-%[^-]-%[^-]-%[^-]", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Recoge los campos separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas, &viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+        }
+
+        if(strcmp(aux, "abierto") == 0){    //Compara la cadena de caracteres auxiliar con la que se ha obtenido la string del fichero con el estado y lo establece a True y False al resto
+            viaje[i].estado.abierto = True;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "cerrado") == 0){    //Compara la cadena de caracteres auxiliar con la que se ha obtenido la string del fichero con el estado y lo establece a True y False al resto
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = True;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "iniciado") == 0){   //Compara la cadena de caracteres auxiliar con la que se ha obtenido la string del fichero con el estado y lo establece a True y False al resto
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = True;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "finalizado") == 0){ //Compara la cadena de caracteres auxiliar con la que se ha obtenido la string del fichero con el estado y lo establece a True y False al resto
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = True;
+            viaje[i].estado.anulado = False;
+            continue;
+        }
+        if(strcmp(aux, "anulado") == 0){    //Compara la cadena de caracteres auxiliar con la que se ha obtenido la string del fichero con el estado y lo establece a True y False al resto
+            viaje[i].estado.abierto = False;
+            viaje[i].estado.cerrado = False;
+            viaje[i].estado.iniciado = False;
+            viaje[i].estado.finalizado = False;
+            viaje[i].estado.anulado = True;
+            continue;
+        }
+    }
+    fclose(vf);
+}
+```
+
+*Lee los viajes del fichero Viajes.txt y los mete a la estructura viajes.*
+
+* *static void listarviajes(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Imprime por pantalla el contenido de cada posición de la estructura viajes
+
+static void listarviajes(viajes *viaje){
+    int i;
+    char aux[11];
+
+    printf("\nLista de todos los viajes:\n\n");
+
+    for(i = 0; i < numeroviajes(); i++){    //Imprime por pantalla el número de viajes que haya en el fichero Viajes.txt
+        if(viaje[i].estado.abierto == 1){   //Convierte el estado de valor numérico a string
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        printf("<%i> %s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,   //Imprime la estructura por pantalla separando los campos con guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+    }
+}
+```
+
+*Lista todos los viajes de la estructura viajes separado por guiones. A esta función sólo pueden acceder los administradores.*
+
+* *static void listarviajesabiertos(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Imprime por pantalla los viajes que estan en estado abierto
+
+static void listarviajesabiertos(viajes *viaje){
+    int i;
+    char aux[11];
+
+    printf("\nViajes abiertos:\n\n");
+
+    for(i = 0; i < numeroviajes(); i++){    //Imprime por pantalla el número de viajes abiertos que haya en el fichero Viajes.txt
+        if(viaje[i].estado.abierto == 1){   //Solo en el caso de que el viaje esté abierto se imprimirá por pantalla
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){   //Si no lo está seguirá con el bucle
+            continue;
+        }
+        if(viaje[i].estado.iniciado == 1){
+            continue;
+        }
+        if(viaje[i].estado.finalizado == 1){
+            continue;
+        }
+        if(viaje[i].estado.anulado == 1){
+            continue;
+        }
+        printf("%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha, //Imprime la estructura por pantalla separando los campos con guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+    }
+}
+```
+
+*Imprime por pantalla los viajes que estén en estado abierto de la estructura viajes. Esta función se llama por defecto al iniciar el menú del usuario.*
+
+* *static void imprimirviajes(viajes \**viaje);
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Habra imprimido en un fichero la estructura viajes
+
+static void imprimirviajes(viajes *viaje){
+    int i, tamoriginal = numeroviajes();    //Se guarda el número de lineas del fichero Viajes.txt
+    char aux [11];
+
+    FILE *vf;
+
+    vf = fopen("Viajes.txt", "w");  //Borra el contenido del fichero
+
+    fclose(vf);
+
+    vf = fopen("Viajes.txt", "a");  //Lo abre para escribirlo de nuevo
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura de archivos.\n");
+        exit(1);
+    }
+
+    for(i = 0; i < tamoriginal; i++){   //Vuelve a escribir el contenido actualizándolo
+        if(viaje[i].estado.abierto == 1){   //Convierte el valor numérico de los estados a una cadena de caracteres que se imprimirá en el fichero Viajes.txt
+            strcpy(aux, "abierto");
+        }
+        if(viaje[i].estado.cerrado == 1){
+            strcpy(aux, "cerrado");
+        }
+        if(viaje[i].estado.iniciado == 1){
+            strcpy(aux, "iniciado");
+        }
+        if(viaje[i].estado.finalizado == 1){
+            strcpy(aux, "finalizado");
+        }
+        if(viaje[i].estado.anulado == 1){
+            strcpy(aux, "anulado");
+        }
+        if(tamoriginal == i + 1){   //El último viaje en imprimir no tendrá salto de linea
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+        }
+        else
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
+                                                viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
+    }
+    fclose(vf);
+}
+```
+
+*Imprime en el fichero Viajes.txt la estructura viajes. De este modo, el fichero se puede actualizar con las nuevas modificaciones.*
+
+* *static int numeroviajes(void);
+
+```C
+//Precondición: Ninguna
+//Postcondición: Devuelve el número de lineas que tiene el fichero
+
+static int numeroviajes(void){
+    char aux[MAX_VIAJES];   //Se usa para llegar al final de cada linea
+    FILE *vf;
+    int i = 0;
+
+    vf = fopen("Viajes.txt", "r");  //Abre el fichero en modo lectura
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura del fichero.\n");
+        exit(1);
+    }
+
+    while(fgets(aux, MAX_VIAJES, vf) != NULL){  //Lee cada linea y suma 1 a la variable i
+        i++;
+    }
+
+    rewind(vf);
+    fclose(vf);
+
+    return i;   //Devuelve el número de lineas del fichero Viajes.txt
+}
+```
+
+*Cuenta el número de viajes que hay en Viajes.txt y lo devuelve como un entero.*
+
+* *static viajes *reservarviajes(viajes *viaje);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes
+//Postcondición: Redimensiona la estructura igual al número de viajes actuales del fichero Viajes.txt
+
+static viajes *reservarviajes(viajes *viaje){
+
+    if(numeroviajes() != 0) //Sólo si existe algún viaje en el fichero Viajes.txt se redimensionará la estructura para tantos como haya
+        viaje = (viajes *)realloc(viaje, (numeroviajes())*sizeof(viajes));
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en la asignacion de memoria.\n");
+        exit(1);
+    }
+
+    return viaje;
+}
+```
+
+*Si en el fichero hay algún viaje, redimensiona la estructura viajes al número de viajes que hay. Devuelve la estructura.*
+
+* *static viajes *reservarnuevoviaje(viajes *viaje);*
+
+```C
+//Precondición: Recibe un vector de estructras de tipo viajes
+//Postcondición: Redimensiona la estructura a un tamano mas que el número de viajes actuales del fichero Viajes.txt
+
+static viajes *reservarnuevoviaje(viajes *viaje){
+
+    viaje = (viajes *)realloc(viaje, (numeroviajes() + 1)*sizeof(viajes));  //Redimensiona la estructura para un viaje adicional del número de viajes del fichero Viajes.txt
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en la asignacion de memoria.\n");
+        exit(1);
+    }
+
+    return viaje;
+}
+```
+
+*Permite redimensionar la estructura viajes a una posición más de la actual para guardar en esta un nuevo viaje. Esta función se llama al publicar un nuevo viaje. Devuelve la estructura.*
+
+* *static viajes *publicarviaje(viajes *viaje, char viajeusu [5]);*
+
+```C
+//Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondicón: Habra anadido un viaje nuevo a la estructura viajes y lo habra imprimido en el fichero Viajes.txt
+
+static viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
+    if(contar_vehiculos(viajeusu) > 0){ //Si el usuario no tiene ningún vehículo registrado no puede iniciar un viaje
+        viaje = reservarnuevoviaje(viaje);  //Se reserva memoria para un nuevo viaje
+
+        int posViaje = numeroviajes();  //Se calcula la posición en la estructura del nuevo viaje
+
+        viaje = obtener_datos_vehiculo(viajeusu, viaje, posViaje);  //Obtiene la matrícula y plazas del vehículo
+
+        strcpy(viaje[posViaje].usuviaje, viajeusu); //Copia la ID del usuario actual a la estructura
+
+        leerviajes(viaje);  //Lee los viajes del fichero Viajes.txt
+
+        GenerarID(viaje[posViaje].i_d, numeroviajes()+1, 6);    //Guarda la ID del viaje nuevo
+
+        introducir_fecha(viaje, posViaje);
+
+        horas(viaje, posViaje);
+
+        plazas(viaje, posViaje);
+
+        tipo(viaje, posViaje);
+
+        importe(viaje, posViaje);
+
+        estado(viaje);
+
+        imprimirnuevoviaje(viaje);  //Se imprime el nuevo viaje en el fichero Viajes.txt    
+    }
+    else
+        printf("No puedes publicar un viaje porque no tienes ning�n veh�culo registrado.\n");
+
+    return viaje;
+}
+```
+
+*Permite publicar un nuevo viaje. Esta función aparece tanto en el menú de usuarios como en el de administradores. Devuelve la estructura viaje con el nuevo viaje y lo imprime en el fichero Viajes.txt.*
+
+* *static viajes \**CrearListaViajes(void);
+
+```C
+//Precondición: Ninguna
+//Postcondición: Crea una estructura de viajes
+
+static viajes *CrearListaViajes(void){
+    viajes *viaje;
+
+    if(numeroviajes() == 0) //Si no hay ningún viaje en el fichero Viajes.txt se reserva memoria para una estructura
+        viaje = (viajes *)calloc(1, sizeof(viajes));
+    else
+        viaje = (viajes *)calloc(numeroviajes(), sizeof(viajes));   //Si hay varios viajes se reservará para tantos viajes como haya
+
+    if(viaje == NULL){
+        fprintf(stderr, "Error en asignacion de memoria\n");
+        exit(1);
+    }
+
+    return viaje;
+}
+```
+
+*Esta función está diseñada para reservar memoria para la estructura viajes por primera vez. Si no hay ningún viaje en el fichero Viajes.txt entonces reservará una estructura, si hay algún viaje reservará memoria para ese número de viajes. Devuelve la estructura viaje.*
+
+* *static void menuviajesUsu(char viajeusu [5]);*
+
+```C
+//Precondición: Recibe una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Imprime por pantalla el menú de opciones del usuario
+
+static void menuviajesUsu(char viajeusu [5]){
+    int op;
+	viajes *viaje;
+	
+	viaje = CrearListaViajes(); //Reserva memoria por primera vez
+	
+    system("cls");  //Limpia la pantalla
+
+    viaje = reservarviajes(viaje);  //Reserva memoria para tantos viajes como haya en el fichero Viajes.txt
+    leerviajes(viaje);  //Lee los datos de la estructura en el fichero Viajes.txt
+
+    do{
+    printf("\n########################################\n");
+    printf("#              MENU VIAJES              #\n");
+    printf("########################################\n\n");
+
+    estado(viaje);  //Actualiza el estado de los viajes
+    imprimirviajes(viaje);  //Actualiza los viajes en el fichero
+    listarviajesabiertos(viaje);    //Imprime por pantalla la lista de los viajes abiertos
+
+    printf("\nSeleccione que desea hacer:\n\n");
+    printf("<1> Unirse a un viaje.\n");
+    printf("<2> Publicar un nuevo viaje.\n");
+    printf("<3> Editar un viaje.\n");
+    printf("<0> Volver al menu principal.\n\n");
+
+    if(scanf("%i", &op) != 1){  //Introduce un número para elegir que hacer
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+            switch(op){
+                //case 1: MenuUser(infoper, posViajes); break;
+                case 2: viaje = publicarviaje(viaje, viajeusu); break;
+                case 3: viaje = modviaje(viaje, viajeusu); break;
+                case 0: break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);   //Se repite hasta que el usuario introduzca 0
+
+    free(viaje);    //Se libera la memoria de la estructura viaje
+}
+```
+
+*Imprime por pantalla las opciones disponibles que tienen los usuarios. Por defecto aparecerá la lista de los viajes que están en estado abierto. El usuario podrá elegir entre unirse, publicar o editar un viaje. Cada vez que se entra a alguna de estas funciones, en el siguiente bucle se actualizan los estados de los viajes y el fichero Viajes.txt.*
+
+* *static void menuviajesAdmin(char viajeusu [5]);*
+
+```C
+//Precondición: Recibe una cadena de caracteres que indica la ID del usuario que accede al programa
+//Postcondición: Imprime por pantalla el menú de opciones del administrador
+
+static void menuviajesAdmin(char viajeusu [5]){
+    int op;
+	viajes *viaje;
+	
+	viaje = CrearListaViajes(); //Reserva memoria por primera vez
+	
+    system("cls");  //Limpia la pantalla
+
+    viaje = reservarviajes(viaje);  //Reserva memoria para tantos viajes como haya en el fichero Viajes.txt
+    leerviajes(viaje);  //Lee los datos de la estructura en el fichero Viajes.txt
+
+    do{
+    printf("\n#######################################################\n");
+    printf("#              MENU VIAJES (ADMINISTRADOR)            #\n");
+    printf("#######################################################\n\n");
+
+    estado(viaje);  //Actualiza el estado del viaje
+    imprimirviajes(viaje);  //Actualiza los viajes en el fichero Viajes.txt
+
+    printf("\nSeleccione que desea hacer:\n\n");
+    printf("<1> Listar viajes.\n");
+    printf("<2> Publicar un nuevo viaje.\n");
+    printf("<3> Editar un viaje.\n");
+    printf("<4> Eliminar un viaje.\n");
+    printf("<0> Volver al menu principal.\n\n");
+
+    if(scanf("%i", &op) != 1){  //Introduce un número para elegir que hacer
+            fflush(stdin);
+            fprintf(stderr, "Entrada no valida. Debe ser un numero.\n");
+        } else{
+
+            switch(op){
+                case 1: listarviajes(viaje); break;
+                case 2: viaje = publicarviaje(viaje, viajeusu); break;
+                case 3: viaje = modviajeAdmin(viaje); break;
+                case 4: viaje = eliminarviaje(viaje); break;
+                case 0: break;
+                default: printf("\nElige una de las opciones.\n"); break;
+            }
+        }
+
+    } while(op != 0);   //Se repite hasta que introduzca 0
+
+    free(viaje);    //Se libera la memoria de la estructura viaje
+}
+```
+
+*Imprime por pantalla las opciones disponibles que tienen los administradores. El adminsitrador podrá elegir entre listar, publicar, editar o eliminar un viaje. Cada vez que se entra a alguna de estas funciones, en el siguiente bucle se actualizan los estados de los viajes y el fichero Viajes.txt.*
 
 ###### V. **Trayecto **
 
@@ -3400,22 +4602,6 @@ typedef enum {
 
 ***Funciones Públicas***
 
-* void  eliminarsaltolinea(char *);
-
-```C
-//Precondición: Recibe una cadena de caracteres.
-//Poscondición: Cambia el \n por el \0 para que no haya ningún salto de linea al ser la cadena introducida por el buffer.
-
-void EliminarSaltoLinea(char *cad){
-    int longCad = strlen(cad);
-
-    if(cad[longCad - 1] == '\n')
-        cad[longCad - 1] = '\0';    
-
-}
-
-```
-
 *Sustituye el primer salto de línea de una cadena , si lo hay, por un \0. Permite evitar posibles errores de formato en el sistema. Este procedimiento está diseñado para ser utilizado por otros procedimientos/funciones.*
 
 * *logico vectores_iguales(int , int , int [],int []);*
@@ -3454,9 +4640,274 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 ###### II. **Perfiles**
 
-***Datos de Prueba***
+***Prueba de procedimientos y funciones***
+
+* int Inicio(tPerfil **infoper)* - Recibe la dirección de memoria donde se encuentra la primera posición del vector de estructuras de tipo tPerfil debe estar inicializada con antelación.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | imposible iniciar sesión |   Error   |
+| infoper con datos erróneos | podría iniciarse sesión si se sabe que datos son erróneos, pero el usuario desconocería dichos datos, lo cual hace casi imposible iniciar sesión |   Error   |
+
+
+* void Menu(tPerfil *infoper, int posUsua)* - Dependiendo del tipo de perfil que tenga el usuario, desembocará a un menú u otro, en caso de ser administrador, se llama a MenuAdmin, en caso de no serlo, se llama a MenuUser.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | imposible redirigir a distintos menús |   Error   |
+| posUsua como '10239' | no redirige a ningún menú |   Error   |
+
+* tPerfil ***CrearListaDePerfiles(void)* - Devuelve un vector de tipo tPerfil del tamaño equivalente al numero de usuarios guardados en Usuarios.txt
+.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         el procedimiento no recibe parámetros de entrada          | X |   X   |
+
+* void GenerarID(char ***id, int num, int numDigitos)* - Guarda en la primera cadena una ID segun los parámetros que reciba de num y de numDigitos.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         id ya inicializada          | sobreescribe la dicha ID |   perdida de la cadena que se encontrara almacenada previamente   |
+|        num '-13'          | no genera la ID |   Error   |
+|        numDigitos '-13'          | no genera la ID |   Error   |
+
+* void CargarPerfiles(tPerfil ***infoper)* - Carga toda la información de Usuarios.txt en el vector de estructuras de tipo tPefil..*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | el procedimiento realiza su respectivo funcionamiento |   Funcionamiento siempre adecuado   |
+|        infoper no vacío          | sobreescritura en el registro |   Error   |
+
+* static int ValidarID(tPerfil ***infoper, char id[ID], int \*posUsua, int tam)* - Devuelve 1 si la ID es válida, es decir, si la ID se encuentra en el registro y 0 en caso contrario.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | devuelve 0  |   Funcionamiento adecuado   |
+|        infoper no vacío          | devuelve 1 o 0, depende de los demás parámetros |   Funcionamiento siempre adecuado   |
+|        id vacía          | 0 |   Funcionamiento siempre adecuado   |
+|        id no vacía          | devuelve 1 o 0, depende de los demás parámetros |   Funcionamiento siempre adecuado   |
+|        posUsua con referencia a valor dentro del numero de usuarios en el sistema          | 1 |   Funcionamiento siempre adecuado   |
+|        posUsua con referencia a valor fuera del numero de usuarios en el sistema          | 0 |   Funcionamiento siempre adecuado   |
+|        tam negativo          | 0 |   Error   |
+
+
+* static void MenuAdmin(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el administrador.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no desemboca hacia ningún menú de opcoines  |   Error   |
+|        infoper no vacío          | dependerá de las opciones del administrador |   Funcionamiento siempre adecuado   |
+|        posUsua como número que excede los usuarios existentes          | Problemas a escribir el nombre del administrador |   ¿Error?   |
+|        posUsua como número que no excede los usuarios existentes          | es probable que si el posUsua no se corresponde con el de administrador, escriba un nombre erróneo de mensaje de bienvenida |   ¿Error?   |
+
+
+* static void MenuUser(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el administrador.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no desemboca hacia ningún menú de opcoines  |   Error   |
+|        infoper no vacío          | dependerá de las opciones del usuario |   Funcionamiento siempre adecuado   |
+|        posUsua como número que excede los usuarios existentes          | Imposible usar ESI-SHARE |   Error   |
+|        posUsua como número que no excede los usuarios existentes          | funcionamiento esperado si posUsua corresponde con el usuario que inició sesión |   ¿Error?   |
+
+* static void Perfil(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocaró en diferentes opciones de configuración.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Imposible usar ESI-SHARE  |   Error   |
+|        infoper no vacío          | dependerá de posUsua   |  ¿Error? |
+|        posUsua como número que excede los usuarios existentes          | Imposible usar ESI-SHARE |   Error   |
+|        posUsua como número que no excede los usuarios existentes          | funcionamiento esperado si posUsua corresponde con el usuario que inició sesión |   ¿Error?   |
+
+* static void Usuarios(tPerfil \*infoper) - Menu de opcinoes que desembocará en diferentes opciones de configuración.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Imposible usar ESI-SHARE  |   Error   |
+|        infoper no vacío          | funcionamiento esperado   |  Funcionamiento siempre adecuado |
+
+
+* static void ImprimirESISHARE(void) - Imprime ESI-SHARE por pantalla.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         El procedimiento no recibe parámetros de entrada          | X  |   X   |
+
+
+* static void ReservarNuevoPerfil(tPerfil \*infoper) - En caso de que en Usuarios.txt no se encuentre ningun usuario, esta función reserva memoria para uno nuevo, en caso contrario, si se encuentran n usuarios, reservará memoria para n+1.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | reserva memoria para una sola posición  |   Funcionamiento siempre adecuado   |
+|         infoper no vacío          | reserva memoria para una nueva posición dependiendo del tamaño del registro de usuarios  |   Funcionamiento siempre adecuado   |
+
+* static int ValidarLogin(tPerfil \*infoper, char usuario[MAX_U], char contrasena[MAX_C], int \*pos) - Devuelve 1 si se ha encontrado en el registro y 0 si no se ha encontrado.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | devuelve 0  |   Funcionamiento aparentemente adecuado   |
+|         infoper no vacío          | devolverá 1 o 0 dependiendo de los demás parámetros  |   Funcionamiento siempre adecuado   |
+|         usuario vacío          | 0   |   Funcionamiento siempre adecuado   |
+|         contraseña vacía          | 0   |   Funcionamiento siempre adecuado   |
+|         referencia a valor de pos fuera del rango de usuarios          | 0   |   Funcionamiento adecuado   |
+|         referencia a valor de pos dentro del rango de usuarios          | 1 o 0, dependiendo si el usuario y las contraseñas se encuentran en el registro para esa posición referenciada   |   Funcionamiento siempre adecuado   |
+
+* static int SignUp(tPerfil \*infoper) - Añade en el vector de estructuras tPerfil un nuevo usuario e imprime en Usuarios.txt los datos de ese nuevo usuario.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Añade un nuevo usuario al registro  |   Funcionamiento siempre adecuado   |
+|         infoper no vacío          | Añade un nuevo usuario al registro  |   Funcionamiento siempre adecuado   |
+
+
+* static void BajaUsuario(tPerfil \*infoper) - elimina tanto en el registro tPerfil tanto como en el fichero Usuarios.txt el usuario seleccionado.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | imposible usar ESI-SHARE  |   Error   |
+|         infoper no vacío          | Se eliminará al usuario que se indique  |   Funcionamiento siempre adecuado   |
+
+* static void ListarPerfiles(tPerfil \*infoper) - Imprime por pantalla todos los usuarios con sus respectivos datos, y también el numero de usuarios registrados en el sistema.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no se imprime nada  |   Funcionamiento esperado   |
+|         infoper no vacío          | se imprimirán todos los perfiles con sus respectivos datos  |   Funcionamiento siempre adecuado   |
+
+* static void ModificarCamposUsuario(tPerfil \*infoper, int pos) - cambia tanto en el registro como en el fichero, los datos que puede cambiar un perfil de tipo usuario.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Escritura de datos incorrectos  |   Error   |
+|         infoper no vacío          | dependerá de pos  |   Funcionamiento siempre adecuado   |
+|         pos dentro del rango de opciones del registro          | redigirá a la opción que elija el usuario  |   Funcionamiento siempre adecuado   |
+|         pos fuera del rango de opciones del registro          | imposible cambiar datos y guardará en el fichero caracteres basura  |   Error   |
+
+* static void ModificarCamposAdmin(tPerfil \*infoper) - tras elegir qué usuario cambiar datos, cambia tanto en el registro como en el fichero.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Escritura de datos incorrectos  |   Error   |
+|         infoper no vacío          | X  |   Funcionamiento siempre adecuado   |
+
+* static int LongitudVectorEstructuras(void) - devuelve el numero de líneas que tiene Usuarios.txt, que es a su vez el tamaño que corresponde al vector.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         La función no recibe parámetros de entrada          | X  |   Funcionamiento siempre adecuado   |
+
+* static void ObtenerNombreUsuario(char \*nomUsuario) - guarda en la cadena el nombre de usuario que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        nomUsuario vacío          | X  |   Funcionamiento siempre adecuado   |
+|        nomUsuario no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+
+* static void ObtenerLocalidad(char \*nomLocalidad) - guarda en la cadena la localidad que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        nomLocalidad vacío          | X  |   Funcionamiento siempre adecuado   |
+|        nomLocalidad no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+* static void ObtenerUsuario(tPerfil \*infoper, char \*usuario) - guarda en la cadena el usuario que se introduzca, con varios mensajes de error en caso de que no sea válida o se encuentre ya en el registro.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        infoper vacío          | X  |   ¿Error?   |
+|        infoper no vacío          | Se sobreescribirán los datos correctamente  |   Funcionamiento adecuado   |
+|         usuario vacío          | Se sobreescribirán los datos correctamente  |   Funcionamiento adecuado   |
+|         usuario no vacío          | Se sobreescribirán los datos  |   Funcionamiento aparentemente adecuado   |
+
+* static void ObtenerContrasena(char \*contrasena) - guarda en la cadena la contraseña que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         contraseña vacío          | X  |   Funcionamiento adecuado   |
+|         contraseña no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+* static void LimpiarCadena(char \*cad, int tam) - limpia la cadena poniendo \0 en todas las posiciones de la cadena.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         cad vacía          | X  |   Funcionamiento adecuado   |
+|         cad no vacía          | X  |   Funcionamiento siempre adecuado   |
+|         tam con numero positivo          | X  |   Funcionamiento siempre adecuado   |
+|         tam con numero negativo          | no limpia la cadena  |   Error   |
+
+* static void PreguntarUsuario(char \*user) - pregunta y obtiene el usuario, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         user vacía          | X  |   Funcionamiento adecuado   |
+|         user no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static void ObtenerID(tPerfil \*infoper, char \*id, int tam) - pregunta y la ID, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacía          |  Se obtendrá la ID, pero no se guardará en el registro  |   Error   |
+|         infoper no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static void CambiarID(char \*id) - pregunta y la ID, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         id vacía          |  X  |   Funcionamiento adecuado   |
+|         id no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static char ObtenerEstado(void) - Devuelve un char que contiene '1' pasa estar activo o '0' si pasa a estar bloqueados.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         la función no tiene parámetros de entrada          |  X  |   Funcionamiento siempre adecuado   |
 
 ***Pruebas de Caja Blanca***
+
+* Función sometida a las pruebas de ruta básica
+
+  * *void GenerarID(char \*id, int num, int numDigitos)*
+
+```C
+void GenerarID(char *id, int num, int numDigitos){
+    if(num >= 0 && numDigitos > 0)
+        sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de dígitos almacenados en numDigitos
+    else
+        fprintf(stderr, "La ID no puede ser negativa.");
+}
+```
+
+* Diagrama de control de flujo
+
+![Diagrama de Control de Flujo - Pablo Rivero Galvín](https://github.com/prvgal/ESI-SHARE/blob/main/MarkDown/Diagrama%20de%20flujo%20-%20Jose.png)
+
+* Cálculo de Complejidad ciclomática 
+
+$V(G) = NA – NN + 2 = 5 – 5 + 2 = 0 + 2 = 2$
+
+$V(G) = NNP + 1 = 1 + 1 = 2$
+
+$V(G) =  \text{número de regiones} (R1+R2)= 2$
+
+* Rutas básicas linealmente independientes:
+
+$\text{Ruta 1}: 1-3-4-5$
+
+$\text{Ruta 2}: 1-2-5$
+
+* Casos de Prueba:
+1. Prueba para el primer entero "12" y segundo entero '4'
+   - Entrada: "12" y "4"
+   - Salida esperada: id(0012)
+2. Prueba para el primer entero como número negativo "-2" y segundo entero como número positivo "4"
+   - Entrada: "-2" y "4"
+   - Salida esperada: mensaje de error.
+3. Prueba para el primer entero como número negativo "-2" y segundo entero como número positivo "-4"
+   - Entrada: "-2" y "-4"
+   - Salida esperada: mensaje de error.
 
 ###### III. **Vehículo**
 
@@ -3705,27 +5156,27 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 * Diagrama de control de flujo
 
-![Diagrama de Control de Flujo - Santiago Sánchez Loureiro](C:\Users\Propietario\Desktop\MarkDown\Diagrama de Flujo - Santiago.JPG)
+![Diagrama de Control de Flujo - Santiago Sánchez Loureiro](https://github.com/prvgal/ESI-SHARE/blob/main/MarkDown/Diagrama%20de%20Flujo%20-%20Santiago.JPG)
 
 * Cálculo de Complejidad ciclomática 
 
-V(G) = NA – NN + 2 = 10 – 7 + 2 = 3+ 2 = 5 
+$V(G) = NA – NN + 2 = 10 – 7 + 2 = 3+ 2 = 5$ 
 
-V(G) = NNP + 1 = 4 + 1 = 5 
+$V(G) = NNP + 1 = 4 + 1 = 5 $
 
-V(G) = número de regiones (R1+R2+R3+R4+R5)= 5
+$V(G) = \text{número de regiones} (R1+R2+R3+R4+R5)= 5$
 
 * Rutas básicas linealmente independientes:
 
-Ruta 1: 1-2-...-8
+$\text{Ruta 1}: 1-2-\cdots-8$
 
-Ruta 2: 1-2-3-4-7
+$\text{Ruta 2}: 1-2-3-4-7$
 
-Ruta 3: 1-7
+$\text{Ruta 3}: 1-7$
 
-Ruta 4: 1-2-...-7
+$\text{Ruta 4}: 1-2-\cdots-7$
 
-Ruta 5:  1-2-3-7
+$\text{Ruta 5}:  1-2-3-7$
 
 * Casos de Prueba:
 
@@ -3751,9 +5202,297 @@ Ruta 5:  1-2-3-7
 
 ***Pruebas de Caja Blanca***
 
+***Prueba de procedimientos y funciones***
+* *static void introducir_fecha(viajes \**viaje, int posViaje); - El procedimiento debe recibir una estructura en la que modificará o cambiará la fecha, posViaje indicará la posición del viaje donde se hará
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Se guarda la fecha como basura o directamente nada en su sección |   Error   |
+| posViaje sin reservar | Guarda la fecha como basura o nada en su sección |   Error   |
+
+* *static void horas(viajes \**viaje, int posViaje); - Se repite el caso anterior
+
+* *static void plazas(viajes \**viaje, int posViaje); - Se repite el caso anterior
+
+* *static void tipo(viajes \**viaje, int posViaje); - Se repite el caso anterior
+
+* *static void importe(viajes \**viaje, int posViaje); - Se repite el caso anterior
+
+* *static void estado(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No encuentra ningún error, si la estructura esta vacia no entrará al bucle y no se actualizará el estado ya que no existe ningún viaje |   Funcionamiento siempre adecuado   |
+
+* *static viajes *modviajeAdmin(viajes *viaje);* - Debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No encuentra ningún error, si la estructura esta vacia no se podrán modificar viajes ya que no existe ninguno |   Funcionamiento siempre adecuado   |
+
+* *static viajes *modviaje(viajes *viaje, char viajeusu [5])* - Debe recibir la estructura de viajes y la ID del usuario que está accediendo
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No habrá ningún viaje del usuario por lo que no permitirá modificar nada |   Funcionamiento siempre adecuado   |
+| cadena en otro formato que no sea la ID | No encontrará viajes del usuario ya que no existe esa ID |   Funcionamiento siempre adecuado   |
+
+* *static int listartusviajes(viajes \**viaje, char viajeusu [5]); - Se repite el caso anterior
+
+* *static viajes *eliminarviaje(viajes *viaje);* - Debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No permite borrar ningún viaje porque no existe ningún viaje |   Funcionamiento siempre adecuado   |
+
+* *static void imprimirnuevoviaje(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Imprimirá en el fichero basura o directamente no puede acceder a la estructura |   Error   |
+
+* *static void imprimirviajesborrado(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Imprimirá basura en el fichero o directamente no puede acceder a la estructura |   Error   |
+
+* *static void leerviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Intentará leer los viajes del fichero y no podrá guardarlos |   Error   |
+
+* *static void listarviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No imprimirá ningún viaje, no hay error |   Funcionamiento siempre adecuado   |
+
+* *static void listarviajesabiertos(viajes \**viaje); - Se repite el caso anterior
+
+* *static void imprimirviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Si habia algún viaje en el fichero lo actualizará borrando el contenido y guardando basura |   Error   |
+
+* *static int numeroviajes(void);*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         No recibe entrada          | X |   X   |
+
+* *static viajes *reservarviajes(viajes *viaje);* - Debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | En el caso de que haya algún viaje en el fichero dará error, ya que se está usando realloc |  Error   |
+
+* *static viajes *reservarnuevoviaje(viajes *viaje);* - Debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | No se puede usar realloc para una estructura vacia, antes hay que reservar memoria con malloc o calloc |   Error   |
+
+* *static viajes *publicarviaje(viajes *viaje, char viajeusu [5]);* - Debe recibir la estructura de viajes
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         viajes vacío          | Tratará de reservar una nueva posición con realloc y dará error |   Error   |
+| ID de viaje distinta al formato en que se supone debe estar | La ID del usuario no existe por lo tanto no tendrá registrado ningún vehículo y no podrá iniciar el viaje |   Funcionamiento correcto   |
+
+* *static viajes \**CrearListaViajes(void);
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         No recibe entrada          | X |   X   |
+
+* *static void menuviajesUsu(char viajeusu [5]);* - El procedimiento debe recibir la ID del usuario que accede
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         ID inexistente o con formato distinto          | No podrá realizar nunca funciones como publicar o modificar un viaje, aunque si unirse, pero una vez que salga de la sesión no podrá volver a acceder porque ninguna ID será igual a esta nunca |   Error   |
+
+* *static void menuviajesAdmin(char viajeusu [5]);* - El procedimiento debe recibir la ID del usuario que accede
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         ID inexistente o con formato distinto          | No podrá nunca publicar un viaje |   Funcionamiento adecuado a excepción de publicar viaje   |
+
+* *void menuviajes(char viajeusu [5], char []);* - El procedimiento debe recibir la ID del usuario que accede y una cadena de caracteres que indica si es usuario o administrador
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         ID inexistente o con formato distinto          | Llevará a los errores anteriores de menuviajesUsu o menuviajesAdmin |   Error   |
+| Cadena de caracteres que no sea "usuario" o "administrador" | Siempre llevará al menuviajesAdmin aunque el usuario no sea administrador |   Error   |
+***Pruebas de Caja Blanca***
+* Función sometida a las pruebas de ruta básica
+  * *void menuviajes(char viajeusu [5], char tipousuario[MAX_PU])*
+```C
+void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
+    if(!strcmp(tipousuario, "usuario")) //1
+        menuviajesUsu(viajeusu);    //2
+    else    //3
+        menuviajesAdmin(viajeusu);  //4
+    //Acaba la función //5
+}
+```
+* Diagrama de control de flujo
+![Diagrama de Control de Flujo - Jose Bello González](C:\Users\Propietario\Desktop\MarkDown\Diagrama de flujo - Jose.png)
+* Cálculo de Complejidad ciclomática 
+
+$V(G) = NA – NN + 2 = 5 – 5 + 2 = 0 + 2 = 2$
+
+$V(G) = NNP + 1 = 1 + 1 = 2$
+
+$V(G) =  \text{número de regiones} (R1+R2)= 2$
+
+* Rutas básicas linealmente independientes:
+
+$\text{Ruta 1}: 1-3-4-5$
+
+$\text{Ruta 2}: 1-2-5$
+
+* Casos de Prueba:
+1. Prueba para cadena de caracteres recibida "usuario"
+   - Entrada: "usuario"
+   - Salida esperada: menuviajesUsu(viajeusu)
+   . Prueba para cadena de caracteres recibida "administrador"
+   - Entrada: "administrador"
+   - Salida esperada: menuviajesAdmin(viajeusu)
+3. Prueba para una cadena de caracteres que no es válida por longitud incorrecta o que no reciba ni "usuario" ni "administrador"
+   - Entrada: "usuadmin"
+   - Salida esperada: menuviajesAdmin(viajeusu)
+
 ###### V. **Trayecto**
 
 ***Datos de Prueba***
+
+**Aclaración**: *Los siguientes procedimientos cuentan con las mismas pruebas*
+
++ *void gestionar_trayecto(viajes, tPerfil);* - Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) y una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+
+  **Aclaración**: *Los siguientes procedimientos cuentan con la misma condición*
+
+  Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) 
+
++ *void inicio_trayecto(viajes);*
+
++ *static void final_ESI(viajes);*
+
++ *static void ida_ESI_cadiz(viajes);*
+
++ *static void ida_ESI_sanfer(viajes);*
+
++ *static void ida_ESI_sanfer_cadiz(viajes);*
+
++ *static void ida_ESI_sanfer_cadiz_fin(viajes);*
+
++ *static void ida_ESI_jerez(viajes);*
+
++ *static void ida_ESI_jerez_puerto(viajes);*
+
++ *static void ida_ESI_puerto(viajes);*
+
++ *static void inicio_ESI(viajes);*
+
++ *static void ESI_cadiz(viajes);*
+
++ *static void ESI_sanfernando(viajes);*
+
++ *static void ESI_sanfer_puertor(viajes);*
+
++ *static void ESI_jerez(viajes);*
+
++ *static void ESI_jerez_puertor(viajes);*
+
++ *static void ESI_puertostamaria(viajes);*
+
+  Estas funciones no pueden dar ningún tipo de error, independientemente de los datos que le lleguen, debido al uso de las mismas. Todas las opciones de generar bucles infinitos han sido contempladas y en ninguno de los casos dará error.
+
+**Aclaración**: *Los siguientes procedimientos cuentan con las mismas pruebas*
+
+​		**Aclaración**: *Los siguientes procedimientos cuentan con la misma condición*
+
+Debe haberse generado una ID para un viaje (esta ID sería de tipo entero) 
+
++ *static void ida_ESI_cadiz_puertor(viajes);*
+
++ *static void ida_ESI_cadiz_fin(viajes);*
+
++ *static void ida_ESI_sanfer_cadiz_puertor(viajes);*
+
++ *static void ida_ESI_sanfer_cadiz_fin(viajes);*
+
++ *static void ida_ESI_sanfer_puertor(viajes);*
+
++ *static void ida_ESI_sanfer_fin(viajes);*
+
++ *static void ida_ESI_jerez_puerto_puertor_fin(viajes);*
+
++ *static void ida_ESI_jerez_puertor_fin(viajes);*
+
++ *static void ida_ESI_jerez_puertor(viajes);*
+
++ *static void ida_ESI_jerez_fin(viajes);*
+
++ *static void ida_ESI_puerto_puertor_fin(viajes);*
+
++ *static void ida_ESI_puerto_fin(viajes);*
+
++ *static void ida_ESI_puertor(viajes);*
+
++ *static void ESI_cadiz_puertor(viajes);*
+
++ *static void ESI_cadiz_fin(viajes);*
+
++ *static void ESI_puertoreal(viajes);*
+
++ *static void ESI_sanfer_cadiz(viajes);*
+
++ *static void ESI_sanfer_cadiz_puerto(viajes);*
+
++ *static void ESI_sanfer_puertor_fin(viajes);*
+
++ *static void ESI_sanfer_fin(viajes);*
+
++ *static void ESI_jerez_puertor_puerto_fin(viajes);*
+
++ *static void ESI_jerez_puertor_fin(viajes);*
+
++ *static void ESI_jerez_puerto(viajes);*
+
++ *static void ESI_jerez_fin(viajes);*
+
++ *static void ESI_puerto_puertor_fin(viajes);*
+
++ *static void ESI_puerto_fin(viajes);*
+
+  Esta lista de procedimientos tiene 2 situaciones en las que podrían tener un mal funcionamiento
+
+  |                 Datos empleados                 |                    Descripción del error                     |                          resultado                           |
+  | :---------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+  | Llega contenido erróneo de la estructura viajes | Al llegar contenido erróneo, no imprimirá en el fichero el contenido deseado |          Imprimirá en el fichero contenido erróneo           |
+  |         No llega contenido a la función         | Si no llega contenido, la función recogerá basura de la memoria | Imprimirá la basura que tenga en la posición de memoria correspondiente |
+
+**Aclaración**: *Las siguientes funciones cuentan con las mismas pruebas*
+
++ *static void modificar_trayecto(viajes);* - Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
+
++ *static void borrar_trayecto(viajes);* - Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
+
+  |               Datos empleados                |                    Descripción del error                     |                          resultado                           |
+  | :------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+  | Lega un dato erróneo de la estructura viajes | Al llegar un dato erróneo,  el procedimiento buscará en el fichero ese dato y no lo encontrará | No borrará ningún dato del fichero, al no encontrarse la ID buscada |
+
++ *void mostrar_paradas(tPerfil);* - Debe haberse generado una localidad para el usuario en concreto (esta Localidad una cadena de 20 caracteres)
+
+  |                Datos empleados                |                    Descripción del error                     |                          resultado                           |
+  | :-------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+  | Lega un dato erróneo de la estructura tPerfil | Al llegar un dato erróneo,  el procedimiento buscará en el fichero ese dato y no lo encontrará | No mostrará ningún dato del fichero, al no encontrarse la localidad buscada |
+
+  
 
 ***Pruebas de Caja Blanca***
 
@@ -3779,26 +5518,3 @@ El desarrollo de la plataforma ESI-Share ha sido posible gracias al trabajo de l
 * Sánchez Loureiro, Santiago - Módulo Vehículo.
 
 *San Fernando, a 18 de Abril de 2023* 
-
-## SmartyPants
-
-SmartyPants converts ASCII punctuation characters into "smart" typographic punctuation HTML entities. For example:
-
-|                  | ASCII                           | HTML                          |
-| ---------------- | ------------------------------- | ----------------------------- |
-| Single backticks | `'Isn't this fun?'`             | 'Isn't this fun?'             |
-| Quotes           | `"Isn't this fun?"`             | "Isn't this fun?"             |
-| Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
-
-
-## KaTeX
-
-You can render LaTeX mathematical expressions using [KaTeX](https://khan.github.io/KaTeX/):
-
-The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
-
-$$
-\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
-$$
-
-> You can find more information about **LaTeX** mathematical expressions [here](http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference).
