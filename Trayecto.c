@@ -721,12 +721,11 @@ static void modificar_trayecto(viajes viaje){
 static void borrar_trayecto(viajes viaje){
 
     FILE *pasos, *pasosaux;
-    char linea_borrar[100], linea[100];
-    int idaux;
+    char linea_borrar[100], linea[100], idaux[7];
     pasos = fopen("Pasos.txt", "r");
     pasosaux = fopen("PasosAux.txt", "w");
 
-    while ((fscanf(pasos, "%[^-]", &idaux))!=EOF) {
+    while ((fscanf(pasos, "%[^-]", idaux))!=EOF) {
         if (idaux == viaje.i_d) {
             fgets(linea, 100, pasos);
             strcpy(linea_borrar, linea);
@@ -747,8 +746,7 @@ static void borrar_trayecto(viajes viaje){
 void mostrar_paradas(tPerfil usuario){
 
     FILE *pasos;
-    int id_viaje;
-    char linea[30], parada[21];
+    char linea[30], parada[21], id_viaje[7];
     pasos = fopen("Pasos.txt", "r");
 
     printf("Los viajes que pasan por su localidad son:\n\n");
