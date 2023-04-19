@@ -743,7 +743,7 @@ static void borrar_trayecto(viajes viaje){
 }
 
 
-void mostrar_paradas(tPerfil usuario){
+void mostrar_paradas(char usuario){
 
     FILE *pasos;
     char linea[30], parada[21], id_viaje[7];
@@ -752,7 +752,7 @@ void mostrar_paradas(tPerfil usuario){
     printf("Los viajes que pasan por su localidad son:\n\n");
     while (fgets(linea, sizeof(linea), pasos)!=NULL){
         sscanf(linea,"%s-%[^\n]", id_viaje, parada);
-        if(strcmp(usuario.Localidad, parada)==0)
+        if(strcmp(usuario, parada)==0)
             printf("  %s-%s\n", id_viaje, parada);
     }
 
