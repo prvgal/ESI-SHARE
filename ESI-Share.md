@@ -5496,6 +5496,14 @@ Debe haberse generado una ID para un viaje (esta ID sería de tipo entero)
 
 ***Pruebas de Caja Blanca***
 
+![](C:\Users\Juanma\Desktop\MarkDown\Diagrama de Flujo - Juanma.jpeg)
+
+V(G)=Número de Regiones
+
++ Ruta1: 1-2-3-4-5-6-9-10-11-12-13-14-15-16
++ Ruta2:1-2-3-4-7-8-9-10-11-12-13-14-15-16
++ Ruta3:1-2-3-10-11-12-13-14-15-16
+
 ###### VI. **Tipos**
 
 ***Datos de Prueba***
