@@ -47,7 +47,7 @@ static void horas(viajes *viaje, int posViaje);
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
 //Postcondición: Actualiza el número de plazas en la estructura viaje de la posición posViaje
 
-static void plazas(viajes *viaje, int posViaje);
+static void uniraviaje(viajes *viaje, char localidad [20]);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y un entero que indicara la posición del usuario en viaje
 //Postcondición: Habra introducido el tipo de viaje en la estructura viaje de la posición posViaje: (I) Ida o (V) Vuelta
@@ -142,7 +142,7 @@ static viajes *CrearListaViajes(void);
 //Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
 //Postcondición: Imprime por pantalla el menú de opciones del usuario
 
-static void menuviajesUsu(char viajeusu [5]);
+static void menuviajesUsu(char viajeusu [5], char localidad [20]);
 
 //Precondición: Recibe un vector de estructuras de tipo viajes y una cadena de caracteres que indica la ID del usuario que accede al programa
 //Postcondición: Imprime por pantalla el menú de opciones del administrador
@@ -155,6 +155,6 @@ static void menuviajesAdmin(char viajeusu [5]);
 una cadena de la estructura tPerfil que indicara si esta accediendo un usuario o un administrador*/
 //Postcondición: Lleva a la función menuviajesUsu o menuviajesAdmin
 
-void menuviajes(char viajeusu [5], char []);
+void menuviajes(char viajeusu [5], char [], char localidad [20]);
 
 #endif

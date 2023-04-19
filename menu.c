@@ -1,5 +1,7 @@
-#include "Viajes.c"
-#include "perfiles.c"
+#include "Viajes.h"
+#include "perfiles.h"
+#include "vehiculo.h"
+#include "trayecto.h"
 
 int main(){
 	int pos;

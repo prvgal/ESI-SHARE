@@ -144,14 +144,29 @@ static void horas(viajes *viaje, int posViaje){
     printf("La hora de llegada introducida es %s\n\n", viaje[posViaje].hora_llegada);
 }
 
-static void plazas(viajes *viaje, int posViaje){
-    if(viaje[posViaje].Nplazas != 0){   //Si el número de plazas no es 0, se actualizará a una menos
-        viaje[posViaje].Nplazas -= 1;
+static void uniraviaje(viajes *viaje, char localidad[20]){
+    int i, valido = 0;
+    char aux[7];
+    mostrar_paradas(localidad);
 
-        printf("Quedan %i plazas libres en el viaje %s\n", viaje[posViaje].Nplazas, viaje[posViaje].i_d);
+    printf("\nIntroduce la ID del viaje al que quieres unirte: ");
+    fflush(stdin);
+    fgets(aux, 7, stdin);
+    
+    for(i = 0; i < numeroviajes() && valido == 0; i++){
+        if(strcmp(aux, viaje[i].i_d) == 0){
+            if(viaje[i].estado.abierto == 1){
+                valido = 1;
+            }
+        }
+    }
+
+    if(valido == 1 && viaje[i-1].Nplazas > 0){
+        printf("\nTe has unido al viaje %s\n\n", aux);
+        viaje[i-1].Nplazas = viaje[i-1].Nplazas - 1;
     }
     else
-    printf("No quedan plazas en el viaje %s\n", viaje[posViaje].i_d);
+        printf("\nLa matricula introducida no es valida o el viaje no tiene plazas disponibles.\n\n");
 }
 
 static void tipo(viajes *viaje, int posViaje){
@@ -766,7 +781,7 @@ static viajes *reservarviajes(viajes *viaje){
     return viaje;
 }
 
-static void menuviajesUsu(char viajeusu [5]){
+static void menuviajesUsu(char viajeusu [5], char localidad [20]){
     int op;
 	viajes *viaje;
 	
@@ -776,6 +791,7 @@ static void menuviajesUsu(char viajeusu [5]){
 
     viaje = reservarviajes(viaje);  //Reserva memoria para tantos viajes como haya en el fichero Viajes.txt
     leerviajes(viaje);  //Lee los datos de la estructura en el fichero Viajes.txt
+    listarviajesabiertos(viaje);    //Imprime por pantalla la lista de los viajes abiertos
 
     do{
     printf("\n########################################\n");
@@ -784,7 +800,6 @@ static void menuviajesUsu(char viajeusu [5]){
 
     estado(viaje);  //Actualiza el estado de los viajes
     imprimirviajes(viaje);  //Actualiza los viajes en el fichero
-    listarviajesabiertos(viaje);    //Imprime por pantalla la lista de los viajes abiertos
 
     printf("\nSeleccione que desea hacer:\n\n");
     printf("<1> Unirse a un viaje.\n");
@@ -798,7 +813,7 @@ static void menuviajesUsu(char viajeusu [5]){
         } else{
 
             switch(op){
-                //case 1: MenuUser(infoper, posViajes); break;
+                case 1: uniraviaje(viaje, localidad); break;
                 case 2: viaje = publicarviaje(viaje, viajeusu); break;
                 case 3: viaje = modviaje(viaje, viajeusu); break;
                 case 0: break;
@@ -905,6 +920,8 @@ static viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
 
         GenerarID(viaje[posViaje].i_d, numeroviajes()+1, 6);    //Guarda la ID del viaje nuevo
 
+        inicio_trayecto(viaje[posViaje].i_d);
+
         introducir_fecha(viaje, posViaje);
 
         horas(viaje, posViaje);
@@ -925,9 +942,9 @@ static viajes *publicarviaje(viajes *viaje, char viajeusu [5]){
     return viaje;
 }
 
-void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
+void menuviajes(char viajeusu [5], char tipousuario[MAX_PU], char localidad [20]){
     if(!strcmp(tipousuario, "usuario")) //Si la cadena de caracteres recibida es "usuario" se ejecutará el menuviajesUsu, sino el menuviajesAdmin
-        menuviajesUsu(viajeusu);
+        menuviajesUsu(viajeusu, localidad);
     else
         menuviajesAdmin(viajeusu);
 }

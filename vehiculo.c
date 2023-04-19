@@ -27,7 +27,7 @@
 
     	printf("\n		*) Número de plazas del vehículo (sin contar el conductor): ");
     	scanf("%i", &vehiculo.num_plazas);
-    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<2){
+    	while(vehiculo.num_plazas>9||vehiculo.num_plazas<1){
     		printf("\n		Introduzca un número realista de plazas (2-9):");
     		scanf("%i", &vehiculo.num_plazas);
 		}
@@ -451,7 +451,7 @@
             while(fgets(linea, sizeof(linea), viaj)!=NULL){
                 sscanf(linea, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%d-%[^-]-%[^-]-%[^-]-%d-%c", viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo,
                                                                                             viaje.importe, viaje.estado, viaje.hoy, &viaje.anular);
-                if(strcmp(viaje.matricula,matricula)==0&&viaje.estado.finalizado==True){
+                if(strcmp(viaje.matricula,matricula)==0){
                     printf("%s - %s - %s - %s - %s - %d - %s - %s - %s - %c", viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
                                                                                 viaje.estado, viaje.anular);
                     coincidencia=True;
