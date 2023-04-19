@@ -108,7 +108,7 @@ static void MenuAdmin(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Usuarios(infoper); break;
-                // case 2: Vehiculos(); break;
+                case 2: admin_veh(); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -147,7 +147,7 @@ static void MenuUser(tPerfil *infoper, int posUsua){
             switch(op){
                 case 0: exit(1); break;
                 case 1: Perfil(infoper, posUsua); break;
-                // case 2: Vehiculos(); break;
+                case 2: usuario_veh(infoper[posUsua]); break;
                 case 3: menuviajes(infoper[posUsua].Id_usuario, infoper[posUsua].Perfil_usuario); break;
                 default: printf("\nElige una de las opciones.\n"); break;
             }
@@ -348,7 +348,7 @@ static int SignUp(tPerfil *infoper){
     // Por defecto el usuario estar� activo.
     infoper[numPerfiles].estado = '1';
 
-    //mod reg veh
+    // usuario_veh(infoper[numPerfiles]);
 
     // Imprimimos al final del fichero los nuevos datos.
     if(LongitudVectorEstructuras() == 0)
