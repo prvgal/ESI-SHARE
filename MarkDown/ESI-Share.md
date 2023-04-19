@@ -4672,6 +4672,200 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 |        num '-13'          | no genera la ID |   Error   |
 |        numDigitos '-13'          | no genera la ID |   Error   |
 
+* void CargarPerfiles(tPerfil ***infoper)* - Carga toda la información de Usuarios.txt en el vector de estructuras de tipo tPefil..*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | el procedimiento realiza su respectivo funcionamiento |   Funcionamiento siempre adecuado   |
+|        infoper no vacío          | sobreescritura en el registro |   Error   |
+
+* static int ValidarID(tPerfil ***infoper, char id[ID], int \*posUsua, int tam)* - Devuelve 1 si la ID es válida, es decir, si la ID se encuentra en el registro y 0 en caso contrario.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | devuelve 0  |   Funcionamiento adecuado   |
+|        infoper no vacío          | devuelve 1 o 0, depende de los demás parámetros |   Funcionamiento siempre adecuado   |
+|        id vacía          | 0 |   Funcionamiento siempre adecuado   |
+|        id no vacía          | devuelve 1 o 0, depende de los demás parámetros |   Funcionamiento siempre adecuado   |
+|        posUsua con referencia a valor dentro del numero de usuarios en el sistema          | 1 |   Funcionamiento siempre adecuado   |
+|        posUsua con referencia a valor fuera del numero de usuarios en el sistema          | 0 |   Funcionamiento siempre adecuado   |
+|        tam negativo          | 0 |   Error   |
+
+
+* static void MenuAdmin(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el administrador.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no desemboca hacia ningún menú de opcoines  |   Error   |
+|        infoper no vacío          | dependerá de las opciones del administrador |   Funcionamiento siempre adecuado   |
+|        posUsua como número que excede los usuarios existentes          | Problemas a escribir el nombre del administrador |   ¿Error?   |
+|        posUsua como número que no excede los usuarios existentes          | es probable que si el posUsua no se corresponde con el de administrador, escriba un nombre erróneo de mensaje de bienvenida |   ¿Error?   |
+
+
+* static void MenuUser(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocará en otro menú de configuración dependiendo de las opciones elegidas por el administrador.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no desemboca hacia ningún menú de opcoines  |   Error   |
+|        infoper no vacío          | dependerá de las opciones del usuario |   Funcionamiento siempre adecuado   |
+|        posUsua como número que excede los usuarios existentes          | Imposible usar ESI-SHARE |   Error   |
+|        posUsua como número que no excede los usuarios existentes          | funcionamiento esperado si posUsua corresponde con el usuario que inició sesión |   ¿Error?   |
+
+* static void Perfil(tPerfil \*infoper, int posUsua) - Menu de opcinoes que desembocaró en diferentes opciones de configuración.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Imposible usar ESI-SHARE  |   Error   |
+|        infoper no vacío          | dependerá de posUsua   |  ¿Error? |
+|        posUsua como número que excede los usuarios existentes          | Imposible usar ESI-SHARE |   Error   |
+|        posUsua como número que no excede los usuarios existentes          | funcionamiento esperado si posUsua corresponde con el usuario que inició sesión |   ¿Error?   |
+
+* static void Usuarios(tPerfil \*infoper) - Menu de opcinoes que desembocará en diferentes opciones de configuración.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Imposible usar ESI-SHARE  |   Error   |
+|        infoper no vacío          | funcionamiento esperado   |  Funcionamiento siempre adecuado |
+
+
+* static void ImprimirESISHARE(void) - Imprime ESI-SHARE por pantalla.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         El procedimiento no recibe parámetros de entrada          | X  |   X   |
+
+
+* static void ReservarNuevoPerfil(tPerfil \*infoper) - En caso de que en Usuarios.txt no se encuentre ningun usuario, esta función reserva memoria para uno nuevo, en caso contrario, si se encuentran n usuarios, reservará memoria para n+1.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | reserva memoria para una sola posición  |   Funcionamiento siempre adecuado   |
+|         infoper no vacío          | reserva memoria para una nueva posición dependiendo del tamaño del registro de usuarios  |   Funcionamiento siempre adecuado   |
+
+* static int ValidarLogin(tPerfil \*infoper, char usuario[MAX_U], char contrasena[MAX_C], int \*pos) - Devuelve 1 si se ha encontrado en el registro y 0 si no se ha encontrado.*
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | devuelve 0  |   Funcionamiento aparentemente adecuado   |
+|         infoper no vacío          | devolverá 1 o 0 dependiendo de los demás parámetros  |   Funcionamiento siempre adecuado   |
+|         usuario vacío          | 0   |   Funcionamiento siempre adecuado   |
+|         contraseña vacía          | 0   |   Funcionamiento siempre adecuado   |
+|         referencia a valor de pos fuera del rango de usuarios          | 0   |   Funcionamiento adecuado   |
+|         referencia a valor de pos dentro del rango de usuarios          | 1 o 0, dependiendo si el usuario y las contraseñas se encuentran en el registro para esa posición referenciada   |   Funcionamiento siempre adecuado   |
+
+* static int SignUp(tPerfil \*infoper) - Añade en el vector de estructuras tPerfil un nuevo usuario e imprime en Usuarios.txt los datos de ese nuevo usuario.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Añade un nuevo usuario al registro  |   Funcionamiento siempre adecuado   |
+|         infoper no vacío          | Añade un nuevo usuario al registro  |   Funcionamiento siempre adecuado   |
+
+
+* static void BajaUsuario(tPerfil \*infoper) - elimina tanto en el registro tPerfil tanto como en el fichero Usuarios.txt el usuario seleccionado.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | imposible usar ESI-SHARE  |   Error   |
+|         infoper no vacío          | Se eliminará al usuario que se indique  |   Funcionamiento siempre adecuado   |
+
+* static void ListarPerfiles(tPerfil \*infoper) - Imprime por pantalla todos los usuarios con sus respectivos datos, y también el numero de usuarios registrados en el sistema.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | no se imprime nada  |   Funcionamiento esperado   |
+|         infoper no vacío          | se imprimirán todos los perfiles con sus respectivos datos  |   Funcionamiento siempre adecuado   |
+
+* static void ModificarCamposUsuario(tPerfil \*infoper, int pos) - cambia tanto en el registro como en el fichero, los datos que puede cambiar un perfil de tipo usuario.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Escritura de datos incorrectos  |   Error   |
+|         infoper no vacío          | dependerá de pos  |   Funcionamiento siempre adecuado   |
+|         pos dentro del rango de opciones del registro          | redigirá a la opción que elija el usuario  |   Funcionamiento siempre adecuado   |
+|         pos fuera del rango de opciones del registro          | imposible cambiar datos y guardará en el fichero caracteres basura  |   Error   |
+
+* static void ModificarCamposAdmin(tPerfil \*infoper) - tras elegir qué usuario cambiar datos, cambia tanto en el registro como en el fichero.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacío          | Escritura de datos incorrectos  |   Error   |
+|         infoper no vacío          | X  |   Funcionamiento siempre adecuado   |
+
+* static int LongitudVectorEstructuras(void) - devuelve el numero de líneas que tiene Usuarios.txt, que es a su vez el tamaño que corresponde al vector.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         La función no recibe parámetros de entrada          | X  |   Funcionamiento siempre adecuado   |
+
+* static void ObtenerNombreUsuario(char \*nomUsuario) - guarda en la cadena el nombre de usuario que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        nomUsuario vacío          | X  |   Funcionamiento siempre adecuado   |
+|        nomUsuario no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+
+* static void ObtenerLocalidad(char \*nomLocalidad) - guarda en la cadena la localidad que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        nomLocalidad vacío          | X  |   Funcionamiento siempre adecuado   |
+|        nomLocalidad no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+* static void ObtenerUsuario(tPerfil \*infoper, char \*usuario) - guarda en la cadena el usuario que se introduzca, con varios mensajes de error en caso de que no sea válida o se encuentre ya en el registro.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|        infoper vacío          | X  |   ¿Error?   |
+|        infoper no vacío          | Se sobreescribirán los datos correctamente  |   Funcionamiento adecuado   |
+|         usuario vacío          | Se sobreescribirán los datos correctamente  |   Funcionamiento adecuado   |
+|         usuario no vacío          | Se sobreescribirán los datos  |   Funcionamiento aparentemente adecuado   |
+
+* static void ObtenerContrasena(char \*contrasena) - guarda en la cadena la contraseña que se introduzca, con varios mensajes de error en caso de que no sea válida.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         contraseña vacío          | X  |   Funcionamiento adecuado   |
+|         contraseña no vacío          | Se sobreescribirán los datos  |   ¿Error?   |
+
+* static void LimpiarCadena(char \*cad, int tam) - limpia la cadena poniendo \0 en todas las posiciones de la cadena.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         cad vacía          | X  |   Funcionamiento adecuado   |
+|         cad no vacía          | X  |   Funcionamiento siempre adecuado   |
+|         tam con numero positivo          | X  |   Funcionamiento siempre adecuado   |
+|         tam con numero negativo          | no limpia la cadena  |   Error   |
+
+* static void PreguntarUsuario(char \*user) - pregunta y obtiene el usuario, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         user vacía          | X  |   Funcionamiento adecuado   |
+|         user no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static void ObtenerID(tPerfil \*infoper, char \*id, int tam) - pregunta y la ID, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         infoper vacía          |  Se obtendrá la ID, pero no se guardará en el registro  |   Error   |
+|         infoper no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static void CambiarID(char \*id) - pregunta y la ID, con mensajes de error en caso que no sea valido.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         id vacía          |  X  |   Funcionamiento adecuado   |
+|         id no vacía          | Sobreescritura  |   Funcionamiento aparentemente adecuado   |
+
+* static char ObtenerEstado(void) - Devuelve un char que contiene '1' pasa estar activo o '0' si pasa a estar bloqueados.
+
+|        Datos empleados        |         Descripción del error          | resultado |
+| :---------------------------: | :------------------------------------: | :-------: |
+|         la función no tiene parámetros de entrada          |  X  |   Funcionamiento siempre adecuado   |
+
+
 
 ***Datos de Prueba***
 
@@ -4998,26 +5192,3 @@ El desarrollo de la plataforma ESI-Share ha sido posible gracias al trabajo de l
 * Sánchez Loureiro, Santiago - Módulo Vehículo.
 
 *San Fernando, a 18 de Abril de 2023* 
-
-## SmartyPants
-
-SmartyPants converts ASCII punctuation characters into "smart" typographic punctuation HTML entities. For example:
-
-|                  | ASCII                           | HTML                          |
-| ---------------- | ------------------------------- | ----------------------------- |
-| Single backticks | `'Isn't this fun?'`             | 'Isn't this fun?'             |
-| Quotes           | `"Isn't this fun?"`             | "Isn't this fun?"             |
-| Dashes           | `-- is en-dash, --- is em-dash` | -- is en-dash, --- is em-dash |
-
-
-## KaTeX
-
-You can render LaTeX mathematical expressions using [KaTeX](https://khan.github.io/KaTeX/):
-
-The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
-
-$$
-\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
-$$
-
-> You can find more information about **LaTeX** mathematical expressions [here](http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference).
