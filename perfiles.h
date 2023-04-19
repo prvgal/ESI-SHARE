@@ -1,10 +1,6 @@
 #ifndef _PERFILES_H_
 #define _PERFILES_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #define ID 5
 #define MAX_N 21
 #define MAX_L 21
@@ -111,10 +107,6 @@ static void ModificarCamposAdmin(tPerfil *infoper);
 // Precondici�n: 
 // Poscondici�n: devuelve el numero de l�neas que tiene Usuarios.txt, que es a su vez el tama�o que corresponde al vector
 static int LongitudVectorEstructuras(void);
-
-// Precondici�n: recibe una cadena de caraacteres.
-// Poscondici�n: elimina, si se encuentra, un salto de l�nea al final de la palabra
-static void EliminarSaltoLinea(char *cad);
 
 // Precondici�n: recibe una cadena de caracteres y el tama�o de dicha cadena.
 // Poscondici�n: limpia la cadena poniendo \0 en todas las posiciones de la cadena
