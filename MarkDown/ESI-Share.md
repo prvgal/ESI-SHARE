@@ -5122,23 +5122,23 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 
 * Cálculo de Complejidad ciclomática 
 
-V(G) = NA – NN + 2 = 10 – 7 + 2 = 3+ 2 = 5 
+$V(G) = NA – NN + 2 = 10 – 7 + 2 = 3+ 2 = 5$ 
 
-V(G) = NNP + 1 = 4 + 1 = 5 
+$V(G) = NNP + 1 = 4 + 1 = 5 $
 
-V(G) = número de regiones (R1+R2+R3+R4+R5)= 5
+$V(G) = \text{número de regiones} (R1+R2+R3+R4+R5)= 5$
 
 * Rutas básicas linealmente independientes:
 
-Ruta 1: 1-2-...-8
+$\text{Ruta 1}: 1-2-\cdots-8$
 
-Ruta 2: 1-2-3-4-7
+$\text{Ruta 2}: 1-2-3-4-7$
 
-Ruta 3: 1-7
+$\text{Ruta 3}: 1-7$
 
-Ruta 4: 1-2-...-7
+$\text{Ruta 4}: 1-2-\cdots-7$
 
-Ruta 5:  1-2-3-7
+$\text{Ruta 5}:  1-2-3-7$
 
 * Casos de Prueba:
 
@@ -5159,8 +5159,14 @@ Ruta 5:  1-2-3-7
    - Salida esperada: 0
 
 ###### IV. **Viajes**
+
+***Datos de Prueba***
+
+***Pruebas de Caja Blanca***
+
 ***Prueba de procedimientos y funciones***
 * *static void introducir_fecha(viajes \**viaje, int posViaje); - El procedimiento debe recibir una estructura en la que modificará o cambiará la fecha, posViaje indicará la posición del viaje donde se hará
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Se guarda la fecha como basura o directamente nada en su sección |   Error   |
@@ -5175,16 +5181,19 @@ Ruta 5:  1-2-3-7
 * *static void importe(viajes \**viaje, int posViaje); - Se repite el caso anterior
 
 * *static void estado(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No encuentra ningún error, si la estructura esta vacia no entrará al bucle y no se actualizará el estado ya que no existe ningún viaje |   Funcionamiento siempre adecuado   |
 
 * *static viajes *modviajeAdmin(viajes *viaje);* - Debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No encuentra ningún error, si la estructura esta vacia no se podrán modificar viajes ya que no existe ninguno |   Funcionamiento siempre adecuado   |
 
 * *static viajes *modviaje(viajes *viaje, char viajeusu [5])* - Debe recibir la estructura de viajes y la ID del usuario que está accediendo
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No habrá ningún viaje del usuario por lo que no permitirá modificar nada |   Funcionamiento siempre adecuado   |
@@ -5193,26 +5202,31 @@ Ruta 5:  1-2-3-7
 * *static int listartusviajes(viajes \**viaje, char viajeusu [5]); - Se repite el caso anterior
 
 * *static viajes *eliminarviaje(viajes *viaje);* - Debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No permite borrar ningún viaje porque no existe ningún viaje |   Funcionamiento siempre adecuado   |
 
 * *static void imprimirnuevoviaje(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Imprimirá en el fichero basura o directamente no puede acceder a la estructura |   Error   |
 
 * *static void imprimirviajesborrado(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Imprimirá basura en el fichero o directamente no puede acceder a la estructura |   Error   |
 
 * *static void leerviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Intentará leer los viajes del fichero y no podrá guardarlos |   Error   |
 
 * *static void listarviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No imprimirá ningún viaje, no hay error |   Funcionamiento siempre adecuado   |
@@ -5220,73 +5234,88 @@ Ruta 5:  1-2-3-7
 * *static void listarviajesabiertos(viajes \**viaje); - Se repite el caso anterior
 
 * *static void imprimirviajes(viajes \**viaje); - El procedimiento debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Si habia algún viaje en el fichero lo actualizará borrando el contenido y guardando basura |   Error   |
 
 * *static int numeroviajes(void);*
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         No recibe entrada          | X |   X   |
 
 * *static viajes *reservarviajes(viajes *viaje);* - Debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | En el caso de que haya algún viaje en el fichero dará error, ya que se está usando realloc |  Error   |
 
 * *static viajes *reservarnuevoviaje(viajes *viaje);* - Debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | No se puede usar realloc para una estructura vacia, antes hay que reservar memoria con malloc o calloc |   Error   |
 
 * *static viajes *publicarviaje(viajes *viaje, char viajeusu [5]);* - Debe recibir la estructura de viajes
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         viajes vacío          | Tratará de reservar una nueva posición con realloc y dará error |   Error   |
 | ID de viaje distinta al formato en que se supone debe estar | La ID del usuario no existe por lo tanto no tendrá registrado ningún vehículo y no podrá iniciar el viaje |   Funcionamiento correcto   |
 
 * *static viajes \**CrearListaViajes(void);
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         No recibe entrada          | X |   X   |
 
 * *static void menuviajesUsu(char viajeusu [5]);* - El procedimiento debe recibir la ID del usuario que accede
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         ID inexistente o con formato distinto          | No podrá realizar nunca funciones como publicar o modificar un viaje, aunque si unirse, pero una vez que salga de la sesión no podrá volver a acceder porque ninguna ID será igual a esta nunca |   Error   |
 
 * *static void menuviajesAdmin(char viajeusu [5]);* - El procedimiento debe recibir la ID del usuario que accede
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         ID inexistente o con formato distinto          | No podrá nunca publicar un viaje |   Funcionamiento adecuado a excepción de publicar viaje   |
 
 * *void menuviajes(char viajeusu [5], char []);* - El procedimiento debe recibir la ID del usuario que accede y una cadena de caracteres que indica si es usuario o administrador
+
 |        Datos empleados        |         Descripción del error          | resultado |
 | :---------------------------: | :------------------------------------: | :-------: |
 |         ID inexistente o con formato distinto          | Llevará a los errores anteriores de menuviajesUsu o menuviajesAdmin |   Error   |
 | Cadena de caracteres que no sea "usuario" o "administrador" | Siempre llevará al menuviajesAdmin aunque el usuario no sea administrador |   Error   |
-
 ***Pruebas de Caja Blanca***
 * Función sometida a las pruebas de ruta básica
   * *void menuviajes(char viajeusu [5], char tipousuario[MAX_PU])*
-  ```C
-  void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
+```C
+void menuviajes(char viajeusu [5], char tipousuario[MAX_PU]){
     if(!strcmp(tipousuario, "usuario")) //1
         menuviajesUsu(viajeusu);    //2
     else    //3
         menuviajesAdmin(viajeusu);  //4
     //Acaba la función //5
 }
-  ```
+```
 * Diagrama de control de flujo
 ![Diagrama de Control de Flujo - Jose Bello González](C:\Users\Propietario\Desktop\MarkDown\Diagrama de flujo - Jose.png)
 * Cálculo de Complejidad ciclomática 
-V(G) = NA – NN + 2 = 5 – 5 + 2 = 0 + 2 = 2
-V(G) = NNP + 1 = 1 + 1 = 2
-V(G) = número de regiones (R1+R2)= 2
+
+$V(G) = NA – NN + 2 = 5 – 5 + 2 = 0 + 2 = 2$
+
+$V(G) = NNP + 1 = 1 + 1 = 2$
+
+$V(G) =  \text{número de regiones} (R1+R2)= 2$
+
 * Rutas básicas linealmente independientes:
-Ruta 1: 1-3-4-5
-Ruta 2: 1-2-5
+
+$\text{Ruta 1}: 1-3-4-5$
+
+$\text{Ruta 2}: 1-2-5$
+
 * Casos de Prueba:
 1. Prueba para cadena de caracteres recibida "usuario"
    - Entrada: "usuario"
