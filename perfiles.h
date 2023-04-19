@@ -31,7 +31,7 @@ int Inicio(tPerfil *infoper);
 // Poscondición: Dependiendo del tipo de perfil que tenga el usuario, desembocará a un menú u otro, en caso de ser administrador, se llama a MenuAdmin, en caso de no serlo, se llama a MenuUser
 void Menu(tPerfil *infoper, int posUsua);
 
-// Precondición: 
+// Precondición: Nada.
 // Poscondición: Devuelve un vector de tipo tPerfil del tamaño equivalente al numero de usuarios guardados en Usuarios.txt
 tPerfil *CrearListaDePerfiles(void);
 
@@ -66,7 +66,7 @@ static void Perfil(tPerfil *infoper, int posUsua);
 // Poscondición: Menu de opcinoes que desembocará en diferentes opciones de configuración.
 static void Usuarios(tPerfil *infoper);
 
-// Precondición: 
+// Precondición: Nada.
 // Poscondición: Imprime ESI-SHARE por pantalla.
 static void ImprimirESISHARE(void);
 
@@ -104,7 +104,7 @@ static void ModificarCamposUsuario(tPerfil *infoper, int pos);
 // Poscondición: tras elegir qué usuario cambiar datos, cambia tanto en el registro como en el fichero.
 static void ModificarCamposAdmin(tPerfil *infoper);
 
-// Precondición: 
+// Precondición: Nada.
 // Poscondición: devuelve el numero de líneas que tiene Usuarios.txt, que es a su vez el tamaño que corresponde al vector
 static int LongitudVectorEstructuras(void);
 
@@ -145,7 +145,7 @@ static void PreguntarUsuario(char *user);
 // Poscondición: pregunta y la ID, con mensajes de error en caso que no sea valido
 static void CambiarID(char *id);
 
-// Precondición: 
+// Precondición: Nada.
 // Poscondición: Devuelve un char que contiene '1' pasa estar activo o '0' si pasa a estar bloqueados
 static char ObtenerEstado(void);
 
