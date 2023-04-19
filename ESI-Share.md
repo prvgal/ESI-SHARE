@@ -5510,9 +5510,13 @@ V(G)=Número de Regiones
 
 ***Pruebas de Caja Blanca***
 
-##### 3.2.2. **Pruebas de Integración**
-
 ##### 3.2.3. **Plan de Pruebas de Aceptación**
+
+Una vez iniciada la fase de pruebas de aceptación, el equipo ve como único requisito necesario para dar por terminada la plataforma que el usuario sea capaz de manejar con facilidad y comodidad nuestro servicio, si encontrarse ninguna clase de errores. 
+
+El equipo de desarrollo de ESI-Share se compromete a actualizar la plataforma con arreglos a los errores que puedan encontrarse durante su uso. 
+
+El programa debe ser capaz de seguir las instrucciones dadas por el usuario a la hora de realizar tareas como abrir viajes, unirse a estos, y en general seguir correctamente las funcionalidades básicas diseñadas por el equipo.
 
 ### 4. **Créditos**
 
