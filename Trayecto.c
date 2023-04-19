@@ -6,7 +6,7 @@
 #include "Trayecto.h"
 #include "perfiles.h"
 
-void gestionar_trayecto(viajes viaje, tPerfil usuario){
+void gestionar_trayecto(viajes viaje, char usuario){
     int op;
     do{
         system("cls");
