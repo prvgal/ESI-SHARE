@@ -72,8 +72,8 @@
 	}
 
 	static void acortar_cadena(char cadena[]){
-		int i;
-		for(i=0;i<strlen(cadena);i++){
+		int i, len = (int) strlen(cadena);
+		for(i=0; i<len; i++){
     			if(cadena[i]=='\n')
     				cadena[i]='\0';
 			}
@@ -449,10 +449,10 @@
         }
         else{
             while(fgets(linea, sizeof(linea), viaj)!=NULL){
-                sscanf(linea, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%d-%[^-]-%[^-]-%[^-]-%[^-]-%c", viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo,
+                sscanf(linea, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%d-%[^-]-%[^-]-%[^-]-%d-%c", viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo,
                                                                                             viaje.importe, viaje.estado, viaje.hoy, &viaje.anular);
                 if(strcmp(viaje.matricula,matricula)==0&&viaje.estado.finalizado==True){
-                    printf("%d - %s - %s - %s - %s - %d - %s - %s - %s - %c", &viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
+                    printf("%s - %s - %s - %s - %s - %d - %s - %s - %s - %c", viaje.i_d, viaje.matricula, viaje.fecha, viaje.hora_inicio, viaje.hora_llegada, &viaje.Nplazas, viaje.tipo, viaje.importe,
                                                                                 viaje.estado, viaje.anular);
                     coincidencia=True;
                 }
@@ -623,7 +623,7 @@
         return i;
     }
 
-    void obtener_datos_vehiculo(char usu[IDUSU], viajes viaje){
+    viajes *obtener_matricula_vehiculo(char usu[IDUSU], viajes *viaje, int posViaje){
         char mat[IDMAT];
         FILE *veh;
         char linea[MAX_LIN_FICHVEH];
@@ -652,12 +652,77 @@
 
                     if(strcmp(mat_actual,mat)==0&&strcmp(usu_actual,usu)==0){
                         coincidencia=True;
-                        strcpy(viaje.matricula,mat_actual);
-                        sscanf(linea, "%*[^0123456789]%d", &viaje.Nplazas);
+                        strcpy(viaje[posViaje].matricula,mat_actual);
                     }
                 }
             }
             fclose(veh);
             if(coincidencia==False)
                 printf("\nEl vehiculo indicado no figura en su cuenta.\n");
+            
+            return viaje;
     }
+
+viajes *obtener_plazas_vehiculo(viajes *viaje, int posViaje, char mat_actual[IDMAT]){
+        
+        typedef struct {
+    char matricula[IDMAT];
+    char Idv[IDUSU];
+    int plazas;
+    char nombre[CARACTERES];
+} Vehiculo;
+
+    Vehiculo *vehiculos;
+    vehiculos = (Vehiculo*)calloc(numerovehiculos(), sizeof(Vehiculo));
+
+        FILE *veh;
+        int i = 0;
+        int j;
+
+        if((veh=fopen("vehiculo.txt","r"))==NULL)
+                printf("\nError al abrir el fichero vehiculo.txt\n");
+
+            else{
+
+    while (!feof(veh)) {
+        fscanf(veh, "%[^-]-%[^-]-%d-%[^\n]\n", vehiculos[i].matricula, vehiculos[i].Idv, &vehiculos[i].plazas, vehiculos[i].nombre);
+        i++;
+    }
+
+    fclose(veh);
+
+    for (j = 0; j < i; j++) {
+        if (strcmp(mat_actual, vehiculos[j].matricula) == 0) {
+            viaje[posViaje].Iplazas = vehiculos[j].plazas;
+            break;
+        }
+    }
+
+        fclose(veh);
+            }
+
+        free(vehiculos);
+        return viaje;
+    }
+
+    static int numerovehiculos(void){
+    char aux[MAX_LIN_FICHVEH];   //Se usa para llegar al final de cada linea
+    FILE *vf;
+    int i = 0;
+
+    vf = fopen("vehiculo.txt", "r");  //Abre el fichero en modo lectura
+
+    if(vf == NULL){
+        fprintf(stderr, "Error en la apertura del fichero.\n");
+        exit(1);
+    }
+
+    while(fgets(aux, MAX_LIN_FICHVEH, vf) != NULL){  //Lee cada linea y suma 1 a la variable i
+        i++;
+    }
+
+    rewind(vf);
+    fclose(vf);
+
+    return i;   //Devuelve el número de lineas del fichero Viajes.txt
+}
