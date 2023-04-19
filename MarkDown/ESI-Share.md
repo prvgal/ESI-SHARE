@@ -1285,7 +1285,7 @@ static void PreguntarUsuario(char *user){
 // Poscondición: pregunta y la ID, con mensajes de error en caso que no sea valido
 
 static void ObtenerID(tPerfil *infoper, char *id, int tam){
-    int i = 0, encontrado = 0;
+    int i = 0, encontrado = 0, fin = 0;
     char c;
 
     printf("\nIndique la ID (primer campo de usuario) del usuario desea modificar: ");
@@ -1303,9 +1303,18 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
             encontrado = 1;
     }
 
+    for(i = 0; id[i] != '\0' && !fin; i++){
+        if(isdigit((int) id[i]))    // Comprobamos si el formato es correcto
+            encontrado = 1;
+        else{
+            encontrado = 0;  
+            fin = 1; 
+        }
+    }
+
     // Si no se ha encontrado, limpiamos la cadena y volvemos a llamar a la función
     if(!encontrado){
-        printf("\nLa ID no se encuentra en el registro o no tiene 4 caracteres.");
+        printf("\nLa ID no se encuentra en el registro o no tiene 4 caracteres o el formato introducido es incorrecto.");
         LimpiarCadena(id, ID);
         ObtenerID(infoper, id, tam);
     }
@@ -1321,7 +1330,7 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
 // Poscondición: pregunta y la ID, con mensajes de error en caso que no sea valido
 
 static void CambiarID(char *id){
-    int i = 0;
+    int i = 0, encontrado = 0, fin = 0;
     char c;
 
     printf("\nIntroduzca la nueva ID: ");
@@ -1334,9 +1343,18 @@ static void CambiarID(char *id){
 
     id[i] = '\0';   // Añadimos el \0 final
 
+    for(i = 0; id[i] != '\0' && !fin; i++){
+        if(isdigit((int) id[i]))
+            encontrado = 1;
+        else{
+            encontrado = 0;  
+            fin = 1; 
+        }
+    }
+
     // Comprobamos si el tamaño es correcto, en caso de no serlo, limpiamos la cadena y volvemos a llamar a la función
-    if(strlen(id) != ID-1){
-        printf("\nLa ID tiene 4 caracteres.");
+    if(strlen(id) != ID-1 || !encontrado){
+        printf("\nLa ID tiene 4 caracteres o el formato no es correcto.");
         LimpiarCadena(id, ID);
         CambiarID(id);
     }
