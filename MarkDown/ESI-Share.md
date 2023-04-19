@@ -374,7 +374,7 @@ tPerfil *CrearListaDePerfiles(void){
 // Poscondición: guarda en id una cadena de caracteres, por ejemplo, si num = 12 y numDigitos = 4, en id se encontrará 0012
 
 void GenerarID(char *id, int num, int numDigitos){
-    if(num >= 0)
+    if(num >= 0 && numDigitos > 0)
         sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de d�gitos almacenados en numDigitos
     else
         fprintf(stderr, "La ID no puede ser negativa.");
@@ -4670,6 +4670,7 @@ logico vectores_iguales(int longitud1, int longitud2, int vec1[],int vec2[]) {
 | :---------------------------: | :------------------------------------: | :-------: |
 |         id ya inicializada          | sobreescribe la dicha ID |   perdida de la cadena que se encontrara almacenada previamente   |
 |        num '-13'          | no genera la ID |   Error   |
+|        numDigitos '-13'          | no genera la ID |   Error   |
 
 
 ***Datos de Prueba***
