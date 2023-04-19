@@ -281,8 +281,8 @@ static int listartusviajes(viajes *viaje, char viajeusu [5]){
             if(viaje[i].estado.anulado == 1){
                         strcpy(aux, "anulado");
             }
-            printf("<%i> %s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", j+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            printf("<%i> %s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", j+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
             j++;
         }
@@ -477,13 +477,13 @@ static void imprimirnuevoviaje(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal + 1 == i + 1){   //El último viaje en imprimir irá sin salto de linea
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
         else
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
     fclose(vf);
@@ -523,13 +523,13 @@ static void imprimirviajes(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal == i + 1){   //El último viaje en imprimir no tendrá salto de linea
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
         else
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
     fclose(vf);
@@ -569,13 +569,13 @@ static void imprimirviajesborrado(viajes *viaje){
             strcpy(aux, "anulado");
         }
         if(tamoriginal == i + 1){   //El último viaje en imprimir no tendrá salto de linea
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Se imprimen separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
         else
-            fprintf(vf, "%s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+            fprintf(vf, "%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
     fclose(vf);
@@ -598,8 +598,8 @@ static void leerviajes(viajes *viaje){
     for(i = 0; i < numeroviajes(); i++){    //Recorre el número de lineas que haya en el fichero
         if(fgets(buff, MAX_VIAJES, vf) != NULL){    //Guarda en la estructura el contenido del fichero hasta que llega al final
             buff[strcspn(buff, "\n")] = '\0';   //Convierte los \n en \0
-            sscanf(buff, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%i-%[^-]-%[^-]-%[^-]-%[^-]", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Recoge los campos separados por guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas,
+            sscanf(buff, "%[^-]-%[^-]-%[^-]-%[^-]-%[^-]-%i-%i-%[^-]-%[^-]-%[^-]-%[^-]", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,  //Recoge los campos separados por guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, &viaje[i].Nplazas, &viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
         }
 
@@ -669,8 +669,8 @@ static void listarviajes(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             strcpy(aux, "anulado");
         }
-        printf("<%i> %s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,   //Imprime la estructura por pantalla separando los campos con guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+        printf("<%i> %s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", i+1, viaje[i].i_d, viaje[i].matricula, viaje[i].fecha,   //Imprime la estructura por pantalla separando los campos con guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
 }
@@ -697,8 +697,8 @@ static void listarviajesabiertos(viajes *viaje){
         if(viaje[i].estado.anulado == 1){
             continue;
         }
-        printf("%s-%s-%s-%s-%s-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha, //Imprime la estructura por pantalla separando los campos con guiones
-                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas,
+        printf("%s-%s-%s-%s-%s-%i-%i-%s-%s-%s-%s\n", viaje[i].i_d, viaje[i].matricula, viaje[i].fecha, //Imprime la estructura por pantalla separando los campos con guiones
+                                                viaje[i].hora_inicio, viaje[i].hora_llegada, viaje[i].Nplazas, viaje[i].Iplazas,
                                                 viaje[i].tipo, viaje[i].importe, aux, viaje[i].usuviaje);
     }
 }
