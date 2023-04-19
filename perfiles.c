@@ -634,7 +634,10 @@ static int LongitudVectorEstructuras(void){
 }
 
 void GenerarID(char *id, int num, int numDigitos){
-    sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de d�gitos almacenados en numDigitos
+    if(num >= 0)
+        sprintf(id, "%0*d", numDigitos, num);   // Transformamos num en ID con el numero de d�gitos almacenados en numDigitos
+    else
+        fprintf(stderr, "La ID no puede ser negativa.");
 }
 
 static int ValidarID(tPerfil *infoper, char id[ID], int *posUsua, int tam){
