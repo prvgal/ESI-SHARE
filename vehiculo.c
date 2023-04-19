@@ -398,7 +398,7 @@
         fclose(veh);
     }
 
-    void menu_registro_vehiculo(tPerfil usuario){
+    void menu_registro_vehiculo(char usuario[ID]){
         int op, i, num_veh;
         vehiculo_inf vehiculo[num_veh];
 
@@ -417,7 +417,7 @@
                 switch(op){
                     case 1: if(scanf("%d",&op)!=1){ fflush(stdin); printf("\nError: no has introducido una entrada válida, prueba con otra.\n");
                             op=-1; i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1, 2, 3 o 0 según lo que necesites.\n");} else{ for(i=0;i<num_veh;i++){
-                            strcpy(vehiculo[i].id_usuario, usuario.Id_usuario); introducir_datos_veh(vehiculo[i]);}}
+                            strcpy(vehiculo[i].id_usuario, usuario); introducir_datos_veh(vehiculo[i]);}}
                     case 2: break;
                     default: printf("\nPor favor, introduzca un número válido.\n"); i++; if(i>5) printf("\nVenga va, tú puedes, que no es tan complicado: pulsa 1 o 2 según lo que necesites."); break;
                 }
