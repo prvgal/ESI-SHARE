@@ -1304,7 +1304,7 @@ static void ObtenerID(tPerfil *infoper, char *id, int tam){
     }
 
     for(i = 0; id[i] != '\0' && !fin; i++){
-        if(isdigit((int) id[i]))    // Comprobamos si el formato es correcto
+        if(isdigit((int) id[i])) // Comprobamos si el formato es correcto
             encontrado = 1;
         else{
             encontrado = 0;  
@@ -1344,7 +1344,7 @@ static void CambiarID(char *id){
     id[i] = '\0';   // Añadimos el \0 final
 
     for(i = 0; id[i] != '\0' && !fin; i++){
-        if(isdigit((int) id[i]))
+        if(isdigit((int) id[i])) // Comprobamos si el formato es correcto
             encontrado = 1;
         else{
             encontrado = 0;  
@@ -4598,22 +4598,6 @@ typedef enum {
 ```
 
 ***Funciones Públicas***
-
-* void  eliminarsaltolinea(char *);
-
-```C
-//Precondición: Recibe una cadena de caracteres.
-//Poscondición: Cambia el \n por el \0 para que no haya ningún salto de linea al ser la cadena introducida por el buffer.
-
-void EliminarSaltoLinea(char *cad){
-    int longCad = strlen(cad);
-
-    if(cad[longCad - 1] == '\n')
-        cad[longCad - 1] = '\0';    
-
-}
-
-```
 
 *Sustituye el primer salto de línea de una cadena , si lo hay, por un \0. Permite evitar posibles errores de formato en el sistema. Este procedimiento está diseñado para ser utilizado por otros procedimientos/funciones.*
 
