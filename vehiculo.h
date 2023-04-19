@@ -34,7 +34,7 @@
 
     //Precondición: Recibe la ID del usuario que se esté registrando en el momento.
     //Postcondición: Se habrán registrado los vehículos que haya indicado el usuario al registrarse si es que tiene, se habrá continuado normalmente el registro en caso contrario.
-    void menu_registro_vehiculo(tPerfil);
+    void menu_registro_vehiculo(char []);
 
     //Precondición: Recibe la ID del usuario que esté  registrado en el momento, así como una estructura de tipo viajes con algún dato básico.
     //Postcondición: Devuelve la estructura con la matricula del vehiculo que el usuario haya elegido
